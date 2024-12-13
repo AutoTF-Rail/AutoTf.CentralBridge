@@ -5,11 +5,11 @@ namespace AutoTf.CentralBridgeOS;
 public class CentralBridge : IDisposable
 {
 	private readonly Logger _logger = new Logger();
-	private readonly Hotspot _hotspot;
+	private readonly Hotspot _hotspot = new Hotspot();
 
 	public void Initialize()
 	{
-		// _logger.Log("Startup");
+		_logger.Log("Startup");
 		string interfaceName = "wlan1";
 		string ssid = "MyHotspot";
 		string password = "StrongPassword123";
