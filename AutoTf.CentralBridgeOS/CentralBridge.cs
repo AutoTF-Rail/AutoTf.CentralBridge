@@ -9,11 +9,11 @@ public class CentralBridge : IDisposable
 
 	public void Initialize()
 	{
-		_logger.Log("Startup");
+		// _logger.Log("Startup");
 		string interfaceName = "wlan1";
 		string ssid = "MyHotspot";
 		string password = "StrongPassword123";
-
+		Console.WriteLine("Startup");
 		try
 		{
 			_hotspot.StartWifi(interfaceName, ssid, password);
