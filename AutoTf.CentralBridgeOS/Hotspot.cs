@@ -1,9 +1,17 @@
 using System.Diagnostics;
+using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS;
 
 public class Hotspot
 {
+    private readonly Logger _logger;
+
+    public Hotspot(Logger logger)
+    {
+        _logger = logger;
+    }
+    
 	public void StartWifi(string interfaceName, string ssid, string password)
     {
         string configPath = "/etc/hostapd/hostapd.conf";
@@ -13,13 +21,13 @@ public class Hotspot
 
         if (!File.Exists(configPath))
         {
-            Console.WriteLine("Hostapd config not found. Creating it from default...");
+            _logger.Log("Hostapd config not found. Creating it from default...");
             
             if (!File.Exists(defaultConfigPath))
                 throw new FileNotFoundException("Default hostapd config not found in program directory!");
             
             File.Copy(defaultConfigPath, configPath, true);
-            Console.WriteLine($"Default config copied to {configPath}");
+            _logger.Log($"Default config copied to {configPath}");
         }
 
         string hostapdConfig = $"interface={interfaceName}\n" +
@@ -33,7 +41,7 @@ public class Hotspot
                                "rsn_pairwise=CCMP\n";
         
         File.WriteAllText(configPath, hostapdConfig);
-        Console.WriteLine("Hostapd config updated successfully!");
+        _logger.Log("Hostapd config updated successfully!");
 
         ExecuteCommand("sudo systemctl stop hostapd");
         ExecuteCommand("sudo killall hostapd");
@@ -43,7 +51,7 @@ public class Hotspot
     public void StopWifi()
     {
         ExecuteCommand("sudo systemctl stop hostapd");
-        Console.WriteLine("WiFi hotspot stopped.");
+        _logger.Log("WiFi hotspot stopped.");
     }
 
     private void CheckDependencies()
@@ -51,7 +59,7 @@ public class Hotspot
         string[] requiredTools = { "hostapd", "iw" };
         foreach (string tool in requiredTools)
         {
-            Console.WriteLine($"Checking for {tool}...");
+            _logger.Log($"Checking for {tool}...");
             try
             {
                 ExecuteCommand($"which {tool}");
@@ -61,7 +69,7 @@ public class Hotspot
                 throw new Exception($"{tool} is not installed. Please install it using 'sudo apt-get install {tool}'.");
             }
         }
-        Console.WriteLine("All dependencies are installed.");
+        _logger.Log("All dependencies are installed.");
     }
 
     private void ExecuteCommand(string command)
@@ -88,7 +96,7 @@ public class Hotspot
         {
             throw new Exception($"Error: {error}");
         }
-
-        Console.WriteLine(output);
+        
+        _logger.Log(output);
     }
 }
