@@ -43,14 +43,14 @@ public class Hotspot
         File.WriteAllText(configPath, hostapdConfig);
         _logger.Log("Hostapd config updated successfully!");
 
-        ExecuteCommand("sudo systemctl stop hostapd");
-        ExecuteCommand("sudo killall hostapd");
-        ExecuteCommand("sudo systemctl start hostapd");
+        ExecuteCommand("sudo systemctl stop hostapd", true);
+        ExecuteCommand("sudo killall hostapd", true);
+        ExecuteCommand("sudo systemctl start hostapd", false);
     }
 
     public void StopWifi()
     {
-        ExecuteCommand("sudo systemctl stop hostapd");
+        ExecuteCommand("sudo systemctl stop hostapd", true);
         _logger.Log("WiFi hotspot stopped.");
     }
 
@@ -62,7 +62,7 @@ public class Hotspot
             _logger.Log($"Checking for {tool}...");
             try
             {
-                ExecuteCommand($"which {tool}");
+                ExecuteCommand($"which {tool}", false);
             }
             catch
             {
@@ -72,31 +72,40 @@ public class Hotspot
         _logger.Log("All dependencies are installed.");
     }
 
-    private void ExecuteCommand(string command)
+    private void ExecuteCommand(string command, bool ignoreExceptions)
     {
-        Process process = new Process
+        try
         {
-            StartInfo = new ProcessStartInfo
+            Process process = new Process
             {
-                FileName = "/bin/bash",
-                Arguments = $"-c \"{command}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "/bin/bash",
+                    Arguments = $"-c \"{command}\"",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                }
+            };
+            process.Start();
+            process.WaitForExit();
+
+            string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
+
+            if (!string.IsNullOrEmpty(error) && !command.Contains("which"))
+            {
+                throw new Exception($"Error: {error}");
             }
-        };
-        process.Start();
-        process.WaitForExit();
-
-        string output = process.StandardOutput.ReadToEnd();
-        string error = process.StandardError.ReadToEnd();
-
-        if (!string.IsNullOrEmpty(error) && !command.Contains("which"))
-        {
-            throw new Exception($"Error: {error}");
+            
+            _logger.Log(output);
         }
-        
-        _logger.Log(output);
+        catch (Exception e)
+        {
+            _logger.Log((ignoreExceptions ? "IGNORED:" : "") + e.Message);
+            if (!ignoreExceptions)
+                throw;
+        }
     }
 }
