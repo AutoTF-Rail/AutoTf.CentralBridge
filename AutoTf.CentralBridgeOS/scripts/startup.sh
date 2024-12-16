@@ -2,11 +2,9 @@
 
 exec > /dev/tty1 2>&1
 
-fbi -T 1 -d /dev/fb0 -a -noverbose /home/display/AutoTf.TabletOS/AutoTf.TabletOS/bin/Debug/net8.0/Images/TabletOSLoadingOS.png 
-
 eval "$(ssh-agent -s)"
     
-ssh-add /home/display/githubKey
+ssh-add /home/CentralBridge/github
 
 check_internet() {
   sleep 5
@@ -37,19 +35,16 @@ check_git_changes() {
 }
 
 
-cd /home/display/AutoTf.TabletOS/AutoTf.TabletOS
+cd /home/CentralBridge/AutoTf.CentralBridge/AutoTf.CentralBridge
 
 
 if check_internet; then
-    fbi -T 1 -d /dev/fb0 -a -noverbose /home/display/AutoTf.TabletOS/AutoTf.TabletOS/bin/Debug/net8.0/Images/TabletOSGettingUpdates.png 
     if check_git_changes; then
         git pull
-        fbi -T 1 -d /dev/fb0 -a -noverbose /home/display/AutoTf.TabletOS/AutoTf.TabletOS/bin/Debug/net8.0/Images/TabletOSApplyingUpdates.png 
         dotnet build
     else
         echo "Skipping git pull as there are no changes."
     fi
 fi
-fbi -T 1 -d /dev/fb0 -a -noverbose /home/display/AutoTf.TabletOS/AutoTf.TabletOS/bin/Debug/net8.0/Images/TabletOSStartingUp.png
 
 dotnet run 2>&1 | tee /dev/tty1

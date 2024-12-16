@@ -11,20 +11,28 @@ public class CentralBridge : IDisposable
 	{
 		_logger.Log("Startup");
 		string interfaceName = "wlan1";
-		string ssid = "MyHotspot";
-		string password = "StrongPassword123";
+		string ssid = "CentralBridge-" + GenerateRandomString();
+		string password = "CentralBridgePW";
 		Console.WriteLine("Startup");
+		
 		try
 		{
 			_hotspot.StartWifi(interfaceName, ssid, password);
-			Console.WriteLine("WiFi hotspot started successfully!");
+			Console.WriteLine($"WiFi hotspot started successfully as {ssid}!");
 		}
 		catch (Exception ex)
 		{
 			Console.WriteLine($"Error: {ex.Message}");
 		}
 	}
-
+	
+	public static string GenerateRandomString()
+	{
+		Random random = new Random();
+		const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		return new string(Enumerable.Repeat(chars, 10)
+			.Select(s => s[random.Next(s.Length)]).ToArray());
+	}
 
 	public void Dispose()
 	{
