@@ -36,6 +36,7 @@ public class Hotspot
         Console.WriteLine("Hostapd config updated successfully!");
 
         ExecuteCommand("sudo systemctl stop hostapd");
+        ExecuteCommand("sudo killall hostapd");
         ExecuteCommand("sudo systemctl start hostapd");
     }
 
