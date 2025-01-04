@@ -15,6 +15,7 @@ public class BluetoothService : IDisposable
 		try
 		{
 			serverContext = new ServerContext();
+			await serverContext.Connect();
 		
 			AdvertisementProperties advertisementProperties = new AdvertisementProperties
 			{
