@@ -5,7 +5,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 public class Hotspot : IDisposable
 {
     private readonly Logger _logger = Statics.Logger;
-    private readonly string dhcpConfigPath = "/etc/dnsmasq.conf";
+    private readonly string dhcpConfigPath = "/etc/dhcpcd.conf";
 
 	public void StartWifi(string interfaceName, string ssid, string password)
     {
@@ -38,7 +38,7 @@ public class Hotspot : IDisposable
         
         File.WriteAllText(configPath, hostapdConfig);
         _logger.Log("Hostapd config updated successfully!");
-        CommandExecuter.ExecuteSilent("sudo systemctl start hostapd", false);
+        CommandExecuter.ExecuteSilent("sudo systemctl restart hostapd", false);
     }
 
     public void SetupDhcpConfig(string interfaceName)
