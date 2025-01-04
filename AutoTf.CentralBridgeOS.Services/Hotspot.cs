@@ -44,11 +44,9 @@ public class Hotspot : IDisposable
     public void SetupDhcpConfig(string interfaceName)
     {
         string dhcpConfig = $"interface={interfaceName}\n" +
-                            "statuc ip_address=192.168.1.1/24\n" +
-                            "nohook wpa_supplicant\n" +
-                            "dhcp-range=192.168.0.100,192.168.0.200,255.255.255.0,24h\n" +
-                            "dhcp-option=3,192.168.0.1\n" +
-                            "dhcp-option=6,192.168.0.1\n";
+                            "dhcp-range=192.168.1.100,192.168.1.200,255.255.255.0,24h\n" +
+                            "dhcp-option=3,192.168.1.1\n" +
+                            "dhcp-option=6,192.168.1.1\n";
 
         File.WriteAllText(dhcpConfigPath, dhcpConfig);
         CommandExecuter.ExecuteSilent("sudo systemctl restart dnsmasq", false);

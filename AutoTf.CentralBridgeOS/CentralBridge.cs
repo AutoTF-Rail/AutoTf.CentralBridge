@@ -21,6 +21,7 @@ public class CentralBridge : IDisposable
 		{
 			NetworkConfigurator netConf = new NetworkConfigurator();
 			netConf.SetStaticIpAddress("192.168.0.1", "24");
+			netConf.SetStaticIpAddress("192.168.1.1", "24", "wlan1");
 			_logger.Log("Successfully set local IP.");
 			
 			_hotspot.StartWifi(interfaceName, ssid, password);
