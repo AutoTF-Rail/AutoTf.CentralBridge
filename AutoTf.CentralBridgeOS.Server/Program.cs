@@ -27,9 +27,6 @@ public class Program
 		_bluetoothService = new BluetoothService();
 
 		app.Run();
-		
-		_hotspot.Dispose();
-		_bluetoothService.Dispose();
 	}
 
 	private static bool ConfigureNetwork()
