@@ -78,7 +78,7 @@ public interface IProperties : IDBusObject
 	Task<IDictionary<string, object>> GetAllAsync(string interfaceName);
 }
 
-public class Advertisement : IDBusObject, ILEAdvertisement, IProperties
+public class Advertisement : IDBusObject, ILEAdvertisement
 {
 	private readonly Logger _logger;
 	private readonly ObjectPath _path;
@@ -97,10 +97,10 @@ public class Advertisement : IDBusObject, ILEAdvertisement, IProperties
 		return Task.CompletedTask;
 	}
 	
-	public async Task<IDictionary<string, object>> GetAllAsync(string interfaceName)
+	public Task<IDictionary<string, object>> GetAllAsync()
 	{
-		_logger.Log($"GetAll called for {interfaceName}");
-		return GetProperties();
+		_logger.Log("GetAll called.");
+		return Task.FromResult(GetProperties());
 	}
 	
 	public IDictionary<string, object> GetProperties()
