@@ -1,3 +1,4 @@
+using System.Text;
 using AutoTf.Logging;
 using DotnetBleServer.Advertisements;
 using DotnetBleServer.Core;
@@ -24,7 +25,7 @@ public class BluetoothService : IDisposable
 				LocalName = "ExampleBeacon",
 				ManufacturerData = new Dictionary<string, object>()
 				{
-					{"meow", "meow"}
+					{"meow", Encoding.UTF8.GetBytes("meow")}
 				}
 			};
 
