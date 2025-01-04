@@ -14,24 +14,31 @@ public class BluetoothService : IDisposable
 	{
 		try
 		{
+			_logger.Log("Connecting to BlueZ D-Bus...");
+
 			Connection connection = new Connection(Address.System);
 			await connection.ConnectAsync();
 
-			Advertisement advertisement = new Advertisement();
+			Advertisement advertisement = new Advertisement(BeaconPath, _logger);
 			await connection.RegisterObjectAsync(advertisement);
-
-			ILEAdvertisingManager? manager = connection.CreateProxy<ILEAdvertisingManager>("org.bluez", new ObjectPath("/org/bluez/hci0"));
-			await manager.RegisterAdvertisementAsync(new ObjectPath(BeaconPath), new Dictionary<string, object>());
+			
+			_logger.Log("Bluetooth beacon started successfully!");
 
 			await Task.Delay(Timeout.Infinite, cancellationToken);
+
+			connection.UnregisterObject(new ObjectPath(BeaconPath));
+			_logger.Log("Bluetooth beacon stopped.");
+			
 		}
 		catch (TaskCanceledException)
 		{
-			Console.WriteLine("Beacon stopped.");
+			_logger.Log("Bluetooth beacon stopped.");
 		}
-		catch (Exception ex)
+		catch (Exception e)
 		{
-			Console.WriteLine($"Error: {ex.Message}");
+			_logger.Log("Error: Bluetooth beacon threw an error");
+			_logger.Log($"Error: {e.Message}");
+			_logger.Log($"StackTrace: {e.StackTrace}");
 		}
 	}
 	
@@ -46,20 +53,29 @@ public class BluetoothService : IDisposable
 		_cancellationTokenSource?.Cancel();
 	}
 }
-[DBusInterface("org.bluez.LEAdvertisingManager1")]
-public interface ILEAdvertisingManager : IDBusObject
+
+[DBusInterface("org.bluez.LEAdvertisement1")]
+public interface ILEAdvertisement : IDBusObject
 {
-	Task RegisterAdvertisementAsync(ObjectPath advertisement, IDictionary<string, object> options);
-	Task UnregisterAdvertisementAsync(ObjectPath advertisement);
+	Task ReleaseAsync();
 }
 
 public class Advertisement : IDBusObject, ILEAdvertisement
 {
-	public ObjectPath ObjectPath => new ObjectPath("/org/bluez/example/advertisement");
+	private readonly Logger _logger;
+	private readonly ObjectPath _path;
+
+	public Advertisement(string path, Logger logger)
+	{
+		_path = new ObjectPath(path);
+		_logger = logger;
+	}
+
+	public ObjectPath ObjectPath => _path;
 
 	public Task ReleaseAsync()
 	{
-		Console.WriteLine("Advertisement released.");
+		_logger.Log("Advertisement released.");
 		return Task.CompletedTask;
 	}
 
@@ -69,18 +85,12 @@ public class Advertisement : IDBusObject, ILEAdvertisement
 		{
 			{ "Type", "broadcast" },
 			{ "ServiceUUIDs", new[] { "12345678-1234-5678-1234-56789abcdef0" } },
-			{ "LocalName", "SimpleBeacon" },
+			{ "LocalName", "ExampleBeacon" },
 			{ "ManufacturerData", new Dictionary<ushort, object>
 				{
-					{ 0x004C, Encoding.UTF8.GetBytes("Hello World!") }
+					{ 0x004C, Encoding.UTF8.GetBytes("Meow") }
 				}
 			}
 		};
 	}
-}
-
-[DBusInterface("org.bluez.LEAdvertisement1")]
-public interface ILEAdvertisement : IDBusObject
-{
-	Task ReleaseAsync();
 }
