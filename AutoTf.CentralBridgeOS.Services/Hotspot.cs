@@ -40,8 +40,8 @@ public class Hotspot : IDisposable
         _logger.Log("Hostapd config updated successfully!");
         CommandExecuter.ExecuteSilent("sudo systemctl start hostapd", false);
     }
-    
-    private void SetupDhcpConfig(string interfaceName)
+
+    public void SetupDhcpConfig(string interfaceName)
     {
         string dhcpConfig = $"interface={interfaceName}\n" +
                             "dhcp-range=192.168.0.100,192.168.0.200,255.255.255.0,24h\n" +
