@@ -31,7 +31,7 @@ public class Hotspot : IDisposable
                                "hw_mode=g\n" +
                                "channel=6\n" +
                                "wpa=2\n" +
-                               "ignore_broadcast_ssid=1\n" +
+                               // "ignore_broadcast_ssid=1\n" +
                                $"wpa_passphrase={password}\n" +
                                "wpa_key_mgmt=WPA-PSK\n" +
                                "rsn_pairwise=CCMP\n";
