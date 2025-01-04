@@ -30,6 +30,7 @@ public class BluetoothService : IDisposable
 		{
 			_logger.Log("Error: Bluetooth beacon threw an error");
 			_logger.Log($"Error: {e.Message}");
+			_logger.Log($"StackTrace: {e.StackTrace}");
 		}
 	}
 
