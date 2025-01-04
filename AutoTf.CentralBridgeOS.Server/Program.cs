@@ -15,6 +15,7 @@ public class Program
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		builder.Services.AddControllers();
+		builder.Services.AddSingleton<BluetoothService>();
 
 		WebApplication app = builder.Build();
 		
@@ -22,8 +23,15 @@ public class Program
 
 		if (!ConfigureNetwork())
 			return;
+		
+		BluetoothService bluetoothService = app.Services.GetRequiredService<BluetoothService>();
+		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+		_ = bluetoothService.StartBeacon(cancellationTokenSource.Token);
 
-		_bluetoothService.StartBeacon();
+		app.Lifetime.ApplicationStopping.Register(() =>
+		{
+			bluetoothService.StopBeacon();
+		});
 		
 		app.Run();
 	}
