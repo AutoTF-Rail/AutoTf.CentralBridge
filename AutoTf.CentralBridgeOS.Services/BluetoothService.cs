@@ -1,38 +1,21 @@
-using System.Text;
 using AutoTf.Logging;
-using Tmds.DBus;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class BluetoothService : IDisposable
+public class BluetoothService
 {
 	private readonly Logger _logger = Statics.Logger;
-	private CancellationTokenSource _cancellationTokenSource;
-	private const string BeaconPath = "/org/bluez/example/advertisement";
+	private int _instanceId = 2;
 
-	public async Task StartBeaconAsync(CancellationToken cancellationToken)
+	public void StartBeaconAsync()
 	{
 		try
 		{
-			_logger.Log("Connecting to BlueZ D-Bus...");
+			string hexMessage = StringToHex(Statics.CurrentSsid);
 
-			Connection connection = new Connection(Address.System);
-			await connection.ConnectAsync();
+			string command = $"btmgmt add-adv -d 09{hexMessage} {_instanceId}";
 
-			Advertisement advertisement = new Advertisement(BeaconPath, _logger);
-			await connection.RegisterObjectAsync(advertisement);
-			
-			_logger.Log("Bluetooth beacon started successfully!");
-
-			await Task.Delay(Timeout.Infinite, cancellationToken);
-
-			connection.UnregisterObject(new ObjectPath(BeaconPath));
-			_logger.Log("Bluetooth beacon stopped.");
-			
-		}
-		catch (TaskCanceledException)
-		{
-			_logger.Log("Bluetooth beacon stopped.");
+			CommandExecuter.ExecuteSilent(command, false);
 		}
 		catch (Exception e)
 		{
@@ -42,55 +25,23 @@ public class BluetoothService : IDisposable
 		}
 	}
 	
-	public void StopBeacon()
+	public void RemoveBeacon()
 	{
-		_cancellationTokenSource?.Cancel();
-		_logger.Log("Stopping Bluetooth beacon...");
+		string command = $"btmgmt remove-adv {_instanceId}";
+		CommandExecuter.ExecuteSilent(command, true);
+		Console.WriteLine("Beacon removed.");
 	}
-
-	public void Dispose()
+	
+	private static string StringToHex(string input)
 	{
-		_cancellationTokenSource?.Cancel();
-	}
-}
+		char[] chars = input.ToCharArray();
+		string hexOutput = string.Empty;
 
-[DBusInterface("org.bluez.LEAdvertisement1")]
-public interface ILEAdvertisement : IDBusObject
-{
-	Task ReleaseAsync();
-}
-
-public class Advertisement : IDBusObject, ILEAdvertisement
-{
-	private readonly Logger _logger;
-	private readonly ObjectPath _path;
-
-	public Advertisement(string path, Logger logger)
-	{
-		_path = new ObjectPath(path);
-		_logger = logger;
-	}
-
-	public ObjectPath ObjectPath => _path;
-
-	public Task ReleaseAsync()
-	{
-		_logger.Log("Advertisement released.");
-		return Task.CompletedTask;
-	}
-
-	public IDictionary<string, object> GetProperties()
-	{
-		return new Dictionary<string, object>
+		foreach (char c in chars)
 		{
-			{ "Type", "broadcast" },
-			{ "ServiceUUIDs", new[] { "12345678-1234-5678-1234-56789abcdef0" } },
-			{ "LocalName", "ExampleBeacon" },
-			{ "ManufacturerData", new Dictionary<ushort, object>
-				{
-					{ 0x004C, Encoding.UTF8.GetBytes("Meow") }
-				}
-			}
-		};
+			hexOutput += ((int)c).ToString("X2");
+		}
+
+		return hexOutput;
 	}
 }

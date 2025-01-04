@@ -25,12 +25,11 @@ public class Program
 			return;
 		
 		BluetoothService bluetoothService = app.Services.GetRequiredService<BluetoothService>();
-		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-		_ = bluetoothService.StartBeaconAsync(cancellationTokenSource.Token);
+		bluetoothService.StartBeaconAsync();
 
 		app.Lifetime.ApplicationStopping.Register(() =>
 		{
-			bluetoothService.StopBeacon();
+			bluetoothService.RemoveBeacon();
 		});
 		
 		app.Run();
