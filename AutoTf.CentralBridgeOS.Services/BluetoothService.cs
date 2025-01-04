@@ -22,10 +22,15 @@ public class BluetoothService : IDisposable
 			Advertisement advertisement = new Advertisement(BeaconPath, _logger);
 			await connection.RegisterObjectAsync(advertisement);
 			
+			var bluezPath = "/org/bluez/hci0";
+			var manager = connection.CreateProxy<ILEAdvertisingManager>("org.bluez", new ObjectPath(bluezPath));
+			await manager.RegisterAdvertisementAsync(new ObjectPath(BeaconPath), new Dictionary<string, object>());
+
 			_logger.Log("Bluetooth beacon started successfully!");
 
 			await Task.Delay(Timeout.Infinite, cancellationToken);
 
+			await manager.UnregisterAdvertisementAsync(new ObjectPath(BeaconPath));
 			connection.UnregisterObject(new ObjectPath(BeaconPath));
 			_logger.Log("Bluetooth beacon stopped.");
 			
@@ -54,6 +59,13 @@ public class BluetoothService : IDisposable
 	}
 }
 
+[DBusInterface("org.bluez.LEAdvertisingManager1")]
+public interface ILEAdvertisingManager : IDBusObject
+{
+	Task RegisterAdvertisementAsync(ObjectPath advertisement, IDictionary<string, object> options);
+	Task UnregisterAdvertisementAsync(ObjectPath advertisement);
+}
+
 [DBusInterface("org.bluez.LEAdvertisement1")]
 public interface ILEAdvertisement : IDBusObject
 {
@@ -78,7 +90,7 @@ public class Advertisement : IDBusObject, ILEAdvertisement
 		_logger.Log("Advertisement released.");
 		return Task.CompletedTask;
 	}
-
+	
 	public IDictionary<string, object> GetProperties()
 	{
 		return new Dictionary<string, object>
