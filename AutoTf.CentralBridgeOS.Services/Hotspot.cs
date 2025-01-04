@@ -5,7 +5,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 public class Hotspot : IDisposable
 {
     private readonly Logger _logger = Statics.Logger;
-    private readonly string dhcpConfigPath = "/etc/dhcpcd.conf";
+    private readonly string dhcpConfigPath = "/etc/dnsmasq.conf";
 
 	public void StartWifi(string interfaceName, string ssid, string password)
     {
