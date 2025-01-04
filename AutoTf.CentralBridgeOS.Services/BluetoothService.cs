@@ -9,13 +9,8 @@ public class BluetoothService : IDisposable
 	private readonly Logger _logger = Statics.Logger;
 	
 	private ServerContext serverContext;
-	
-	public BluetoothService()
-	{
-		StartBeacon();
-	}
 
-	private async void StartBeacon()
+	public async void StartBeacon()
 	{
 		try
 		{

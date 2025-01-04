@@ -6,13 +6,12 @@ namespace AutoTf.CentralBridgeOS.Server;
 public class Program
 {
 	private static readonly Logger _logger = Statics.Logger;
-	private static HotspotService _hotspot;
-	private static BluetoothService _bluetoothService;
+	private static readonly HotspotService _hotspot = new HotspotService();
+	private static readonly BluetoothService _bluetoothService = new BluetoothService();
 	
 	public static void Main(string[] args)
 	{
 		_logger.Log("Starting up----------------------------");
-		Console.WriteLine("Startup");
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		builder.Services.AddControllers();
@@ -24,8 +23,8 @@ public class Program
 		if (!ConfigureNetwork())
 			return;
 
-		_bluetoothService = new BluetoothService();
-
+		_bluetoothService.StartBeacon();
+		
 		app.Run();
 	}
 
