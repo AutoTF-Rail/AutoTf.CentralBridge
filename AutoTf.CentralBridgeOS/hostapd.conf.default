@@ -8,4 +8,5 @@ wpa_passphrase=DefaultPass123
 wpa_key_mgmt=WPA-PSK
 rsn_pairwise=CCMP
 macaddr_acl=1
+ignore_broadcast_ssid=1
 accept_mac_file=/etc/hostapd/accepted_macs.txt

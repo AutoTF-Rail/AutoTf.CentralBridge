@@ -1,26 +1,32 @@
+using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
+using Emgu.CV.Dnn;
+using Emgu.CV.Shape;
 
 namespace AutoTf.CentralBridgeOS;
 
 public class CentralBridge : IDisposable
 {
-	private readonly Logger _logger = new Logger();
+	private readonly Logger _logger = Statics.Logger;
 	private Hotspot _hotspot;
 
 	public void Initialize()
 	{
-		_hotspot = new Hotspot(_logger);
+		_hotspot = new Hotspot();
 		_logger.Log("Startup");
+		
 		string interfaceName = "wlan1";
 		string ssid = "CentralBridge-" + GenerateRandomString();
 		string password = "CentralBridgePW";
-		Console.WriteLine("Startup");
 		
 		try
 		{
+			NetworkConfigurator netConf = new NetworkConfigurator();
+			netConf.SetStaticIpAddress("192.168.178.1", "24");
+			_logger.Log("Successfully set local IP.");
+			
 			_hotspot.StartWifi(interfaceName, ssid, password);
 			_logger.Log($"Started WIFI as:  {ssid}");
-			Console.WriteLine($"WiFi hotspot started successfully as {ssid}!");
 		}
 		catch (Exception ex)
 		{
@@ -39,6 +45,6 @@ public class CentralBridge : IDisposable
 
 	public void Dispose()
 	{
-		// TODO release managed resources here
+		_logger.Dispose();
 	}
 }

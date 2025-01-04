@@ -24,4 +24,8 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Services\AutoTf.CentralBridgeOS.Services.csproj" />
+    </ItemGroup>
 </Project>

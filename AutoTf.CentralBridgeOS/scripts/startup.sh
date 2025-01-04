@@ -41,7 +41,7 @@ cd /home/CentralBridge/AutoTf.CentralBridge/AutoTf.CentralBridge
 if check_internet; then
     if check_git_changes; then
         git pull
-        dotnet build
+        dotnet build -m
     else
         echo "Skipping git pull as there are no changes."
     fi

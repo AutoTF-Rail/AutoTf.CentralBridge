@@ -1,0 +1,70 @@
+using System.Globalization;
+using System.Text.RegularExpressions;
+using AutoTf.Logging;
+
+namespace AutoTf.CentralBridgeOS.Services;
+
+public class NetworkConfigurator
+{
+	private readonly Logger _logger = Statics.Logger;
+	
+	public void SetStaticIpAddress(string ipAddress, string subnetMask)
+	{
+		try
+		{
+			string? usbInterface = FindUsbEthernetAdapter();
+			if (usbInterface == null)
+				throw new Exception("Could not find USB Lan Adapter.");
+			
+			if (CheckIpAddress(usbInterface))
+				return;
+			_logger.Log("Setting Static IP.");
+			string setIpCommand = $"sudo ip addr add {ipAddress}/{subnetMask} dev {usbInterface}";
+			string bringUpInterfaceCommand = $"sudo ip link set {usbInterface} up";
+
+			CommandExecuter.ExecuteSilent(setIpCommand, false);
+			CommandExecuter.ExecuteSilent(bringUpInterfaceCommand, false);
+
+			_logger.Log($"Set {ipAddress} on {usbInterface} with subnet mask {subnetMask}");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"An error occurred while setting IP: {ex.Message}");
+			throw;
+		}
+	}
+	
+	public bool CheckIpAddress(string interfaceName)
+	{
+		string checkIpCommand = $"ip addr show {interfaceName}";
+		string output = CommandExecuter.ExecuteCommand(checkIpCommand);
+
+		if (output.Contains("inet"))
+		{
+			_logger.Log($"Current IP settings for {interfaceName}:");
+			_logger.Log(output.Split('\n')[1].Trim());
+			return true;
+		}
+
+		_logger.Log($"{interfaceName} does not have an IP address set.");
+		return false;
+	}
+	
+	
+	public string? FindUsbEthernetAdapter()
+	{
+		_logger.Log("Checking for USB Lan Adapter");
+		string command = "udevadm info -e | grep -B20 -A10 'ID_VENDOR_ID=0bda' | grep 'INTERFACE='";
+		string output = CommandExecuter.ExecuteCommand(command);
+
+		Match match = Regex.Match(output, "INTERFACE=(\\w+)");
+		
+		if (match.Success)
+		{
+			_logger.Log("Found interface at: " + match.Groups[1].Value);
+			return match.Groups[1].Value;
+		}
+
+		return null;
+	}
+}

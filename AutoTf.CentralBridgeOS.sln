@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS", "AutoTf.CentralBridgeOS\AutoTf.CentralBridgeOS.csproj", "{56828949-3C49-41BA-8F09-BCA3B602F6E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Services", "AutoTf.CentralBridgeOS.Services\AutoTf.CentralBridgeOS.Services.csproj", "{66509DAD-8289-48F9-A170-4D38EFCA029F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{56828949-3C49-41BA-8F09-BCA3B602F6E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56828949-3C49-41BA-8F09-BCA3B602F6E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56828949-3C49-41BA-8F09-BCA3B602F6E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66509DAD-8289-48F9-A170-4D38EFCA029F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66509DAD-8289-48F9-A170-4D38EFCA029F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66509DAD-8289-48F9-A170-4D38EFCA029F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66509DAD-8289-48F9-A170-4D38EFCA029F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

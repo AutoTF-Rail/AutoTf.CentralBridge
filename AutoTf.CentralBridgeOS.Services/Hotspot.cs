@@ -1,16 +1,10 @@
-using System.Diagnostics;
 using AutoTf.Logging;
 
-namespace AutoTf.CentralBridgeOS;
+namespace AutoTf.CentralBridgeOS.Services;
 
 public class Hotspot
 {
-    private readonly Logger _logger;
-
-    public Hotspot(Logger logger)
-    {
-        _logger = logger;
-    }
+    private readonly Logger _logger = Statics.Logger;
     
 	public void StartWifi(string interfaceName, string ssid, string password)
     {
@@ -36,6 +30,7 @@ public class Hotspot
                                "hw_mode=g\n" +
                                "channel=6\n" +
                                "wpa=2\n" +
+                               "ignore_broadcast_ssid=1\n" +
                                $"wpa_passphrase={password}\n" +
                                "wpa_key_mgmt=WPA-PSK\n" +
                                "rsn_pairwise=CCMP\n";
@@ -43,14 +38,14 @@ public class Hotspot
         File.WriteAllText(configPath, hostapdConfig);
         _logger.Log("Hostapd config updated successfully!");
 
-        ExecuteCommand("sudo systemctl stop hostapd", true);
-        ExecuteCommand("sudo killall hostapd", true);
-        ExecuteCommand("sudo systemctl start hostapd", false);
+        CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
+        CommandExecuter.ExecuteSilent("sudo killall hostapd", true);
+        CommandExecuter.ExecuteSilent("sudo systemctl start hostapd", false);
     }
 
     public void StopWifi()
     {
-        ExecuteCommand("sudo systemctl stop hostapd", true);
+        CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
         _logger.Log("WiFi hotspot stopped.");
     }
 
@@ -62,7 +57,7 @@ public class Hotspot
             _logger.Log($"Checking for {tool}...");
             try
             {
-                ExecuteCommand($"which {tool}", false);
+                CommandExecuter.ExecuteSilent($"which {tool}", false);
             }
             catch
             {
@@ -70,42 +65,5 @@ public class Hotspot
             }
         }
         _logger.Log("All dependencies are installed.");
-    }
-
-    private void ExecuteCommand(string command, bool ignoreExceptions)
-    {
-        try
-        {
-            Process process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "/bin/bash",
-                    Arguments = $"-c \"{command}\"",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            process.Start();
-            process.WaitForExit();
-
-            string output = process.StandardOutput.ReadToEnd();
-            string error = process.StandardError.ReadToEnd();
-
-            if (!string.IsNullOrEmpty(error) && !command.Contains("which"))
-            {
-                throw new Exception($"Error: {error}");
-            }
-            
-            _logger.Log(output);
-        }
-        catch (Exception e)
-        {
-            _logger.Log((ignoreExceptions ? "IGNORED:" : "") + e.Message);
-            if (!ignoreExceptions)
-                throw;
-        }
     }
 }
