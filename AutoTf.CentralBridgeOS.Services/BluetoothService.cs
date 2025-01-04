@@ -11,7 +11,7 @@ public class BluetoothService
 	{
 		try
 		{
-			string hexMessage = StringToHex(Statics.CurrentSsid);
+			string hexMessage = StringToHex(Statics.CurrentSsid.Replace("CentralBridge-", "CB-"));
 
 			string command = $"btmgmt add-adv -d 09{hexMessage} {_instanceId}";
 
