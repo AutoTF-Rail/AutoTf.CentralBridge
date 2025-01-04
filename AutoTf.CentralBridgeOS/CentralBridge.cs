@@ -1,7 +1,5 @@
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
-using Emgu.CV.Dnn;
-using Emgu.CV.Shape;
 
 namespace AutoTf.CentralBridgeOS;
 
@@ -22,7 +20,7 @@ public class CentralBridge : IDisposable
 		try
 		{
 			NetworkConfigurator netConf = new NetworkConfigurator();
-			netConf.SetStaticIpAddress("192.168.178.1", "24");
+			netConf.SetStaticIpAddress("192.168.0.1", "24");
 			_logger.Log("Successfully set local IP.");
 			
 			_hotspot.StartWifi(interfaceName, ssid, password);
@@ -45,6 +43,7 @@ public class CentralBridge : IDisposable
 
 	public void Dispose()
 	{
+		_hotspot.Dispose();
 		_logger.Dispose();
 	}
 }

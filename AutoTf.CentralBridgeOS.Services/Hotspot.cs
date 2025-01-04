@@ -2,10 +2,11 @@ using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class Hotspot
+public class Hotspot : IDisposable
 {
     private readonly Logger _logger = Statics.Logger;
-    
+    private readonly string dhcpConfigPath = "/etc/dnsmasq.conf";
+
 	public void StartWifi(string interfaceName, string ssid, string password)
     {
         string configPath = "/etc/hostapd/hostapd.conf";
@@ -37,10 +38,19 @@ public class Hotspot
         
         File.WriteAllText(configPath, hostapdConfig);
         _logger.Log("Hostapd config updated successfully!");
-
-        CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
-        CommandExecuter.ExecuteSilent("sudo killall hostapd", true);
         CommandExecuter.ExecuteSilent("sudo systemctl start hostapd", false);
+    }
+    
+    private void SetupDhcpConfig(string interfaceName)
+    {
+        string dhcpConfig = $"interface={interfaceName}\n" +
+                            "dhcp-range=192.168.0.100,192.168.0.200,255.255.255.0,24h\n" +
+                            "dhcp-option=3,192.168.0.1\n" +
+                            "dhcp-option=6,192.168.0.1\n";
+
+        File.WriteAllText(dhcpConfigPath, dhcpConfig);
+        CommandExecuter.ExecuteSilent("sudo systemctl restart dnsmasq", false);
+        _logger.Log("DHCP server configuration updated successfully!");
     }
 
     public void StopWifi()
@@ -51,7 +61,7 @@ public class Hotspot
 
     private void CheckDependencies()
     {
-        string[] requiredTools = { "hostapd", "iw" };
+        string[] requiredTools = { "hostapd", "iw", "dnsmasq" };
         foreach (string tool in requiredTools)
         {
             _logger.Log($"Checking for {tool}...");
@@ -65,5 +75,12 @@ public class Hotspot
             }
         }
         _logger.Log("All dependencies are installed.");
+    }
+
+    public void Dispose()
+    {
+        CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
+        CommandExecuter.ExecuteSilent("sudo systemctl stop dnsmasq", true);
+        CommandExecuter.ExecuteSilent("sudo killall hostapd", true);
     }
 }
