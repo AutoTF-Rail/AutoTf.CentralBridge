@@ -20,8 +20,12 @@ public class BluetoothService : IDisposable
 			AdvertisementProperties advertisementProperties = new AdvertisementProperties
 			{
 				Type = "peripheral",
-				ServiceUUIDs = new[] { Guid.NewGuid().ToString() },
-				LocalName = "ExampleBeacon"
+				ServiceUUIDs = new[] { "12345678-1234-5678-1234-56789abcdef0" },
+				LocalName = "ExampleBeacon",
+				ManufacturerData = new Dictionary<string, object>()
+				{
+					{"meow", "meow"}
+				}
 			};
 
 			AdvertisingManager advertisingManager = new AdvertisingManager(serverContext);
