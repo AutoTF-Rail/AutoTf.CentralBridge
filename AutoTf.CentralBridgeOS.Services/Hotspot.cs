@@ -67,7 +67,8 @@ public class Hotspot : IDisposable
             _logger.Log($"Checking for {tool}...");
             try
             {
-                CommandExecuter.ExecuteSilent($"which {tool}", false);
+                if (CommandExecuter.ExecuteCommand($"which {tool}") == "")
+                    throw new Exception();
             }
             catch
             {
