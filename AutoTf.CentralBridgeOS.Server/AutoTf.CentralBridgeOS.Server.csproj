@@ -26,9 +26,4 @@
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Services\AutoTf.CentralBridgeOS.Services.csproj" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
 </Project>
