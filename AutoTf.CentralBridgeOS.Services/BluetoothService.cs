@@ -72,7 +72,13 @@ public interface ILEAdvertisement : IDBusObject
 	Task ReleaseAsync();
 }
 
-public class Advertisement : IDBusObject, ILEAdvertisement
+[DBusInterface("org.freedesktop.DBus.Properties")]
+public interface IProperties : IDBusObject
+{
+	Task<IDictionary<string, object>> GetAllAsync(string interfaceName);
+}
+
+public class Advertisement : IDBusObject, ILEAdvertisement, IProperties
 {
 	private readonly Logger _logger;
 	private readonly ObjectPath _path;
@@ -89,6 +95,12 @@ public class Advertisement : IDBusObject, ILEAdvertisement
 	{
 		_logger.Log("Advertisement released.");
 		return Task.CompletedTask;
+	}
+	
+	public async Task<IDictionary<string, object>> GetAllAsync(string interfaceName)
+	{
+		_logger.Log($"GetAll called for {interfaceName}");
+		return GetProperties();
 	}
 	
 	public IDictionary<string, object> GetProperties()
