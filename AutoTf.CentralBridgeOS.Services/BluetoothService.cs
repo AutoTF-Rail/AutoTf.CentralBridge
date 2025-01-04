@@ -12,9 +12,13 @@ public class BluetoothService
 		try
 		{
 			string hexMessage = StringToHex(Statics.CurrentSsid.Replace("CentralBridge-", "CB-"));
-			_logger.Log("Trying to start BLE as: " + hexMessage);
+			int length = hexMessage.Length / 2 + 1;
+			string lengthByte = length.ToString("X2");
+			string adData = $"{lengthByte}09{hexMessage}";
+
+			_logger.Log("Trying to start BLE as: " + adData);
 			
-			string command = $"btmgmt add-adv -d 09{hexMessage} {_instanceId}";
+			string command = $"btmgmt add-adv -d {adData} {_instanceId}";
 
 			CommandExecuter.ExecuteSilent(command, false);
 		}
