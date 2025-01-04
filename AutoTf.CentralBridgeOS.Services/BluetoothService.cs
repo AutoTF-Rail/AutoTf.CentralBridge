@@ -1,7 +1,6 @@
 using System.Text;
 using AutoTf.Logging;
-using DotnetBleServer.Advertisements;
-using DotnetBleServer.Core;
+using Tmds.DBus;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
@@ -9,31 +8,27 @@ public class BluetoothService : IDisposable
 {
 	private readonly Logger _logger = Statics.Logger;
 	private CancellationTokenSource _cancellationTokenSource;
-	private ServerContext serverContext;
+	private const string BeaconPath = "/org/bluez/example/advertisement";
 
-	public async Task StartBeacon(CancellationToken cancellationToken)
+	public async Task StartBeaconAsync(CancellationToken cancellationToken)
 	{
 		try
 		{
-			serverContext = new ServerContext();
-			await serverContext.Connect();
-		
-			AdvertisementProperties advertisementProperties = new AdvertisementProperties
-			{
-				Type = "peripheral",
-				ServiceUUIDs = new[] { "12345678-1234-5678-1234-56789abcdef0" },
-				LocalName = "ExampleBeacon",
-				ManufacturerData = new Dictionary<string, object>()
-				{
-					{"meow", Encoding.UTF8.GetBytes("meow")}
-				}
-			};
+			_logger.Log("Connecting to BlueZ D-Bus...");
 
-			AdvertisingManager advertisingManager = new AdvertisingManager(serverContext);
-			await advertisingManager.CreateAdvertisement(advertisementProperties);
+			Connection connection = new Connection(Address.System);
+			await connection.ConnectAsync();
+
+			Advertisement advertisement = new Advertisement(BeaconPath, _logger);
+			await connection.RegisterObjectAsync(advertisement);
 			
 			_logger.Log("Bluetooth beacon started successfully!");
+
 			await Task.Delay(Timeout.Infinite, cancellationToken);
+
+			connection.UnregisterObject(new ObjectPath(BeaconPath));
+			_logger.Log("Bluetooth beacon stopped.");
+			
 		}
 		catch (TaskCanceledException)
 		{
@@ -56,6 +51,46 @@ public class BluetoothService : IDisposable
 	public void Dispose()
 	{
 		_cancellationTokenSource?.Cancel();
-		serverContext.Dispose();
+	}
+}
+
+[DBusInterface("org.bluez.LEAdvertisement1")]
+public interface ILEAdvertisement : IDBusObject
+{
+	Task ReleaseAsync();
+}
+
+public class Advertisement : IDBusObject, ILEAdvertisement
+{
+	private readonly Logger _logger;
+	private readonly ObjectPath _path;
+
+	public Advertisement(string path, Logger logger)
+	{
+		_path = new ObjectPath(path);
+		_logger = logger;
+	}
+
+	public ObjectPath ObjectPath => _path;
+
+	public Task ReleaseAsync()
+	{
+		_logger.Log("Advertisement released.");
+		return Task.CompletedTask;
+	}
+
+	public IDictionary<string, object> GetProperties()
+	{
+		return new Dictionary<string, object>
+		{
+			{ "Type", "broadcast" },
+			{ "ServiceUUIDs", new[] { "12345678-1234-5678-1234-56789abcdef0" } },
+			{ "LocalName", "ExampleBeacon" },
+			{ "ManufacturerData", new Dictionary<ushort, object>
+				{
+					{ 0x004C, Encoding.UTF8.GetBytes("Meow") }
+				}
+			}
+		};
 	}
 }
