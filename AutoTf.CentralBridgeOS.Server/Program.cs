@@ -12,7 +12,7 @@ public class Program
 	public static void Main(string[] args)
 	{
 		_logger.Log("Starting up----------------------------");
-		
+		Console.WriteLine("Startup");
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		builder.Services.AddControllers();

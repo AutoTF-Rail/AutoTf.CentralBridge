@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoTf.Logging" Version="1.0.0-20241210205046" />
+      <PackageReference Include="AutoTf.Logging" Version="1.0.0-2024.12.19.12.49.39" />
       <PackageReference Include="DotnetBleServer" Version="0.1.0-snapshot" />
     </ItemGroup>
 
