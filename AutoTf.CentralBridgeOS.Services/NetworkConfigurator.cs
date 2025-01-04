@@ -5,9 +5,9 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class NetworkConfigurator
 {
-	private readonly Logger _logger = Statics.Logger;
+	private static readonly Logger _logger = Statics.Logger;
 	
-	public void SetStaticIpAddress(string ipAddress, string subnetMask, string newInterface = "eth0")
+	public static void SetStaticIpAddress(string ipAddress, string subnetMask, string newInterface = "eth0")
 	{
 		try
 		{
@@ -29,7 +29,7 @@ public class NetworkConfigurator
 		}
 	}
 	
-	public bool CheckIpAddress(string interfaceName)
+	public static bool CheckIpAddress(string interfaceName)
 	{
 		string checkIpCommand = $"ip addr show {interfaceName}";
 		string output = CommandExecuter.ExecuteCommand(checkIpCommand);
@@ -46,7 +46,7 @@ public class NetworkConfigurator
 	}
 	
 	
-	public string? FindUsbEthernetAdapter()
+	public static string? FindUsbEthernetAdapter()
 	{
 		_logger.Log("Checking for USB Lan Adapter");
 		string command = "udevadm info -e | grep -B20 -A10 'ID_VENDOR_ID=0bda' | grep 'INTERFACE='";

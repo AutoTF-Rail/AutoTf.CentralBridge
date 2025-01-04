@@ -1,0 +1,6 @@
+@AutoTf.CentralBridgeOS.Server_HostAddress = http://localhost:5252
+
+GET {{AutoTf.CentralBridgeOS.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
