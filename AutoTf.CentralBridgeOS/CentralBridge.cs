@@ -24,7 +24,7 @@ public class CentralBridge : IDisposable
 			_logger.Log("Successfully set local IP.");
 			
 			_hotspot.StartWifi(interfaceName, ssid, password);
-			// _hotspot.SetupDhcpConfig(interfaceName);
+			_hotspot.SetupDhcpConfig(interfaceName);
 			_logger.Log($"Started WIFI as:  {ssid}");
 		}
 		catch (Exception ex)
