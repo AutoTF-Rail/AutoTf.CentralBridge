@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.RegularExpressions;
 using AutoTf.Logging;
 
@@ -8,24 +7,20 @@ public class NetworkConfigurator
 {
 	private readonly Logger _logger = Statics.Logger;
 	
-	public void SetStaticIpAddress(string ipAddress, string subnetMask)
+	public void SetStaticIpAddress(string ipAddress, string subnetMask, string newInterface = "eth0")
 	{
 		try
 		{
-			string? usbInterface = FindUsbEthernetAdapter();
-			if (usbInterface == null)
-				throw new Exception("Could not find USB Lan Adapter.");
-			
-			if (CheckIpAddress(usbInterface))
+			if (CheckIpAddress(newInterface))
 				return;
 			_logger.Log("Setting Static IP.");
-			string setIpCommand = $"sudo ip addr add {ipAddress}/{subnetMask} dev {usbInterface}";
-			string bringUpInterfaceCommand = $"sudo ip link set {usbInterface} up";
+			string setIpCommand = $"sudo ip addr add {ipAddress}/{subnetMask} dev {newInterface}";
+			string bringUpInterfaceCommand = $"sudo ip link set {newInterface} up";
 
 			CommandExecuter.ExecuteSilent(setIpCommand, false);
 			CommandExecuter.ExecuteSilent(bringUpInterfaceCommand, false);
 
-			_logger.Log($"Set {ipAddress} on {usbInterface} with subnet mask {subnetMask}");
+			_logger.Log($"Set {ipAddress} on {newInterface} with subnet mask {subnetMask}");
 		}
 		catch (Exception ex)
 		{
