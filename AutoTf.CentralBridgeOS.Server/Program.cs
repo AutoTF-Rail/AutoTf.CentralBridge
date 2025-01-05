@@ -8,6 +8,7 @@ public class Program
 	private static readonly Logger _logger = Statics.Logger;
 	private static readonly HotspotService _hotspot = new HotspotService();
 	private static readonly BluetoothService _bluetoothService = new BluetoothService();
+	private static readonly NetworkManager _netManager = new NetworkManager();
 	
 	public static void Main(string[] args)
 	{
@@ -21,6 +22,8 @@ public class Program
 		
 		app.MapControllers();
 
+		_netManager.Initialize();
+
 		if (!ConfigureNetwork())
 			return;
 		
@@ -30,6 +33,7 @@ public class Program
 		app.Lifetime.ApplicationStopping.Register(() =>
 		{
 			bluetoothService.RemoveBeacon();
+			_netManager.Dispose();
 		});
 		
 		app.Run();
@@ -43,7 +47,6 @@ public class Program
 		string ssid = "CentralBridge-" + GenerateRandomString();
 		Statics.CurrentSsid = ssid;
 		string password = "CentralBridgePW";
-		
 		try
 		{
 			NetworkConfigurator.SetStaticIpAddress("192.168.0.1", "24");

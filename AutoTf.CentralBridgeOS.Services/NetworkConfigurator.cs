@@ -1,3 +1,4 @@
+using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using AutoTf.Logging;
 
@@ -6,6 +7,29 @@ namespace AutoTf.CentralBridgeOS.Services;
 public class NetworkConfigurator
 {
 	private static readonly Logger _logger = Statics.Logger;
+	
+	public static bool IsInternetAvailable()
+	{
+		_logger.Log("Checking for internet.");
+		try
+		{
+			using var ping = new Ping();
+
+			PingReply reply = ping.Send("1.1.1.1", 1500);
+			if (reply.Status == IPStatus.Success)
+			{
+				_logger.Log("Got internet connection.");
+				return true;
+			}
+		}
+		catch
+		{
+			// ignored
+		}
+
+		_logger.Log("Got no internet connection.");
+		return false;
+	}
 	
 	public static void SetStaticIpAddress(string ipAddress, string subnetMask, string newInterface = "eth0")
 	{

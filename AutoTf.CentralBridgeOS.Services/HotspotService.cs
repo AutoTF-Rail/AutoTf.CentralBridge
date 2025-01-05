@@ -7,6 +7,7 @@ public class HotspotService : IDisposable
     private readonly Logger _logger = Statics.Logger;
     private readonly string dhcpConfigPath = "/etc/dnsmasq.conf";
 
+    // Only call this once the NetworkManager has tried to sync. Due to MAC Addresses maybe still being synced.
 	public void StartWifi(string interfaceName, string ssid, string password)
     {
         string configPath = "/etc/hostapd/hostapd.conf";
