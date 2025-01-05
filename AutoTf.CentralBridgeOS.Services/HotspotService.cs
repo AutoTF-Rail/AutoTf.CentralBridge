@@ -32,6 +32,8 @@ public class HotspotService : IDisposable
                                "hw_mode=g\n" +
                                "channel=6\n" +
                                "wpa=2\n" +
+                               "ctrl_interface=/var/run/hostapd\n" +
+                               "ctrl_interface_group=0\n" +
                                "ignore_broadcast_ssid=1\n" +
                                $"wpa_passphrase={password}\n" +
                                "wpa_key_mgmt=WPA-PSK\n" +
