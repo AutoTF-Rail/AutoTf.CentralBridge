@@ -9,6 +9,7 @@ public class Program
 	private static readonly HotspotService _hotspot = new HotspotService();
 	private static readonly BluetoothService _bluetoothService = new BluetoothService();
 	private static readonly NetworkManager _netManager = new NetworkManager();
+	private static readonly FileManager _fileManager = new FileManager();
 	
 	public static void Main(string[] args)
 	{
@@ -17,7 +18,10 @@ public class Program
 		
 		builder.Services.AddControllers();
 		builder.Services.AddSingleton<BluetoothService>();;
+		builder.Services.AddSingleton(_fileManager);
 		builder.Services.AddSingleton(_netManager);
+		
+		_logger.Log("Starting for EVU: " + Statics.EvuName);
 
 		WebApplication app = builder.Build();
 		

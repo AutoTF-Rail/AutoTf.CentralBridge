@@ -15,6 +15,19 @@ public class InformationController : ControllerBase
 		_networkManager = networkManager;
 	}
 
+	[HttpGet("evuname")]
+	public IActionResult EvuName()
+	{
+		return Content(Statics.EvuName);
+	}
+
+	[HttpGet("issimavailable")]
+	public IActionResult IsSimAvailable()
+	{
+		// To be implemented and tested.
+		return Content("False");
+	}
+
 	[HttpGet("isinternetavailable")]
 	public IActionResult IsInternetAvailable()
 	{
@@ -25,6 +38,12 @@ public class InformationController : ControllerBase
 	// 1: MAC Address
 	// 2: Device type (service, tablet, other)
 	// 3: Login info (username for tablets, login reason for service)
+	// Example:
+	// [
+	// "meow",
+	// "meow",
+	// "meow"
+	// ]
 	[HttpPost("hello")]
 	public IActionResult Hello([FromBody] string[] body)
 	{

@@ -10,7 +10,6 @@ public class NetworkConfigurator
 	
 	public static bool IsInternetAvailable()
 	{
-		_logger.Log("Checking for internet.");
 		try
 		{
 			using var ping = new Ping();
@@ -18,7 +17,6 @@ public class NetworkConfigurator
 			PingReply reply = ping.Send("1.1.1.1", 1500);
 			if (reply.Status == IPStatus.Success)
 			{
-				_logger.Log("Got internet connection.");
 				return true;
 			}
 		}

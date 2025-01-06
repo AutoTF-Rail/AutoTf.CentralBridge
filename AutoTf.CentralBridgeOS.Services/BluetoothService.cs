@@ -11,7 +11,8 @@ public class BluetoothService
 	{
 		try
 		{
-			string hexMessage = StringToHex(Statics.CurrentSsid.Replace("CentralBridge-", "CB-"));
+			// .Replace("CentralBridge-", "CB-")
+			string hexMessage = StringToHex(Statics.CurrentSsid);
 			int length = hexMessage.Length / 2 + 1;
 			string lengthByte = length.ToString("X2");
 			string adData = $"{lengthByte}09{hexMessage}";

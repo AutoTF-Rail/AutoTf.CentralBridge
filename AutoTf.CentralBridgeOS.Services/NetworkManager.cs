@@ -96,8 +96,10 @@ public class NetworkManager : IDisposable
 
 	private void SyncSyncTimerElapsed(object? sender, ElapsedEventArgs e)
 	{
+		_logger.Log("Checking for internet.");
 		if (NetworkConfigurator.IsInternetAvailable())
 		{
+			_logger.Log("Got internet connection.");
 			_logger.Log("Periodic sync check started.");
 			TrySync();
 			return;
