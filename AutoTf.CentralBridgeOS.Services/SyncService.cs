@@ -9,17 +9,15 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class SyncService
 {
-	private readonly Logger _logger;
+	private readonly Logger _logger = Statics.Logger;
 	private List<string> _collectedLogs = new List<string>();
 	private readonly Timer _syncTimer = new Timer(150000);
 	private readonly string _rootDomain;
 	
 	public SyncService()
 	{
-		_logger = Statics.Logger;
-		_logger.Log("Initializing Sync.");
+		_logger.NewLog += log => _collectedLogs.Add(log);
 		_rootDomain = $"https://{Statics.EvuName}.server.autotf.de";
-		_logger.NewLog += LoggerOnNewLog;
 		_logger.Log("Set server domain to: " + _rootDomain);
 		
 		if (NetworkConfigurator.IsInternetAvailable())
@@ -28,13 +26,7 @@ public class SyncService
 		}
 		StartInternetListener();
 	}
-
-	private void LoggerOnNewLog(string log)
-	{
-		Console.WriteLine("New Log.");
-		_collectedLogs.Add(log);
-	}
-
+	
 	private void StartInternetListener()
 	{
 		_syncTimer.Elapsed += SyncSyncTimerElapsed;
