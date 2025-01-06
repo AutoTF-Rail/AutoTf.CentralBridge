@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Timers;
@@ -17,6 +18,7 @@ public class SyncService
 	{
 		_rootDomain = $"https://{Statics.EvuName}server.autotf.de";
 		_logger.NewLog += log => _collectedLogs.Add(log);
+		_logger.Log("Set server domain to: " + _rootDomain);
 		
 		if (NetworkConfigurator.IsInternetAvailable())
 		{
@@ -58,9 +60,13 @@ public class SyncService
 		try
 		{
 			_logger.Log("SYNC: Syncing MAC Addresses.");
-			string url = Path.Combine(_rootDomain, "sync", "macAddress");
+			string url = _rootDomain + "sync/macAddress";
 			
 			using HttpClient client = new HttpClient();
+			
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+			
 			HttpResponseMessage response = await client.GetAsync(url);
 			response.EnsureSuccessStatusCode();
 
@@ -95,10 +101,13 @@ public class SyncService
 			List<string> tempLogStorage = new List<string>(_collectedLogs);
 			_collectedLogs.Clear();
 		
-			string url = Path.Combine(_rootDomain, "sync", "uploadlogs");
+			string url = _rootDomain + "sync/uploadlogs";
 			string jsonBody = JsonSerializer.Serialize(tempLogStorage);
 
 			using HttpClient client = new HttpClient();
+			
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
 			StringContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 			HttpResponseMessage response = await client.PostAsync(url, content);
