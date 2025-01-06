@@ -16,7 +16,7 @@ public class SyncService
 	
 	public SyncService()
 	{
-		_rootDomain = $"https://{Statics.EvuName}server.autotf.de";
+		_rootDomain = $"https://{Statics.EvuName}.server.autotf.de";
 		_logger.NewLog += log => _collectedLogs.Add(log);
 		_logger.Log("Set server domain to: " + _rootDomain);
 		
@@ -60,7 +60,7 @@ public class SyncService
 		try
 		{
 			_logger.Log("SYNC: Syncing MAC Addresses.");
-			string url = _rootDomain + "sync/macAddress";
+			string url = _rootDomain + "/sync/macAddress";
 			
 			using HttpClient client = new HttpClient();
 			
@@ -101,7 +101,7 @@ public class SyncService
 			List<string> tempLogStorage = new List<string>(_collectedLogs);
 			_collectedLogs.Clear();
 		
-			string url = _rootDomain + "sync/uploadlogs";
+			string url = _rootDomain + "/sync/uploadlogs";
 			string jsonBody = JsonSerializer.Serialize(tempLogStorage);
 
 			using HttpClient client = new HttpClient();
