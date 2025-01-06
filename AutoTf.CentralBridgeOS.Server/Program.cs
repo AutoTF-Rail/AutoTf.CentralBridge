@@ -36,7 +36,7 @@ public class Program
 			_netManager.Dispose();
 		});
 		
-		app.Run();
+		app.Run("http://0.0.0.0:80");
 	}
 
 	private static bool ConfigureNetwork()
