@@ -17,7 +17,7 @@ public class SyncService
 	public SyncService()
 	{
 		_rootDomain = $"https://{Statics.EvuName}.server.autotf.de";
-		_logger.NewLog += log => _collectedLogs.Add(log);
+		_logger.NewLog += LoggerOnNewLog;
 		_logger.Log("Set server domain to: " + _rootDomain);
 		
 		if (NetworkConfigurator.IsInternetAvailable())
@@ -26,6 +26,13 @@ public class SyncService
 		}
 		StartInternetListener();
 	}
+
+	private void LoggerOnNewLog(string log)
+	{
+		Console.WriteLine("New Log.");
+		_collectedLogs.Add(log);
+	}
+
 	private void StartInternetListener()
 	{
 		_syncTimer.Elapsed += SyncSyncTimerElapsed;
