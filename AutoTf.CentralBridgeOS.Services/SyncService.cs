@@ -51,9 +51,35 @@ public class SyncService
 
 	private async void TrySync()
 	{
+		await UpdateStatus();
 		await SyncMac();
 		await UploadLogs();
 		// TODO: send recorded data (Only if on wifi, not cellular), and maybe logs only on wifi too?
+	}
+
+	private async Task UpdateStatus()
+	{
+		try
+		{
+			_logger.Log("SYNC: Updating status.");
+		
+			string url = _rootDomain + "/sync/updatestatus";
+
+			using HttpClient client = new HttpClient();
+			
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+
+			HttpResponseMessage response = await client.PostAsync(url, null);
+			response.EnsureSuccessStatusCode();
+			
+			_logger.Log("SYNC: Successfully updated status.");
+		}
+		catch (Exception e)
+		{
+			_logger.Log("SYNC: ERROR: An error occured while updating the status.");
+			_logger.Log(e.Message);
+		}
 	}
 
 	private async Task SyncMac()
