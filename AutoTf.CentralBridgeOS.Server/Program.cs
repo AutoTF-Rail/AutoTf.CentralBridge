@@ -14,6 +14,7 @@ public class Program
 	
 	public static void Main(string[] args)
 	{
+		_logger.NewLog += e => Console.WriteLine("New log");
 		_logger.Log("Starting up----------------------------");
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
