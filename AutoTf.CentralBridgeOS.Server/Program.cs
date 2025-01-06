@@ -16,7 +16,8 @@ public class Program
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		builder.Services.AddControllers();
-		builder.Services.AddSingleton<BluetoothService>();
+		builder.Services.AddSingleton<BluetoothService>();;
+		builder.Services.AddSingleton(_netManager);
 
 		WebApplication app = builder.Build();
 		
