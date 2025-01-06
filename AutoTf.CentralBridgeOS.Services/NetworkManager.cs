@@ -7,24 +7,23 @@ namespace AutoTf.CentralBridgeOS.Services;
 public class NetworkManager : IDisposable
 {
 	private readonly Logger _logger = Statics.Logger;
-	private readonly Timer _syncTimer = new Timer(150000);
 	private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
 
 	public List<string> AcceptedDevices { get; private set; } = new List<string>();
 	public Dictionary<string, Timer> PendingDevices { get; private set; } = new Dictionary<string, Timer>();
 	public Action<string> DeviceSaidHelloEvent = null!;
+
+	public NetworkManager()
+	{
+		Initialize();
+	}
 	
-	public void Initialize()
+	private void Initialize()
 	{
 		DeviceSaidHelloEvent += OnDeviceSaidHelloEvent;
 		// Check for internet
 		// Sync MAC Addresses
 		// Start listening for new devices
-		if (NetworkConfigurator.IsInternetAvailable())
-		{
-			TrySync();
-			StartInternetListener();
-		}
 
 		StartConnectionListener();
 	}
@@ -72,13 +71,13 @@ public class NetworkManager : IDisposable
 			_logger.Log("Host: " + parts[3]);
 			_logger.Log("Starting 4 minute timer for " + parts[1]);
 			Timer timer = new Timer(240000);
-			timer.Elapsed += (_, _) => TimerOnElapsed(parts[1]);
+			timer.Elapsed += (_, _) => PendingDeviceElapsed(parts[1]);
 			timer.Start();
 			PendingDevices.Add(parts[1], timer);
 		}
 	}
 
-	private void TimerOnElapsed(string macAddr)
+	private void PendingDeviceElapsed(string macAddr)
 	{
 		_logger.Log($"Timer elapsed for {macAddr}. Kicking device from network.");
 		CommandExecuter.ExecuteSilent($"hostapd_cli deauthenticate {macAddr}", true);
@@ -86,36 +85,8 @@ public class NetworkManager : IDisposable
 		PendingDevices.Remove(macAddr);
 	}
 
-	private void StartInternetListener()
-	{
-		_syncTimer.Elapsed += SyncSyncTimerElapsed;
-		_syncTimer.Start();
-		
-		_logger.Log("Started Sync timer.");
-	}
-
-	private void SyncSyncTimerElapsed(object? sender, ElapsedEventArgs e)
-	{
-		_logger.Log("Checking for internet.");
-		if (NetworkConfigurator.IsInternetAvailable())
-		{
-			_logger.Log("Got internet connection.");
-			_logger.Log("Periodic sync check started.");
-			TrySync();
-			return;
-		}
-		
-		_logger.Log("VERBOSE: Train has left internet connection. Could not sync.");
-	}
-
-	private void TrySync()
-	{
-		_logger.Log("Trying to sync...");
-	}
-
 	public void Dispose()
 	{
-		_logger.Log("Disposed sync timer.");
-		_syncTimer.Dispose();
+		_watcher.Dispose();
 	}
 }

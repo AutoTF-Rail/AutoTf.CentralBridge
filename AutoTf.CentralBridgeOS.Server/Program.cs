@@ -10,6 +10,7 @@ public class Program
 	private static readonly BluetoothService _bluetoothService = new BluetoothService();
 	private static readonly NetworkManager _netManager = new NetworkManager();
 	private static readonly FileManager _fileManager = new FileManager();
+	private static readonly SyncService _syncService = new SyncService();
 	
 	public static void Main(string[] args)
 	{
@@ -27,8 +28,6 @@ public class Program
 		
 		app.MapControllers();
 
-		_netManager.Initialize();
-
 		if (!ConfigureNetwork())
 			return;
 		
@@ -39,6 +38,7 @@ public class Program
 		{
 			bluetoothService.RemoveBeacon();
 			_netManager.Dispose();
+			_syncService.Dispose();
 		});
 		
 		app.Run("http://0.0.0.0:80");
