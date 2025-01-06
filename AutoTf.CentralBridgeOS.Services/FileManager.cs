@@ -14,7 +14,7 @@ public class FileManager
 	{
 		Statics.EvuName = File.ReadAllText(Path.Combine(_dataDir, "evuName"));
 		Statics.Username = ReadFile("username");
-		Statics.Username = ReadFile("password");
+		Statics.Password = ReadFile("password");
 	}
 	
 	public bool ReadFile(string fileName, out string content)
