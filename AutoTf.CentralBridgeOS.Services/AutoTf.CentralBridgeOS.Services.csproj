@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoTf.Logging" Version="1.0.0-2024.12.19.12.49.39" />
+      <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250106-1316" />
     </ItemGroup>
 
 </Project>
