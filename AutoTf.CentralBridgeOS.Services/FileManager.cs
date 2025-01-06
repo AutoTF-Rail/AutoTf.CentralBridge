@@ -2,7 +2,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class FileManager
 {
-	private readonly string _dataDir = Path.Combine("etc", "AutoTf");
+	private readonly string _dataDir = Path.Combine("/", "etc", "AutoTf");
 	
 	public FileManager()
 	{
