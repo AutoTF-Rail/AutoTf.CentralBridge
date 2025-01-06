@@ -70,7 +70,8 @@ public class SyncService
 			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
-			HttpResponseMessage response = await client.PostAsync(url, null);
+			StringContent content = new StringContent("Online", Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.PostAsync(url, content);
 			response.EnsureSuccessStatusCode();
 			
 			_logger.Log("SYNC: Successfully updated status.");
