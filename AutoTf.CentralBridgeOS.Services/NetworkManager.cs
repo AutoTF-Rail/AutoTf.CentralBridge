@@ -31,7 +31,6 @@ public class NetworkManager : IDisposable
 
 	private void OnDeviceSaidHelloEvent(string deviceIp)
 	{
-		_logger.Log($"Device {deviceIp} said hello.");
 		if (PendingDevices.ContainsKey(deviceIp))
 		{
 			PendingDevices.Remove(deviceIp);
@@ -82,7 +81,7 @@ public class NetworkManager : IDisposable
 	private void TimerOnElapsed(string macAddr)
 	{
 		_logger.Log($"Timer elapsed for {macAddr}. Kicking device from network.");
-		CommandExecuter.ExecuteSilent($"hostapd_cli disassociate {macAddr}", true);
+		CommandExecuter.ExecuteSilent($"hostapd_cli deauthenticate {macAddr}", true);
 		PendingDevices[macAddr].Dispose();
 		PendingDevices.Remove(macAddr);
 	}
