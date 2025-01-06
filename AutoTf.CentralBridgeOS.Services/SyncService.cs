@@ -65,7 +65,6 @@ public class SyncService
 			using HttpClient client = new HttpClient();
 			
 			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
-			Console.WriteLine(authValue);
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 			
 			HttpResponseMessage response = await client.GetAsync(url);
@@ -97,6 +96,11 @@ public class SyncService
 	{
 		try
 		{
+			if (_collectedLogs.Count == 0)
+			{
+				_logger.Log("SYNC: No logs to upload. Skipping.");
+				return;
+			}
 			_logger.Log("SYNC: Uploading logs");
 			
 			List<string> tempLogStorage = new List<string>(_collectedLogs);
