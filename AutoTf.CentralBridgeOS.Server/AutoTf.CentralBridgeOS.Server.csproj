@@ -24,6 +24,7 @@
 
 
     <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Extensions\AutoTf.CentralBridgeOS.Extensions.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Services\AutoTf.CentralBridgeOS.Services.csproj" />
     </ItemGroup>
 

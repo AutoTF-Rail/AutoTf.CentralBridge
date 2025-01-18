@@ -1,5 +1,8 @@
 using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
+using AutoTf.SerialProtocol;
+using AutoTf.SerialProtocol.Models;
 
 namespace AutoTf.CentralBridgeOS.Server;
 
@@ -10,7 +13,6 @@ public class Program
 	private static readonly BluetoothService _bluetoothService = new BluetoothService();
 	private static readonly NetworkManager _netManager = new NetworkManager();
 	private static readonly FileManager _fileManager = new FileManager();
-	private static readonly SyncService _syncService = new SyncService();
 	
 	public static void Main(string[] args)
 	{
@@ -21,6 +23,8 @@ public class Program
 		builder.Services.AddSingleton<BluetoothService>();;
 		builder.Services.AddSingleton(_fileManager);
 		builder.Services.AddSingleton(_netManager);
+		builder.Services.AddSingleton<SyncManager>();
+		builder.Services.AddSingleton<ISerialService>(new SerialProtocol.SerialProtocol(_logger));
 		
 		_logger.Log("Starting for EVU: " + Statics.EvuName);
 
@@ -29,16 +33,16 @@ public class Program
 		app.MapControllers();
 
 		if (!ConfigureNetwork())
-			return;
+			_logger.Log("Could not start hotspot.");
 		
 		BluetoothService bluetoothService = app.Services.GetRequiredService<BluetoothService>();
 		bluetoothService.StartBeaconAsync();
 
 		app.Lifetime.ApplicationStopping.Register(() =>
 		{
+			Statics.ShutdownEvent?.Invoke();
 			bluetoothService.RemoveBeacon();
 			_netManager.Dispose();
-			_syncService.Dispose();
 		});
 		
 		app.Run("http://0.0.0.0:80");

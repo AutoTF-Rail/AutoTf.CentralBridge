@@ -1,0 +1,92 @@
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using AutoTf.Logging;
+
+namespace AutoTf.CentralBridgeOS.Services.Sync;
+
+public class DataSync : Sync
+{
+	private List<string> _collectedLogs = new List<string>();
+	
+	public DataSync(Logger logger, FileManager fileManager) : base(logger, fileManager)
+	{
+		_logger.NewLog += log => _collectedLogs.Add(log);
+		Statics.SyncEvent = Sync;
+	}
+
+	private async void Sync()
+	{
+		try
+		{
+			await UpdateStatus();
+			await UploadLogs();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("ERROR: Failed to sync mac addresses.");
+			_logger.Log("ERROR: " + e.Message);
+		}
+	}
+	
+	private async Task UpdateStatus()
+	{
+		try
+		{
+			_logger.Log("SYNC: Updating status.");
+		
+			string url = _rootDomain + "/sync/device/updatestatus";
+
+			using HttpClient client = new HttpClient();
+			
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+
+			StringContent content = new StringContent("Online", Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.PostAsync(url, content);
+			response.EnsureSuccessStatusCode();
+			
+			_logger.Log("SYNC: Successfully updated status.");
+		}
+		catch (Exception e)
+		{
+			_logger.Log("SYNC: ERROR: An error occured while updating the status.");
+			_logger.Log(e.Message);
+		}
+	}
+	
+	private async Task UploadLogs()
+	{
+		try
+		{
+			if (_collectedLogs.Count == 0)
+			{
+				_logger.Log("SYNC: No logs to upload. Skipping.");
+				return;
+			}
+			_logger.Log("SYNC: Uploading logs");
+			
+			List<string> tempLogStorage = new List<string>(_collectedLogs);
+			_collectedLogs.Clear();
+		
+			string url = _rootDomain + "/sync/device/uploadlogs";
+			string jsonBody = JsonSerializer.Serialize(tempLogStorage);
+
+			using HttpClient client = new HttpClient();
+			
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+
+			StringContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+			HttpResponseMessage response = await client.PostAsync(url, content);
+			response.EnsureSuccessStatusCode();
+			
+			_logger.Log("SYNC: Successfully uploaded logs.");
+		}
+		catch (Exception e)
+		{
+			_logger.Log("SYNC: ERROR: Failed to upload logs.");
+			_logger.Log(e.Message);
+		}
+	}
+}

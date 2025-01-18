@@ -12,4 +12,11 @@ public static class Statics
 	// There is nothing "to destroy" on the server anyway.
 	public static string Username { get; set; }
 	public static string Password { get; set; }
+	public static Action? ShutdownEvent;
+	public static Action? SyncEvent;
+	
+	// A list of all devices (tablets) MAC addresses that have logged in and are allowed to use the API.
+	// This list should be checked against the given "macAddr" header before every request.
+	// Just because a device is on the network, doesn't mean it's an authorized user.
+	public static List<string> AllowedDevices { get; set; } = new List<string>();
 }
