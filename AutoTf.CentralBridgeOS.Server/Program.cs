@@ -18,10 +18,6 @@ public class Program
 	{
 		_logger.Log("Starting up----------------------------");
 		_logger.Log("Starting for EVU: " + Statics.EvuName);
-
-		CameraService cam = new CameraService();
-		cam.StartCapture();
-		Console.WriteLine("Done");
 		
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		

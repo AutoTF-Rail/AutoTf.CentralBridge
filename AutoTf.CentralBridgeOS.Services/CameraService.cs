@@ -6,7 +6,6 @@ public class CameraService
 {
 	public CameraService()
 	{
-		
 	}
 
 	public unsafe void StartCapture()
