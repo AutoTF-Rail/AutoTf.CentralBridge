@@ -25,7 +25,7 @@ public class Program
 		builder.Services.AddSingleton<BluetoothService>();;
 		builder.Services.AddSingleton(_fileManager);
 		builder.Services.AddSingleton(_netManager);
-		builder.Services.AddSingleton<SyncManager>();
+		builder.Services.AddSingleton<SyncManager>(new SyncManager(_fileManager));
 		builder.Services.AddSingleton<ISerialService>(new SerialProtocol.SerialProtocol(_logger));
 		
 
