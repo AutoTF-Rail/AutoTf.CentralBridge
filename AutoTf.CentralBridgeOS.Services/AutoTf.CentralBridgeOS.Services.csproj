@@ -4,12 +4,14 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250106-1316" />
       <PackageReference Include="AutoTf.SerialProtocol" Version="1.0.0-20250118170053" />
       <PackageReference Include="AutoTf.SerialProtocol.Models" Version="1.0.0-20250118170053" />
+      <PackageReference Include="FFmpeg.AutoGen" Version="7.0.0" />
       <PackageReference Include="Otp.NET" Version="1.4.0" />
       <PackageReference Include="Yubico.YubiKey" Version="1.12.1" />
     </ItemGroup>

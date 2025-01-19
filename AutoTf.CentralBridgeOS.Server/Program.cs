@@ -17,6 +17,12 @@ public class Program
 	public static void Main(string[] args)
 	{
 		_logger.Log("Starting up----------------------------");
+		_logger.Log("Starting for EVU: " + Statics.EvuName);
+
+		CameraService cam = new CameraService();
+		cam.StartCapture();
+		Console.WriteLine("Done");
+		
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		builder.Services.AddControllers();
@@ -26,7 +32,6 @@ public class Program
 		builder.Services.AddSingleton<SyncManager>();
 		builder.Services.AddSingleton<ISerialService>(new SerialProtocol.SerialProtocol(_logger));
 		
-		_logger.Log("Starting for EVU: " + Statics.EvuName);
 
 		WebApplication app = builder.Build();
 		
