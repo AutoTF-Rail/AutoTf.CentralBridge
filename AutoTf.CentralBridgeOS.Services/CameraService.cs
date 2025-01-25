@@ -18,10 +18,11 @@ public class CameraService : IDisposable
         Statics.ShutdownEvent += Dispose;
         _videoCapture.Set(CapProp.FrameWidth, frameWidth);
         _videoCapture.Set(CapProp.FrameHeight, frameHeight);
+        Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
 
         Directory.CreateDirectory("recordings");
         _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-            VideoWriter.Fourcc('M', 'P', '4', 'V'), 30, new Size(frameWidth, frameHeight), true);
+            VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(frameWidth, frameHeight), true);
         
         _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
     }
