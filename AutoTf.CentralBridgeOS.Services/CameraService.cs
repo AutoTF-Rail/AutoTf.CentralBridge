@@ -67,24 +67,14 @@ public class CameraService : IDisposable
 
                 while (bytesRead < _frameSize)
                 {
-                    int chunkSize = 1024;
-                    int read = await ffmpegOutputStream.ReadAsync(buffer, bytesRead, chunkSize);
-
+                    int read = await ffmpegOutputStream.ReadAsync(buffer, bytesRead, _frameSize - bytesRead);
                     if (read == 0)
                     {
                         string errorOutput = await ffmpegErrorStream.ReadToEndAsync();
                         throw new EndOfStreamException($"End of stream reached before reading a full frame. FFmpeg error output: {errorOutput}");
                     }
                     bytesRead += read;
-                    Console.WriteLine($"Bytes Read: {bytesRead}/{_frameSize}");
-
-                    // Log the partial read if it isn't completed yet
-                    if (bytesRead < _frameSize)
-                    {
-                        Console.WriteLine($"Still reading... {bytesRead} bytes out of {_frameSize}");
-                    }
                 }
-                Console.WriteLine("Write");
 
                 Array.Copy(buffer, latestFrameBuffer, _frameSize);
                 CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
