@@ -60,7 +60,9 @@ public class CameraService : IDisposable
 
                 lock (_frameLock)
                 {
-                    _latestFrame.Dispose();
+                    if(_latestFrame != null)
+                        _latestFrame.Dispose();
+                    
                     _latestFrame = frame.Clone();
                 }
 
