@@ -17,8 +17,8 @@ public class CameraService : IDisposable
         _videoCapture.Set(CapProp.FrameHeight, frameHeight);
 
         Directory.CreateDirectory("recordings");
-        _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4", 30,
-            new Size(frameWidth, frameHeight), true);
+        _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
+            VideoWriter.Fourcc('X', '2', '6', '4'), 30, new Size(frameWidth, frameHeight), true);
         Task.Run(ReadFramesAsync);
     }
     
