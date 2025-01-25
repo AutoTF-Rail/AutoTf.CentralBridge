@@ -26,7 +26,7 @@ public class CameraService : IDisposable
             Mat frame = new Mat();
             videoCapture.Read(frame);
 
-            CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
+            CvInvoke.Imwrite("/home/CentralBridge/meow/" + DateTime.Now.ToString("HH:mm:ss zz") + ".png",
                 frame);
             Console.WriteLine("Captured");
             Thread.Sleep(250);
