@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UseRidGraph>true</UseRidGraph>
     </PropertyGroup>
 
 
@@ -31,4 +32,8 @@
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Services\AutoTf.CentralBridgeOS.Services.csproj" />
     </ItemGroup>
 
+
+    <PropertyGroup>
+        <UseRidGraph>true</UseRidGraph>
+    </PropertyGroup>
 </Project>
