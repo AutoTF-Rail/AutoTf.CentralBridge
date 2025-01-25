@@ -38,27 +38,34 @@ public class CameraService : IDisposable
 
     private async Task ReadFramesAsync(CancellationToken cancellationToken)
     {
-        do
+        try
         {
-            Mat frame = new Mat();
-            _videoCapture.Read(frame);
-
-            if (frame.IsEmpty)
+            do
             {
+                Mat frame = new Mat();
+                _videoCapture.Read(frame);
+
+                if (frame.IsEmpty)
+                {
+                    await Task.Delay(50);
+                    continue;
+                }
+
+                lock (_frameLock)
+                {
+                    _latestFrame = frame.Clone();
+                }
+
+                _videoWriter.Write(frame);
+
                 await Task.Delay(50);
-                continue;
-            }
-
-            lock (_frameLock)
-            {
-                _latestFrame = frame.Clone();
-            }
-
-            _videoWriter.Write(frame);
-
-            await Task.Delay(50);
-        } while (!cancellationToken.IsCancellationRequested);
-        
+            } while (!cancellationToken.IsCancellationRequested);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occured while saving a frame:");
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public void Dispose()
