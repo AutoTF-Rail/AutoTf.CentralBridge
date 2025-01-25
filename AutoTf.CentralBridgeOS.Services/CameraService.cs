@@ -1,6 +1,5 @@
 using System.Diagnostics;
-using Emgu.CV;
-using Emgu.CV.CvEnum;
+using OpenCvSharp;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
@@ -18,15 +17,15 @@ public class CameraService : IDisposable
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
-        VideoCapture videoCapture = new VideoCapture(0, VideoCapture.API.Any);
-        videoCapture.Set(CapProp.FrameWidth, 1920);
-        videoCapture.Set(CapProp.FrameHeight, 1080);
+        VideoCapture videoCapture = new VideoCapture(0, VideoCaptureAPIs.ANY);
+        videoCapture.Set(VideoCaptureProperties.FrameWidth, 1920);
+        videoCapture.Set(VideoCaptureProperties.FrameHeight, 1080);
         while (true)
         {
             Mat frame = new Mat();
             videoCapture.Read(frame);
 
-            CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
+            Cv2.ImWrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
                 GetLatestFrameMat());
             Console.WriteLine("Captured");
         }
@@ -90,7 +89,7 @@ public class CameraService : IDisposable
                 }
 
                 Array.Copy(buffer, latestFrameBuffer, _frameSize);
-                CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
+                Cv2.ImWrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
                     GetLatestFrameMat());
             }
             catch (Exception ex)
@@ -103,11 +102,10 @@ public class CameraService : IDisposable
 
     private Mat ConvertYuvToMat(byte[] yuvData)
     {
-        Mat yuvMat = new Mat(_frameHeight + _frameHeight / 2, _frameWidth, DepthType.Cv8U, 1);
-        yuvMat.SetTo(yuvData);
-
-        CvInvoke.CvtColor(yuvMat, yuvMat, ColorConversion.Yuv2BgrI420);
-
+        Mat yuvMat = Mat.FromPixelData(_frameHeight + _frameHeight / 2, _frameWidth, MatType.CV_8UC1, yuvData);
+        
+        Cv2.CvtColor(yuvMat, yuvMat, ColorConversionCodes.YUV2BGR_I420);
+        
         return yuvMat;
     }
 
