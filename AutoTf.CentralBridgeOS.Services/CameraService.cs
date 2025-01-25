@@ -6,7 +6,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class CameraService : IDisposable
 {
-    private readonly VideoCapture _videoCapture = new VideoCapture();
+    private readonly VideoCapture _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
     private readonly VideoWriter _videoWriter;
     private Mat _latestFrame = null!;
     private readonly object _frameLock = new object();
