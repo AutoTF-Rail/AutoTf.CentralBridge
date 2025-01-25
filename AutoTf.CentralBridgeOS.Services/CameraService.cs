@@ -18,6 +18,7 @@ public class CameraService : IDisposable
         Statics.ShutdownEvent += Dispose;
         _videoCapture.Set(CapProp.FrameWidth, frameWidth);
         _videoCapture.Set(CapProp.FrameHeight, frameHeight);
+        _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
         Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
 
         Directory.CreateDirectory("recordings");
