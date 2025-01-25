@@ -12,8 +12,8 @@
         <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250106-1316" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 
-        <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
-        <PackageReference Include="Emgu.CV.runtime.debian-arm" Version="4.10.0.5680" />
+        <PackageReference Include="Emgu.CV" Version="4.9.0.5494" />
+        <PackageReference Include="Emgu.CV.runtime.debian-arm" Version="4.9.0.5494" />
     </ItemGroup>
 
 
