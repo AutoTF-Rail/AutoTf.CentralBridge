@@ -26,8 +26,9 @@ public class CameraService : IDisposable
         StartCaptureAsync();
     }
 
-    public Task StartCaptureAsync()
+    private Task StartCaptureAsync()
     {
+        Console.WriteLine("Starting capture");
         string ffmpegArgs = $"-f v4l2 -input_format mjpeg -framerate 30 -video_size 1920x1080 -i /dev/video0 -c:v h264_v4l2m2m -pix_fmt yuv420p -preset fast -crf 22 -f rawvideo pipe:1 -loglevel error";
 
         ProcessStartInfo startInfo = new ProcessStartInfo
@@ -74,6 +75,7 @@ public class CameraService : IDisposable
                     }
                     bytesRead += read;
                 }
+                Console.WriteLine("Write");
 
                 Array.Copy(buffer, latestFrameBuffer, _frameSize);
                 CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
