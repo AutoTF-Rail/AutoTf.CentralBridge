@@ -59,7 +59,6 @@ public class CameraService : IDisposable
             await Task.Delay(50);
         } while (!cancellationToken.IsCancellationRequested);
         
-        _videoWriter.Dispose();
     }
 
     public void Dispose()
@@ -68,6 +67,8 @@ public class CameraService : IDisposable
 
         _frameCaptureTask?.Wait();
 
+        _videoCapture.Release();
+        _videoWriter.Dispose();
         _videoCapture.Dispose();
         _cancellationTokenSource.Dispose();
     }
