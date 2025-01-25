@@ -43,8 +43,8 @@ public class CameraService : IDisposable
         {
             do
             {
-                Mat frame = new Mat();
-                if (!_videoCapture.Read(frame))
+                Mat frame = _videoCapture.QueryFrame();
+                if (frame == null)
                 {
                     Console.WriteLine("Could not read frame from device.");
                     await Task.Delay(50);
@@ -60,6 +60,7 @@ public class CameraService : IDisposable
 
                 lock (_frameLock)
                 {
+                    _latestFrame.Dispose();
                     _latestFrame = frame.Clone();
                 }
 
@@ -79,6 +80,7 @@ public class CameraService : IDisposable
     public void Dispose()
     {
         Console.WriteLine("Disposing video capture");
+        _videoCapture.Stop();
         _cancellationTokenSource.Cancel();
 
         _frameCaptureTask?.Wait();
