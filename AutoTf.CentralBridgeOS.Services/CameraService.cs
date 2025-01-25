@@ -11,6 +11,7 @@ public class CameraService : IDisposable
     private Mat _latestFrame = null!;
     private readonly object _frameLock = new object();
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+    private Task? _frameCaptureTask;
 
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
     {
@@ -21,7 +22,7 @@ public class CameraService : IDisposable
         _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
             VideoWriter.Fourcc('X', '2', '6', '4'), 30, new Size(frameWidth, frameHeight), true);
         
-        Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+        _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
     }
     
     public Mat LatestFrame
@@ -57,6 +58,7 @@ public class CameraService : IDisposable
 
             await Task.Delay(50);
         } while (!cancellationToken.IsCancellationRequested);
+        
         _videoWriter.Dispose();
     }
 
@@ -64,7 +66,7 @@ public class CameraService : IDisposable
     {
         _cancellationTokenSource.Cancel();
 
-        Thread.Sleep(100);
+        _frameCaptureTask?.Wait();
 
         _videoCapture.Dispose();
         _cancellationTokenSource.Dispose();
