@@ -43,8 +43,8 @@ public class CameraService : IDisposable
         {
             do
             {
-                Mat frame = _videoCapture.QueryFrame();
-                if (frame == null)
+                Mat frame = new Mat();
+                if (!_videoCapture.Read(frame))
                 {
                     Console.WriteLine("Could not read frame from device.");
                     await Task.Delay(50);
