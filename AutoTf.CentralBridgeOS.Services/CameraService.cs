@@ -20,7 +20,7 @@ public class CameraService : IDisposable
 
         Directory.CreateDirectory("recordings");
         _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".avi",
-            VideoWriter.Fourcc('M', 'J', 'P', 'G'), 30, new Size(frameWidth, frameHeight), true);
+            VideoWriter.Fourcc('M', 'P', '4', 'V'), 30, new Size(frameWidth, frameHeight), true);
         
         _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
     }
