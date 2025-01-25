@@ -67,6 +67,7 @@ public class CameraService : IDisposable
 
                 while (bytesRead < _frameSize)
                 {
+                    Console.WriteLine($"Bytes Read: {bytesRead}/{_frameSize}");
                     int read = await ffmpegOutputStream.ReadAsync(buffer, bytesRead, _frameSize - bytesRead);
                     if (read == 0)
                     {
