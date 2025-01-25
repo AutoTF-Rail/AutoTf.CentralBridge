@@ -1,81 +1,107 @@
-using FFmpeg.AutoGen;
+using System.Diagnostics;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class CameraService
+public class CameraService : IDisposable
 {
-	public CameraService()
-	{
-	}
+    private Process ffmpegProcess;
+    private Stream ffmpegOutputStream;
+    private StreamReader ffmpegErrorStream;
+    private readonly int _frameWidth;
+    private readonly int _frameHeight;
+    private readonly int _frameSize;
+    private byte[] latestFrameBuffer;
 
-	public unsafe void StartCapture()
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public CameraService(int frameWidth = 1920, int frameHeight = 1080)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
-        string outputFileName = "output.mp4";
-        string deviceName = "/dev/video0";
+        _frameWidth = frameWidth;
+        _frameHeight = frameHeight;
 
-        AVFormatContext* inputFormatContext = null;
-        if (ffmpeg.avformat_open_input(&inputFormatContext, deviceName, null, null) != 0)
-            throw new ApplicationException("Could not open video source.");
+        _frameSize = _frameWidth * _frameHeight * 3 / 2;
 
-        if (ffmpeg.avformat_find_stream_info(inputFormatContext, null) < 0)
-            throw new ApplicationException("Could not find stream information.");
+        StartCaptureAsync();
+    }
 
-        AVStream* inputVideoStream = null;
-        for (int i = 0; i < inputFormatContext->nb_streams; i++)
+    public Task StartCaptureAsync()
+    {
+        string ffmpegArgs = $"-f v4l2 -input_format mjpeg -framerate 30 -video_size 1920x1080 -i /dev/video0 -c:v h264_v4l2m2m -pix_fmt yuv420p -preset fast -crf 22 -f rawvideo pipe:1 -loglevel error";
+
+        ProcessStartInfo startInfo = new ProcessStartInfo
         {
-            if (inputFormatContext->streams[i]->codecpar->codec_type == AVMediaType.AVMEDIA_TYPE_VIDEO)
+            FileName = "ffmpeg",
+            Arguments = ffmpegArgs,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        ffmpegProcess = new Process { StartInfo = startInfo };
+        ffmpegProcess.Start();
+        ffmpegOutputStream = ffmpegProcess.StandardOutput.BaseStream;
+        ffmpegErrorStream = ffmpegProcess.StandardError;
+
+        latestFrameBuffer = new byte[_frameSize];
+        Task.Run(ReadFramesAsync);
+
+        return Task.CompletedTask;
+    }
+
+    public byte[] GetLatestFrame() => (byte[])latestFrameBuffer.Clone();
+
+    public Mat GetLatestFrameMat() => ConvertYuvToMat((byte[])latestFrameBuffer.Clone());
+
+    private async Task ReadFramesAsync()
+    {
+        while (true)
+        {
+            try
             {
-                inputVideoStream = inputFormatContext->streams[i];
-                break;
+                byte[] buffer = new byte[_frameSize];
+                int bytesRead = 0;
+
+                while (bytesRead < _frameSize)
+                {
+                    int read = await ffmpegOutputStream.ReadAsync(buffer, bytesRead, _frameSize - bytesRead);
+                    if (read == 0)
+                    {
+                        string errorOutput = await ffmpegErrorStream.ReadToEndAsync();
+                        throw new EndOfStreamException($"End of stream reached before reading a full frame. FFmpeg error output: {errorOutput}");
+                    }
+                    bytesRead += read;
+                }
+
+                Array.Copy(buffer, latestFrameBuffer, _frameSize);
+                CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
+                    GetLatestFrameMat());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error reading frame: " + ex.Message);
+                throw;
             }
         }
+    }
 
-        if (inputVideoStream == null)
-            throw new ApplicationException("Failed to find a video stream in the input context");
+    private Mat ConvertYuvToMat(byte[] yuvData)
+    {
+        Mat yuvMat = new Mat(_frameHeight + _frameHeight / 2, _frameWidth, DepthType.Cv8U, 1);
+        yuvMat.SetTo(yuvData);
 
-        AVCodec* inputCodec = ffmpeg.avcodec_find_decoder(inputVideoStream->codecpar->codec_id);
-        if (inputCodec == null)
-            throw new ApplicationException("Failed to find the decoder");
+        CvInvoke.CvtColor(yuvMat, yuvMat, ColorConversion.Yuv2BgrI420);
 
-        AVCodecContext* inputCodecContext = ffmpeg.avcodec_alloc_context3(inputCodec);
-        ffmpeg.avcodec_parameters_to_context(inputCodecContext, inputVideoStream->codecpar);
-        ffmpeg.avcodec_open2(inputCodecContext, inputCodec, null);
+        return yuvMat;
+    }
 
-        AVFormatContext* outputFormatContext = null;
-        ffmpeg.avformat_alloc_output_context2(&outputFormatContext, null, "mp4", outputFileName);
-        if (outputFormatContext == null)
-            throw new ApplicationException("Could not create output context");
-
-        AVStream* outputVideoStream = ffmpeg.avformat_new_stream(outputFormatContext, inputCodec);
-        if (outputVideoStream == null)
-            throw new ApplicationException("Failed to create a video stream in the output context");
-
-        ffmpeg.avcodec_parameters_copy(outputVideoStream->codecpar, inputVideoStream->codecpar);
-        outputVideoStream->codecpar->codec_tag = 0;
-
-        if (ffmpeg.avio_open(&outputFormatContext->pb, outputFileName, ffmpeg.AVIO_FLAG_WRITE) < 0)
-            throw new ApplicationException("Failed to open the output file");
-
-        if (ffmpeg.avformat_write_header(outputFormatContext, null) < 0)
-            throw new ApplicationException("Error occurred when writing header to output file");
-
-        AVPacket* pkt = ffmpeg.av_packet_alloc();
-
-        while (ffmpeg.av_read_frame(inputFormatContext, pkt) >= 0)
-        {
-            if (pkt->stream_index == inputVideoStream->index)
-            {
-                ffmpeg.av_packet_rescale_ts(pkt, inputVideoStream->time_base, outputVideoStream->time_base);
-                ffmpeg.av_interleaved_write_frame(outputFormatContext, pkt);
-                ffmpeg.av_packet_unref(pkt);
-            }
-        }
-
-        ffmpeg.av_write_trailer(outputFormatContext);
-        ffmpeg.avcodec_close(inputCodecContext);
-        ffmpeg.avformat_close_input(&inputFormatContext);
-        ffmpeg.avio_closep(&outputFormatContext->pb);
-        ffmpeg.avformat_free_context(outputFormatContext);
-        ffmpeg.av_packet_free(&pkt);
+    public void Dispose()
+    {
+        ffmpegProcess?.Kill();
+        ffmpegProcess?.Dispose();
+        ffmpegOutputStream?.Dispose();
+        ffmpegErrorStream?.Dispose();
     }
 }

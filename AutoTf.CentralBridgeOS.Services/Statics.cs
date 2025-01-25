@@ -19,4 +19,12 @@ public static class Statics
 	// This list should be checked against the given "macAddr" header before every request.
 	// Just because a device is on the network, doesn't mean it's an authorized user.
 	public static List<string> AllowedDevices { get; set; } = new List<string>();
+	
+	public static string GenerateRandomString()
+	{
+		Random random = new Random();
+		const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		return new string(Enumerable.Repeat(chars, 10)
+			.Select(s => s[random.Next(s.Length)]).ToArray());
+	}
 }

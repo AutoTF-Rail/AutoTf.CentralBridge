@@ -22,6 +22,7 @@ public class Program
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		builder.Services.AddControllers();
+		builder.Services.AddSingleton(new CameraService());;
 		builder.Services.AddSingleton<BluetoothService>();;
 		builder.Services.AddSingleton(_fileManager);
 		builder.Services.AddSingleton(_netManager);
@@ -54,7 +55,7 @@ public class Program
 		_logger.Log("Configuring network");
 		
 		string interfaceName = "wlan1";
-		string ssid = "CentralBridge-" + GenerateRandomString();
+		string ssid = "CentralBridge-" + Statics.GenerateRandomString();
 		Statics.CurrentSsid = ssid;
 		string password = "CentralBridgePW";
 		try
@@ -76,13 +77,5 @@ public class Program
 		}
 
 		return true;
-	}
-	
-	public static string GenerateRandomString()
-	{
-		Random random = new Random();
-		const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		return new string(Enumerable.Repeat(chars, 10)
-			.Select(s => s[random.Next(s.Length)]).ToArray());
 	}
 }
