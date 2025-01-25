@@ -37,26 +37,27 @@ public class CameraService : IDisposable
 
     private async Task ReadFramesAsync(CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
+        do
         {
             Mat frame = new Mat();
             _videoCapture.Read(frame);
-            
+
             if (frame.IsEmpty)
             {
-                await Task.Delay(50); 
+                await Task.Delay(50);
                 continue;
             }
-            
+
             lock (_frameLock)
             {
                 _latestFrame = frame.Clone();
             }
-            
+
             _videoWriter.Write(frame);
-            
+
             await Task.Delay(50);
-        }
+        } while (!cancellationToken.IsCancellationRequested);
+        _videoWriter.Dispose();
     }
 
     public void Dispose()
@@ -65,7 +66,6 @@ public class CameraService : IDisposable
 
         Thread.Sleep(100);
 
-        _videoWriter.Dispose();
         _videoCapture.Dispose();
         _cancellationTokenSource.Dispose();
     }
