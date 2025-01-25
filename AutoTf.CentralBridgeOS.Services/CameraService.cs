@@ -18,6 +18,18 @@ public class CameraService : IDisposable
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
+        VideoCapture videoCapture = new VideoCapture(0, VideoCapture.API.Any);
+        videoCapture.Set(CapProp.FrameWidth, 1920);
+        videoCapture.Set(CapProp.FrameHeight, 1080);
+        while (true)
+        {
+            Mat frame = new Mat();
+            videoCapture.Read(frame);
+
+            CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
+                GetLatestFrameMat());
+            Console.WriteLine("Captured");
+        }
         _frameWidth = frameWidth;
         _frameHeight = frameHeight;
 
@@ -29,6 +41,7 @@ public class CameraService : IDisposable
     private Task StartCaptureAsync()
     {
         Console.WriteLine("Starting capture");
+        // string ffmpegArgs = $"-f v4l2 -input_format mjpeg  -framerate 30 -video_size 1920x1080 -i /dev/video0 -c:v libx264 -pix_fmt yuv420p -preset fast -crf 22 output.mp4 -y";
         string ffmpegArgs = $"-f v4l2 -input_format mjpeg -framerate 30 -video_size 1920x1080 -i /dev/video0 -c:v h264_v4l2m2m -pix_fmt yuv420p -preset fast -crf 22 -f rawvideo pipe:1 -loglevel error";
 
         ProcessStartInfo startInfo = new ProcessStartInfo
