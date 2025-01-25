@@ -27,8 +27,9 @@ public class CameraService : IDisposable
             videoCapture.Read(frame);
 
             CvInvoke.Imwrite("/home/CentralBridge/meow/" + Statics.GenerateRandomString() + ".png",
-                GetLatestFrameMat());
+                frame);
             Console.WriteLine("Captured");
+            Thread.Sleep(250);
         }
         _frameWidth = frameWidth;
         _frameHeight = frameHeight;
