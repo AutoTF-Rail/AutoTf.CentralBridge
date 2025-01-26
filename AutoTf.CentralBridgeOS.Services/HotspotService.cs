@@ -38,7 +38,9 @@ public class HotspotService : IDisposable
                                "ignore_broadcast_ssid=1\n" +
                                $"wpa_passphrase={password}\n" +
                                "wpa_key_mgmt=WPA-PSK\n" +
-                               "rsn_pairwise=CCMP\n";
+                               "rsn_pairwise=CCMP\n" + 
+                               "macaddr_acl=1\n" + 
+                               "accept_mac_file=/etc/hostapd/accepted_macs.txt\n";
         
         File.WriteAllText(configPath, hostapdConfig);
         _logger.Log("Hostapd config updated successfully!");

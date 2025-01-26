@@ -13,6 +13,7 @@ public class Program
 	private static readonly BluetoothService _bluetoothService = new BluetoothService();
 	private static readonly NetworkManager _netManager = new NetworkManager();
 	private static readonly FileManager _fileManager = new FileManager();
+	private static readonly CameraService _cameraService = new CameraService();
 	
 	public static void Main(string[] args)
 	{
@@ -22,11 +23,11 @@ public class Program
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		builder.Services.AddControllers();
-		builder.Services.AddSingleton(new CameraService());;
+		builder.Services.AddSingleton(_cameraService);
 		builder.Services.AddSingleton<BluetoothService>();;
 		builder.Services.AddSingleton(_fileManager);
 		builder.Services.AddSingleton(_netManager);
-		builder.Services.AddSingleton<SyncManager>(new SyncManager(_fileManager));
+		builder.Services.AddSingleton<SyncManager>(new SyncManager(_fileManager, _cameraService));
 		builder.Services.AddSingleton<ISerialService>(new SerialProtocol.SerialProtocol(_logger));
 		
 

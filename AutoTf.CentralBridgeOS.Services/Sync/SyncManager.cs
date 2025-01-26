@@ -19,12 +19,12 @@ public class SyncManager
 	public static DateTime LastSynced = DateTime.Now;
 	public static DateTime LastSyncTry = DateTime.Now;
 
-	public SyncManager(FileManager fileManager)
+	public SyncManager(FileManager fileManager, CameraService cameraService)
 	{
 		Statics.ShutdownEvent += Dispose;
 		_keySync = new KeySync(_logger, fileManager);
 		_macSync = new MacSync(_logger, fileManager);
-		_dataSync = new DataSync(_logger, fileManager);
+		_dataSync = new DataSync(_logger, fileManager, cameraService);
 		
 		if (NetworkConfigurator.IsInternetAvailable())
 		{

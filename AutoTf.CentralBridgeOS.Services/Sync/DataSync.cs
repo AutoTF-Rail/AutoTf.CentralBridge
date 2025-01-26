@@ -7,10 +7,12 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 
 public class DataSync : Sync
 {
+	private readonly CameraService _cameraService;
 	private List<string> _collectedLogs = new List<string>();
 	
-	public DataSync(Logger logger, FileManager fileManager) : base(logger, fileManager)
+	public DataSync(Logger logger, FileManager fileManager, CameraService cameraService) : base(logger, fileManager)
 	{
+		_cameraService = cameraService;
 		_logger.NewLog += log => _collectedLogs.Add(log);
 		Statics.SyncEvent = Sync;
 	}
@@ -21,6 +23,7 @@ public class DataSync : Sync
 		{
 			await UpdateStatus();
 			await UploadLogs();
+			await UploadVideo();
 		}
 		catch (Exception e)
 		{
@@ -28,7 +31,21 @@ public class DataSync : Sync
 			_logger.Log("ERROR: " + e.Message);
 		}
 	}
-	
+
+	private async Task UploadVideo()
+	{
+		string[] recordings = Directory.GetFiles("recordings/");
+		_cameraService.IntervalCapture();
+		// TODO: Upload
+		// Upload all previous collected recordings
+		
+		// Delete files
+		foreach (string recording in recordings)
+		{
+			File.Delete(recording);
+		}
+	}
+
 	private async Task UpdateStatus()
 	{
 		try
@@ -41,6 +58,7 @@ public class DataSync : Sync
 			
 			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+			client.DefaultRequestHeaders.Add("X-Authentik-Username", Statics.Username);
 
 			StringContent content = new StringContent("Online", Encoding.UTF8, "application/json");
 			HttpResponseMessage response = await client.PostAsync(url, content);

@@ -6,7 +6,9 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class CameraService : IDisposable
 {
-    private readonly VideoCapture _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
+    private readonly int _frameWidth;
+    private readonly int _frameHeight;
+    private VideoCapture _videoCapture;
     private readonly VideoWriter _videoWriter;
     private Mat _latestFrame = null!;
     private readonly object _frameLock = new object();
@@ -15,20 +17,43 @@ public class CameraService : IDisposable
 
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
     {
-        Statics.ShutdownEvent += Dispose;
-        _videoCapture.Set(CapProp.FrameWidth, frameWidth);
-        _videoCapture.Set(CapProp.FrameHeight, frameHeight);
-        _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
-        _videoCapture.Set(CapProp.Fps, 30);
-        Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
+        try
+        {
+            _frameWidth = frameWidth;
+            _frameHeight = frameHeight;
+            
+            Statics.ShutdownEvent += Dispose;
+            IntervalCapture(true);
 
-        Directory.CreateDirectory("recordings");
-        _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-            VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(frameWidth, frameHeight), true);
+            Directory.CreateDirectory("recordings");
+            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
+                VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(frameWidth, frameHeight), true);
         
-        _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+            _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error during ctor.");
+            Console.WriteLine(e);
+        }
     }
-    
+
+    public void IntervalCapture(bool first = false)
+    {
+        if (!first)
+        {
+            _videoCapture.Stop();
+            _videoCapture.Release();
+            _videoCapture.Dispose();
+        }
+
+        _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
+        _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
+        _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
+        _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+        Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
+    }
+
     public Mat LatestFrame
     {
         get
