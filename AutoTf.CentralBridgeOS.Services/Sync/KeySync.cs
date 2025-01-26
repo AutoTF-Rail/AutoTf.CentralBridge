@@ -31,14 +31,8 @@ public class KeySync : Sync
 			_logger.Log("SYNC: Syncing Keys Addresses.");
 			string result = await SendGetString("/sync/keys/allkeys");
 			
-			if (result.Length == 0)
-			{
-				_logger.Log("SYNC: Got 0 keys from server.");
-				return;
-			}
-
-			_logger.Log($"{result.Length} keys received.");
 			_fileManager.WriteAllText("keys", result);
+			_logger.Log("Finished syncing keys.");
 		}
 		catch (Exception e)
 		{
