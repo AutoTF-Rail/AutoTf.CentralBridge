@@ -14,7 +14,7 @@ public class DataSync : Sync
 	{
 		_cameraService = cameraService;
 		_logger.NewLog += log => _collectedLogs.Add(log);
-		Statics.SyncEvent = Sync;
+		Statics.SyncEvent += Sync;
 	}
 
 	private async void Sync()

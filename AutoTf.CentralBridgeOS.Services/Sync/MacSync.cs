@@ -6,7 +6,7 @@ public class MacSync : Sync
 {
 	public MacSync(Logger logger, FileManager fileManager) : base(logger, fileManager)
 	{
-		Statics.SyncEvent = Sync;
+		Statics.SyncEvent += Sync;
 	}
 
 	private async void Sync()
