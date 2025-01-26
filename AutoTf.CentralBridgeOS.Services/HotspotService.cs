@@ -12,6 +12,8 @@ public class HotspotService : IDisposable
     {
         string configPath = "/etc/hostapd/hostapd.conf";
         string defaultConfigPath = "hostapd.conf.default";
+        
+        File.WriteAllText("/etc/hostapd/accepted_macs.txt", "");
 
         CheckDependencies();
 

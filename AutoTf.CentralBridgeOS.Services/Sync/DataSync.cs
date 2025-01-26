@@ -61,7 +61,7 @@ public class DataSync : Sync
 			
 			StringContent content = new StringContent(JsonSerializer.Serialize("Online"), Encoding.UTF8, "application/json");
 			HttpResponseMessage response = await client.PostAsync(url, content);
-			Console.WriteLine(await response.Content.ReadAsStringAsync());
+			
 			response.EnsureSuccessStatusCode();
 			
 			_logger.Log("SYNC: Successfully updated status.");
