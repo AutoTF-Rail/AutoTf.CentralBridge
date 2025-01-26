@@ -58,9 +58,8 @@ public class DataSync : Sync
 			
 			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
-			client.DefaultRequestHeaders.Add("X-Authentik-Username", Statics.Username);
-
-			StringContent content = new StringContent("Online", Encoding.UTF8, "application/json");
+			
+			StringContent content = new StringContent(JsonSerializer.Serialize("Online"), Encoding.UTF8, "application/json");
 			HttpResponseMessage response = await client.PostAsync(url, content);
 			response.EnsureSuccessStatusCode();
 			
