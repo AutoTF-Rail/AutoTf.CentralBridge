@@ -67,4 +67,28 @@ public abstract class Sync
 			throw;
 		}
 	}
+
+	protected async Task<string> SendGetString(string endpoint)
+	{
+		try
+		{
+			string url = _rootDomain + endpoint;
+			
+			using HttpClient client = new HttpClient();
+			
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+			
+			HttpResponseMessage response = await client.GetAsync(url);
+			response.EnsureSuccessStatusCode();
+
+			return await response.Content.ReadAsStringAsync();
+		}
+		catch (Exception e)
+		{
+			_logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			_logger.Log(e.Message);
+			throw;
+		}
+	}
 }

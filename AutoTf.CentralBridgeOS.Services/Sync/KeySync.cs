@@ -29,7 +29,7 @@ public class KeySync : Sync
 		try
 		{
 			_logger.Log("SYNC: Syncing Keys Addresses.");
-			string[] result = await SendGetArray("/sync/keys/allkeys");
+			string result = await SendGetString("/sync/keys/allkeys");
 			
 			if (result.Length == 0)
 			{
@@ -38,7 +38,7 @@ public class KeySync : Sync
 			}
 
 			_logger.Log($"{result.Length} keys received.");
-			_fileManager.WriteAllLines("keys", result);
+			_fileManager.WriteAllText("keys", result);
 		}
 		catch (Exception e)
 		{
