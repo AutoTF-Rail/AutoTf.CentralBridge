@@ -32,7 +32,7 @@ public class KeySync : Sync
 			_logger.Log("SYNC: Syncing Keys Addresses.");
 			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/allkeys"))!;
 			
-			_fileManager.WriteAllText("keys",  JsonSerializer.Serialize(result.Select(x => x.SerialNumber + ":" + x.Secret)));
+			_fileManager.WriteAllLines("keys",  result.Select(x => x.SerialNumber + ":" + x.Secret).ToArray());
 			_logger.Log("Finished syncing keys.");
 		}
 		catch (Exception e)
