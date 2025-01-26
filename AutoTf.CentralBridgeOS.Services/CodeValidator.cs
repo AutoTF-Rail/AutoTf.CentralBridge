@@ -13,13 +13,14 @@ public class CodeValidator
 	
 	public bool ValidateCode(string code, string keySerialNumber, DateTime timeOfCode)
 	{
+		// KeySerialNum:secret
 		string[] allKeys = _fileManager.ReadAllLines("keys", "[]");
-		string? secret = allKeys.FirstOrDefault(x => x.StartsWith($"{keySerialNumber}: "));
+		string? secret = allKeys.FirstOrDefault(x => x.StartsWith($"{keySerialNumber}:"));
 		
 		if (string.IsNullOrEmpty(secret))
 			return false;
 
-		secret = secret.Replace($"{keySerialNumber}: ", "");
+		secret = secret.Replace($"{keySerialNumber}:", "");
 		
 		byte[] secretBytes = Base32Encoding.ToBytes(secret);
 

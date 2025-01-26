@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Services.Sync;
@@ -29,9 +30,9 @@ public class KeySync : Sync
 		try
 		{
 			_logger.Log("SYNC: Syncing Keys Addresses.");
-			string result = await SendGetString("/sync/keys/allkeys");
+			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/allkeys"))!;
 			
-			_fileManager.WriteAllText("keys", result);
+			_fileManager.WriteAllText("keys",  JsonSerializer.Serialize(result.Select(x => x.SerialNumber + ":" + x.Secret)));
 			_logger.Log("Finished syncing keys.");
 		}
 		catch (Exception e)
