@@ -24,8 +24,9 @@ public class Program
 		
 		builder.Services.AddControllers();
 		builder.Services.AddSingleton(_cameraService);
-		builder.Services.AddSingleton<BluetoothService>();;
+		builder.Services.AddSingleton<BluetoothService>();
 		builder.Services.AddSingleton(_fileManager);
+		builder.Services.AddSingleton<CodeValidator>();
 		builder.Services.AddSingleton(_netManager);
 		builder.Services.AddSingleton<SyncManager>(new SyncManager(_fileManager, _cameraService));
 		builder.Services.AddSingleton<ISerialService>(new SerialProtocol.SerialProtocol(_logger));
