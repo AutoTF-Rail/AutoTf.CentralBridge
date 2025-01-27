@@ -43,19 +43,27 @@ public class CameraService : IDisposable
 
     public void IntervalCapture(bool first = false)
     {
-        _failedReads = 0;
-        if (!first)
+        try
         {
-            _videoCapture.Stop();
-            _videoCapture.Release();
-            _videoCapture.Dispose();
-        }
+            _failedReads = 0;
+            if (!first)
+            {
+                _videoCapture.Stop();
+                _videoCapture.Release();
+                _videoCapture.Dispose();
+            }
 
-        _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
-        _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
-        _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
-        _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
-        Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
+            _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
+            _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
+            _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
+            _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+            Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error during capture interval:");
+            Console.WriteLine(e);
+        }
     }
 
     public Mat LatestFramePreview
