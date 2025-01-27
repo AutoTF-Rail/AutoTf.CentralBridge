@@ -34,7 +34,6 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			Mat frame = _cameraService.LatestFrame;
 			Mat frame = _cameraService.LatestFramePreview;
 
 			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
