@@ -21,7 +21,6 @@ public class Program
 		_logger.Log("Starting for EVU: " + Statics.EvuName);
 		
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-		Statics.ShutdownEvent = Shutdown;
 		
 		builder.Services.AddControllers();
 		builder.Services.AddSingleton(_cameraService);
@@ -31,7 +30,8 @@ public class Program
 		builder.Services.AddSingleton(_netManager);
 		builder.Services.AddSingleton<SyncManager>(new SyncManager(_fileManager, _cameraService));
 		builder.Services.AddSingleton<ISerialService>(new SerialProtocol.SerialProtocol(_logger));
-		
+
+		builder.Services.Configure<HostOptions>(x => x.ShutdownTimeout = TimeSpan.FromSeconds(30));
 
 		WebApplication app = builder.Build();
 		
@@ -52,12 +52,6 @@ public class Program
 		});
 		
 		app.Run("http://0.0.0.0:80");
-	}
-
-	private static void Shutdown()
-	{
-		Console.WriteLine("Shutdown event.");
-		_cameraService.Dispose();
 	}
 
 	private static bool ConfigureNetwork()
