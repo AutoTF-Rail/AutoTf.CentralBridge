@@ -4,9 +4,12 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 
 public class MacSync : Sync
 {
+	private string[] _latestList;
+	
 	public MacSync(Logger logger, FileManager fileManager) : base(logger, fileManager)
 	{
 		Statics.SyncEvent += Sync;
+		_latestList = File.ReadAllLines("/etc/hostapd/accepted_macs.txt");
 	}
 
 	private async void Sync()
@@ -29,14 +32,14 @@ public class MacSync : Sync
 		{
 			_logger.Log("SYNC: Syncing MAC Addresses.");
 			string[] result = await SendGetArray("/sync/mac/macAddress");
-			
-			if (result.Length == 0)
-			{
-				_logger.Log("SYNC: Got 0 MAC Addresses from server.");
+
+			if (result == _latestList)
 				return;
-			}
 
 			_logger.Log($"{result.Length} MAC addresses received.");
+			
+			_latestList = result;
+			
 			File.WriteAllLines("/etc/hostapd/accepted_macs.txt", result);
 			CommandExecuter.ExecuteSilent("sudo systemctl restart hostapd", false);
 		}

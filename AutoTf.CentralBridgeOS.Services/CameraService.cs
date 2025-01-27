@@ -60,6 +60,8 @@ public class CameraService : IDisposable
 
             if (_videoWriter != null)
             {
+                _cancellationTokenSource.Cancel();
+                _frameCaptureTask!.Wait();
                 _frameCaptureTask!.Dispose();
                 _videoWriter.Dispose();
             }

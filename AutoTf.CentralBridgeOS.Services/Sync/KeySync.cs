@@ -5,9 +5,12 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 
 public class KeySync : Sync
 {
+	private string[] _latestList;
+	
 	public KeySync(Logger logger, FileManager fileManager) : base(logger, fileManager)
 	{
 		Statics.SyncEvent += Sync;
+		_latestList = _fileManager.ReadAllLines("keys");
 	}
 
 	private async void Sync()
@@ -31,8 +34,13 @@ public class KeySync : Sync
 		{
 			_logger.Log("SYNC: Syncing Keys Addresses.");
 			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/allkeys"))!;
-			
-			_fileManager.WriteAllLines("keys",  result.Select(x => x.SerialNumber + ":" + x.Secret).ToArray());
+
+			string[] keys = result.Select(x => x.SerialNumber + ":" + x.Secret).ToArray();
+			if (keys == _latestList)
+				return;
+
+			_latestList = keys;
+			_fileManager.WriteAllLines("keys",  keys);
 			_logger.Log("Finished syncing keys.");
 		}
 		catch (Exception e)
