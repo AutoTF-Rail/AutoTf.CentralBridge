@@ -54,12 +54,14 @@ public class CameraService : IDisposable
     {
         try
         {
+            Console.WriteLine("Intervaling capture.");
+            
             _failedReads = 0;
 
             if (_videoWriter != null)
             {
-                _videoWriter.Dispose();
                 _frameCaptureTask!.Dispose();
+                _videoWriter.Dispose();
             }
 
             StartVideoWriter();
@@ -76,6 +78,7 @@ public class CameraService : IDisposable
     {
         try
         {
+            Console.WriteLine("Starting capture.");
             _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
                 VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
         
@@ -142,11 +145,14 @@ public class CameraService : IDisposable
                     _latestFrame = frame.Clone();
                 }
                 
-                if (_latestFramePreview != null && !_latestFramePreview.IsEmpty)
-                    _latestFramePreview.Dispose();
+                lock (_frameLockPreview)
+                {
+                    if (_latestFramePreview != null && !_latestFramePreview.IsEmpty)
+                        _latestFramePreview.Dispose();
 
-                _latestFramePreview = new Mat();
-                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
+                    _latestFramePreview = new Mat();
+                    CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
+                }
 
                 _videoWriter.Write(frame);
                 frame.Dispose();

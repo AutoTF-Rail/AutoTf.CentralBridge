@@ -35,7 +35,7 @@ public class DataSync : Sync
 	private async Task UploadVideo()
 	{
 		_logger.Log("SYNC: Uploading videos.");
-		string[] recordings = Directory.GetFiles("recordings/");
+		// string[] recordings = Directory.GetFiles("recordings/");
 		_cameraService.IntervalCapture();
 		// TODO: Upload
 		// Upload all previous collected recordings
