@@ -57,6 +57,7 @@ public class CameraService : IDisposable
             _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
             _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
             _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+            Console.WriteLine("Is capture open: " + _videoCapture.IsOpened);
             Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
         }
         catch (Exception e)
@@ -124,6 +125,11 @@ public class CameraService : IDisposable
                 frame.Dispose();
 
             } while (!cancellationToken.IsCancellationRequested && _failedReads < 5);
+
+            if (_failedReads == 5)
+            {
+                Console.WriteLine("Stopped capture due to failed reads.");
+            }
         }
         catch (Exception ex)
         {
