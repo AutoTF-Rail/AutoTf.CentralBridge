@@ -55,9 +55,13 @@ public class CameraService : IDisposable
         try
         {
             _failedReads = 0;
-            if(_videoWriter != null)
+
+            if (_videoWriter != null)
+            {
                 _videoWriter.Dispose();
-            
+                _frameCaptureTask!.Dispose();
+            }
+
             StartVideoWriter();
         }
         catch (Exception e)
@@ -70,10 +74,18 @@ public class CameraService : IDisposable
     // This needs to be a seperate method, so that we don't start 
     private void StartVideoWriter()
     {
-        _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-            VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
+        try
+        {
+            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
+                VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
         
-        _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+            _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error during capture restart:");
+            Console.WriteLine(e);
+        }
     }
 
     public Mat? LatestFramePreview
