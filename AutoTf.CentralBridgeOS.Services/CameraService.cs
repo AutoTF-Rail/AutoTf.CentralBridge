@@ -10,7 +10,7 @@ public class CameraService : IDisposable
     private readonly int _frameHeight;
     private VideoCapture _videoCapture;
     private readonly VideoWriter _videoWriter;
-    private Mat _latestFrame = null!;
+    private Mat? _latestFrame;
     private readonly object _frameLock = new object();
     private Mat? _latestFramePreview;
     private readonly object _frameLockPreview = new object();
@@ -67,25 +67,25 @@ public class CameraService : IDisposable
         }
     }
 
-    public Mat LatestFramePreview
+    public Mat? LatestFramePreview
     {
         get
         {
             
             lock (_frameLockPreview)
             {
-                return _latestFramePreview!.Clone();
+                return _latestFramePreview?.Clone();
             }
         }
     }
 
-    public Mat LatestFrame
+    public Mat? LatestFrame
     {
         get
         {
             lock (_frameLock)
             {
-                return _latestFrame.Clone();
+                return _latestFrame?.Clone();
             }
         }
     }
@@ -101,7 +101,7 @@ public class CameraService : IDisposable
                 {
                     Console.WriteLine("Could not read frame from device.");
                     _failedReads++;
-                    await Task.Delay(50);
+                    await Task.Delay(500);
                     continue;
                 }
 
@@ -109,7 +109,7 @@ public class CameraService : IDisposable
                 {
                     Console.WriteLine("Frame was empty.");
                     _failedReads++;
-                    await Task.Delay(50);
+                    await Task.Delay(500);
                     continue;
                 }
 
