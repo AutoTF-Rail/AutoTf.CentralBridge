@@ -36,7 +36,8 @@ public class KeySync : Sync
 			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/allkeys"))!;
 
 			string[] keys = result.Select(x => x.SerialNumber + ":" + x.Secret).ToArray();
-			if (keys == _latestList)
+			
+			if (keys.SequenceEqual(_latestList))
 				return;
 
 			_latestList = keys;

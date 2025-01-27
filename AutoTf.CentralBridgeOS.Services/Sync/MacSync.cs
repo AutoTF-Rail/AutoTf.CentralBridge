@@ -33,7 +33,7 @@ public class MacSync : Sync
 			_logger.Log("SYNC: Syncing MAC Addresses.");
 			string[] result = await SendGetArray("/sync/mac/macAddress");
 
-			if (result == _latestList)
+			if (result.SequenceEqual(_latestList))
 				return;
 
 			_logger.Log($"{result.Length} MAC addresses received.");
