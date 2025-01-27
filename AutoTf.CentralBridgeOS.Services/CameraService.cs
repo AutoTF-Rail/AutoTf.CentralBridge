@@ -12,7 +12,7 @@ public class CameraService : IDisposable
     private readonly VideoWriter _videoWriter;
     private Mat _latestFrame = null!;
     private readonly object _frameLock = new object();
-    private Mat _latestFramePreview = null!;
+    private Mat _latestFramePreview = new Mat();
     private readonly object _frameLockPreview = new object();
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     private Task? _frameCaptureTask;
