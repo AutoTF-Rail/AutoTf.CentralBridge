@@ -12,7 +12,7 @@ public class CameraService : IDisposable
     private readonly VideoWriter _videoWriter;
     private Mat _latestFrame = null!;
     private readonly object _frameLock = new object();
-    private Mat _latestFramePreview = new Mat();
+    private Mat? _latestFramePreview;
     private readonly object _frameLockPreview = new object();
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     private Task? _frameCaptureTask;
@@ -71,13 +71,10 @@ public class CameraService : IDisposable
     {
         get
         {
+            
             lock (_frameLockPreview)
             {
-                if (!_latestFramePreview.IsEmpty)
-                    _latestFramePreview.Dispose(); 
-                
-                CvInvoke.Resize(_latestFrame.Clone(), _latestFramePreview, new Size(1280, 720));
-                return _latestFramePreview.Clone();
+                return _latestFramePreview!.Clone();
             }
         }
     }
@@ -123,6 +120,12 @@ public class CameraService : IDisposable
                     
                     _latestFrame = frame.Clone();
                 }
+                
+                if (_latestFramePreview != null && !_latestFramePreview.IsEmpty)
+                    _latestFramePreview.Dispose();
+
+                _latestFramePreview = new Mat();
+                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(1280, 720));
 
                 _videoWriter.Write(frame);
                 frame.Dispose();
