@@ -1,4 +1,6 @@
 using AutoTf.Logging;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
 
 namespace AutoTf.CentralBridgeOS.Services;
 

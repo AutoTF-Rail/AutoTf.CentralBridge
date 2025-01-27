@@ -3,10 +3,7 @@ using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
-using Emgu.CV;
-using Emgu.CV.Structure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 
 namespace AutoTf.CentralBridgeOS.Server.Controllers;
 
@@ -14,90 +11,91 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 [Route("/information")]
 public class InformationController : ControllerBase
 {
-	private readonly NetworkManager _networkManager;
 	private readonly CodeValidator _codeValidator;
 	private readonly FileManager _fileManager;
-	private readonly CameraService _cameraService;
-	private readonly Logger _logger = Statics.Logger;
+	private readonly Logger _logger;
 
-	public InformationController(NetworkManager networkManager, CodeValidator codeValidator, FileManager fileManager, CameraService cameraService)
+	public InformationController(Logger logger, CodeValidator codeValidator, FileManager fileManager)
 	{
-		_networkManager = networkManager;
+		_logger = logger;
 		_codeValidator = codeValidator;
 		_fileManager = fileManager;
-		_cameraService = cameraService;
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
-	}
-
-	[HttpGet("latestFramePreview")]
-	public IActionResult LatestFramePreview()
-	{
-		try
-		{
-			Mat frame = _cameraService.LatestFramePreview;
-
-			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
-
-			frame.Dispose();
-			return File(imageBytes, "image/png");
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine("Failed to supply preview frame:");
-			Console.WriteLine(e.Message);
-			return BadRequest(e.Message);
-		}
-	}
-
-	[HttpGet("latestFrame")]
-	public IActionResult LatestFrame()
-	{
-		try
-		{
-			Mat frame = _cameraService.LatestFrame;
-
-			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
-
-			frame.Dispose();
-			return File(imageBytes, "image/png");
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine("Failed to supply frame:");
-			Console.WriteLine(e.Message);
-			Console.WriteLine(e.StackTrace);
-			return BadRequest(e.Message);
-		}
 	}
 
 	[HttpGet("trainId")]
 	public IActionResult TrainId()
 	{
-		return Content(_fileManager.ReadFile("trainId"));
+		try
+		{
+			return Content(_fileManager.ReadFile("trainId"));
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not supply train id:");
+			_logger.Log(e.Message);
+			return BadRequest("Could not supply train id.");
+		}
 	}
 
 	[HttpGet("trainName")]
 	public IActionResult TrainName()
 	{
-		return Content(_fileManager.ReadFile("TrainName"));
+		try
+		{
+			return Content(_fileManager.ReadFile("TrainName"));
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not supply train name:");
+			_logger.Log(e.Message);
+			return BadRequest("Could not supply train name.");
+		}
 	}
 
 	[HttpGet("lastsynctry")]
 	public IActionResult LastSyncTry()
 	{
-		return Content(SyncManager.LastSyncTry.ToString("dd.MM.yyyy HH:mm:ss"));
+		try
+		{
+			return Content(SyncManager.LastSyncTry.ToString("dd.MM.yyyy HH:mm:ss"));
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not supply last sync try:");
+			_logger.Log(e.Message);
+			return BadRequest("Could not supply last sync try.");
+		}
 	}
 
 	[HttpGet("lastsynced")]
 	public IActionResult LastSynced()
 	{
-		return Content(SyncManager.LastSynced.ToString("dd.MM.yyyy HH:mm:ss"));
+		try
+		{
+			return Content(SyncManager.LastSynced.ToString("dd.MM.yyyy HH:mm:ss"));
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not supply last sync:");
+			_logger.Log(e.Message);
+			return BadRequest("Could not supply last sync.");
+		}
 	}
 
 	[HttpGet("evuname")]
 	public IActionResult EvuName()
 	{
-		return Content(Statics.EvuName);
+		try
+		{
+			return Content(Statics.EvuName);
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not supply EVU name:");
+			_logger.Log(e.Message);
+			return BadRequest("Could not supply EVU name.");
+		}
 	}
 
 	[HttpGet("issimavailable")]
@@ -137,9 +135,9 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine("Error during login: ");
-			Console.WriteLine(ex.Message);
-			return BadRequest(ex.Message);
+			_logger.Log("INFO-C: Error during login:");
+			_logger.Log(ex.Message);
+			return BadRequest("Internal server error.");
 		}
 	}
 }

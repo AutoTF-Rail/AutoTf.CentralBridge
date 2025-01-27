@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using AutoTf.Logging;
@@ -8,12 +7,12 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 public class DataSync : Sync
 {
 	private readonly CameraService _cameraService;
-	private List<string> _collectedLogs = new List<string>();
+	private readonly List<string> _collectedLogs = new List<string>();
 	
 	public DataSync(Logger logger, FileManager fileManager, CameraService cameraService) : base(logger, fileManager)
 	{
 		_cameraService = cameraService;
-		_logger.NewLog += log => _collectedLogs.Add(log);
+		Logger.NewLog += log => _collectedLogs.Add(log);
 		Statics.SyncEvent += Sync;
 	}
 
@@ -27,14 +26,14 @@ public class DataSync : Sync
 		}
 		catch (Exception e)
 		{
-			_logger.Log("ERROR: Failed to sync mac addresses.");
-			_logger.Log("ERROR: " + e.Message);
+			Logger.Log("SYNC-D: ERROR: Failed to sync mac addresses.");
+			Logger.Log("SYNC-D: ERROR: " + e.Message);
 		}
 	}
 
 	private async Task UploadVideo()
 	{
-		_logger.Log("SYNC: Uploading videos.");
+		Logger.Log("SYNC-D: Uploading videos.");
 		// string[] recordings = Directory.GetFiles("recordings/");
 		_cameraService.IntervalCapture();
 		// TODO: Upload
@@ -51,26 +50,18 @@ public class DataSync : Sync
 	{
 		try
 		{
-			_logger.Log("SYNC: Updating status.");
-		
-			string url = _rootDomain + "/sync/device/updatestatus";
+			Logger.Log("SYNC-D: Updating status.");
 
-			using HttpClient client = new HttpClient();
+			if (!await SendPostContent("/sync/device/updatestatus",
+				    new StringContent(JsonSerializer.Serialize("Online"), Encoding.UTF8, "application/json")))
+				throw new Exception("SYNC-D: Failed to update status.");
 			
-			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
-			
-			StringContent content = new StringContent(JsonSerializer.Serialize("Online"), Encoding.UTF8, "application/json");
-			HttpResponseMessage response = await client.PostAsync(url, content);
-			
-			response.EnsureSuccessStatusCode();
-			
-			_logger.Log("SYNC: Successfully updated status.");
+			Logger.Log("SYNC-D: Successfully updated status.");
 		}
 		catch (Exception e)
 		{
-			_logger.Log("SYNC: ERROR: An error occured while updating the status.");
-			_logger.Log(e.Message);
+			Logger.Log("SYNC-D: ERROR: An error occured while updating the status.");
+			Logger.Log(e.Message);
 		}
 	}
 	
@@ -80,32 +71,26 @@ public class DataSync : Sync
 		{
 			if (_collectedLogs.Count == 0)
 			{
-				_logger.Log("SYNC: No logs to upload. Skipping.");
+				Logger.Log("SYNC-D: No logs to upload. Skipping.");
 				return;
 			}
-			_logger.Log("SYNC: Uploading logs");
+			Logger.Log("SYNC-D: Uploading logs");
 			
 			List<string> tempLogStorage = new List<string>(_collectedLogs);
 			_collectedLogs.Clear();
 		
-			string url = _rootDomain + "/sync/device/uploadlogs";
 			string jsonBody = JsonSerializer.Serialize(tempLogStorage);
-
-			using HttpClient client = new HttpClient();
 			
-			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
-
-			StringContent content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-			HttpResponseMessage response = await client.PostAsync(url, content);
-			response.EnsureSuccessStatusCode();
+			if (!await SendPostContent("/sync/device/uploadlogs",
+				    new StringContent(jsonBody, Encoding.UTF8, "application/json")))
+				throw new Exception("SYNC-D: Failed to upload logs.");
 			
-			_logger.Log("SYNC: Successfully uploaded logs.");
+			Logger.Log("SYNC-D: Successfully uploaded logs.");
 		}
 		catch (Exception e)
 		{
-			_logger.Log("SYNC: ERROR: Failed to upload logs.");
-			_logger.Log(e.Message);
+			Logger.Log("SYNC-D: ERROR: Failed to upload logs.");
+			Logger.Log(e.Message);
 		}
 	}
 }

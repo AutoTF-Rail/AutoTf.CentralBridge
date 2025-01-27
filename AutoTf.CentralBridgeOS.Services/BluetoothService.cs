@@ -2,12 +2,18 @@ using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class BluetoothService
+public class BluetoothService : IDisposable
 {
 	private readonly Logger _logger = Statics.Logger;
 	private int _instanceId = 2;
 
-	public void StartBeaconAsync()
+	public BluetoothService()
+	{
+		Statics.ShutdownEvent += Dispose;
+		StartBeacon();
+	}
+
+	private void StartBeacon()
 	{
 		try
 		{
@@ -16,7 +22,7 @@ public class BluetoothService
 			string lengthByte = length.ToString("X2");
 			string adData = $"{lengthByte}09{hexMessage}";
 
-			_logger.Log("Trying to start BLE as: " + adData);
+			_logger.Log("BLUETOOTH: Trying to start BLE as: " + adData);
 			
 			string command = $"btmgmt add-adv -d {adData} {_instanceId}";
 
@@ -24,17 +30,9 @@ public class BluetoothService
 		}
 		catch (Exception e)
 		{
-			_logger.Log("Error: Bluetooth beacon threw an error");
-			_logger.Log($"Error: {e.Message}");
-			_logger.Log($"StackTrace: {e.StackTrace}");
+			_logger.Log("BLUETOOTH: ERROR: Bluetooth beacon threw an error");
+			_logger.Log($"BLUETOOTH: ERROR: {e.Message}");
 		}
-	}
-	
-	public void RemoveBeacon()
-	{
-		string command = $"btmgmt remove-adv {_instanceId}";
-		CommandExecuter.ExecuteSilent(command, true);
-		Console.WriteLine("Beacon removed.");
 	}
 	
 	private static string StringToHex(string input)
@@ -48,5 +46,13 @@ public class BluetoothService
 		}
 
 		return hexOutput;
+	}
+
+	public void Dispose()
+	{
+		string command = $"btmgmt remove-adv {_instanceId}";
+		CommandExecuter.ExecuteSilent(command, true);
+		
+		_logger.Log("BLUETOOTH: Beacon removed.");
 	}
 }

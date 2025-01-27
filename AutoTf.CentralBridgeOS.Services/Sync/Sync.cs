@@ -7,24 +7,24 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 
 public abstract class Sync
 {
-	protected readonly Logger _logger;
-	protected readonly string _rootDomain;
-	protected readonly FileManager _fileManager;
+	protected readonly Logger Logger;
+	protected readonly string RootDomain;
+	protected readonly FileManager FileManager;
 
 	public Sync(Logger logger, FileManager fileManager)
 	{
-		_logger = logger;
-		_fileManager = fileManager;
+		Logger = logger;
+		FileManager = fileManager;
 		
-		_rootDomain = $"https://{Statics.EvuName}.server.autotf.de";
-		_logger.Log("Set server domain to: " + _rootDomain);
+		RootDomain = $"https://{Statics.EvuName}.server.autotf.de";
+		Logger.Log("Set server domain to: " + RootDomain);
 	}
 
 	protected async Task<string> SendGet(string endpoint)
 	{
 		try
 		{
-			string url = _rootDomain + endpoint;
+			string url = RootDomain + endpoint;
 			
 			using HttpClient client = new HttpClient();
 			
@@ -38,8 +38,8 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			_logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
-			_logger.Log(e.Message);
+			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log(e.Message);
 			throw;
 		}
 	}
@@ -48,7 +48,7 @@ public abstract class Sync
 	{
 		try
 		{
-			string url = _rootDomain + endpoint;
+			string url = RootDomain + endpoint;
 			
 			using HttpClient client = new HttpClient();
 			
@@ -62,8 +62,8 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			_logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
-			_logger.Log(e.Message);
+			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log(e.Message);
 			throw;
 		}
 	}
@@ -72,7 +72,7 @@ public abstract class Sync
 	{
 		try
 		{
-			string url = _rootDomain + endpoint;
+			string url = RootDomain + endpoint;
 			
 			using HttpClient client = new HttpClient();
 			
@@ -86,9 +86,38 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			_logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
-			_logger.Log(e.Message);
+			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log(e.Message);
 			throw;
 		}
+	}
+
+	/// <summary>
+	/// Sends a post request with content to a given server endpoint with auth headers.
+	/// </summary>
+	/// <param name="endpoint">the endpoint (not including server url/host)</param>
+	/// <param name="content">The actual content</param>
+	/// <returns>A bool indicating if it was successfull.</returns>
+	protected async Task<bool> SendPostContent(string endpoint, StringContent content)
+	{
+		try
+		{
+			string url = RootDomain + endpoint;
+
+			using HttpClient client = new HttpClient();
+			
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+			
+			HttpResponseMessage response = await client.PostAsync(url, content);
+
+			return response.IsSuccessStatusCode;
+		}
+		catch (Exception e)
+		{
+			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log(e.Message);
+			throw;
+		}	
 	}
 }

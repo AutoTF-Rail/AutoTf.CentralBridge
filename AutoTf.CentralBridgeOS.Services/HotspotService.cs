@@ -4,33 +4,68 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class HotspotService : IDisposable
 {
+    private const string DhcpConfigPath = "/etc/dnsmasq.conf";
+    
+    private readonly FileManager _fileManager;
     private readonly Logger _logger = Statics.Logger;
-    private readonly string dhcpConfigPath = "/etc/dnsmasq.conf";
 
-    public HotspotService()
+    public HotspotService(FileManager fileManager)
     {
+        _fileManager = fileManager;
         Statics.ShutdownEvent += StopWifi;
     }
     
+    public bool Configure()
+    {
+        _logger.Log("HOTSPOT: Configuring network");
+		
+        string interfaceName = "wlan1";
+        string ssid = "CentralBridge-" + _fileManager.ReadFile("trainNumber", Statics.GenerateRandomString());
+		
+        Statics.CurrentSsid = ssid;
+		
+        string password = "CentralBridgePW";
+        try
+        {
+            NetworkConfigurator.SetStaticIpAddress("192.168.0.1", "24");
+            NetworkConfigurator.SetStaticIpAddress("192.168.1.1", "24", "wlan1");
+            _logger.Log("HOTSPOT: Successfully set local IP.");
+			
+            StartWifi(interfaceName, ssid, password);
+            SetupDhcpConfig(interfaceName);
+			
+            _logger.Log($"HOTSPOT: Started WIFI as: {ssid}");
+        }
+        catch (Exception ex)
+        {
+            _logger.Log("HOTSPOT: ERROR: Could not configure network");
+            _logger.Log($"HOTSPOT: ERROR: {ex.Message}");
+            return false;
+        }
+
+        return true;
+    }
+    
     // Only call this once the NetworkManager has tried to sync. Due to MAC Addresses maybe still being synced.
-	public void StartWifi(string interfaceName, string ssid, string password)
+    private void StartWifi(string interfaceName, string ssid, string password)
     {
         string configPath = "/etc/hostapd/hostapd.conf";
         string defaultConfigPath = "hostapd.conf.default";
-        
-        File.WriteAllText("/etc/hostapd/accepted_macs.txt", "");
+
+        // Create it, if it doesn't exist
+        _fileManager.ReadAllLines("/etc/hostapd/accepted_macs.txt");
 
         CheckDependencies();
 
         if (!File.Exists(configPath))
         {
-            _logger.Log("Hostapd config not found. Creating it from default...");
+            _logger.Log("HOTSPOT: Config not found.");
             
             if (!File.Exists(defaultConfigPath))
-                throw new FileNotFoundException("Default hostapd config not found in program directory!");
+                throw new FileNotFoundException("HOTSPOT: ERROR: Default hostapd config not found in program directory!");
             
             File.Copy(defaultConfigPath, configPath, true);
-            _logger.Log($"Default config copied to {configPath}");
+            _logger.Log($"HOTSPOT: Default config copied to {configPath}");
         }
 
         string hostapdConfig = $"interface={interfaceName}\n" +
@@ -53,7 +88,8 @@ public class HotspotService : IDisposable
                                "accept_mac_file=/etc/hostapd/accepted_macs.txt\n";
         
         File.WriteAllText(configPath, hostapdConfig);
-        _logger.Log("Hostapd config updated successfully!");
+        
+        _logger.Log("HOTSPOT: Hostapd config updated successfully!");
         CommandExecuter.ExecuteSilent("sudo systemctl restart hostapd", false);
     }
 
@@ -64,15 +100,16 @@ public class HotspotService : IDisposable
                             "dhcp-option=3,192.168.1.1\n" +
                             "dhcp-option=6,192.168.1.1\n";
 
-        File.WriteAllText(dhcpConfigPath, dhcpConfig);
+        File.WriteAllText(DhcpConfigPath, dhcpConfig);
+        
         CommandExecuter.ExecuteSilent("sudo systemctl restart dnsmasq", false);
-        _logger.Log("DHCP server configuration updated successfully!");
+        _logger.Log("HOTSPOT: DHCP server configuration updated successfully!");
     }
 
     public void StopWifi()
     {
         CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
-        _logger.Log("WiFi hotspot stopped.");
+        _logger.Log("HOTSPOT: WiFi hotspot stopped.");
     }
 
     private void CheckDependencies()
@@ -88,10 +125,11 @@ public class HotspotService : IDisposable
             }
             catch
             {
-                throw new Exception($"{tool} is not installed. Please install it using 'sudo apt-get install {tool}'.");
+                throw new Exception($"HOTSPOT: {tool} is not installed. Please install it using 'sudo apt-get install {tool}'.");
             }
         }
-        _logger.Log("All dependencies are installed.");
+        
+        _logger.Log("HOTSPOT: All dependencies are installed.");
     }
 
     public void Dispose()

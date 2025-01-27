@@ -10,6 +10,7 @@ public class NetworkManager : IDisposable
 
 	public NetworkManager()
 	{
+		Statics.ShutdownEvent += Dispose;
 		Initialize();
 	}
 	
