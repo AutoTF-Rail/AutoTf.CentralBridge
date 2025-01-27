@@ -25,7 +25,6 @@ public class CameraService : IDisposable
             _frameWidth = frameWidth;
             _frameHeight = frameHeight;
             
-            Statics.ShutdownEvent += Dispose;
             IntervalCapture(true);
 
             Directory.CreateDirectory("recordings");

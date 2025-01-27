@@ -57,6 +57,7 @@ public class Program
 	private static void Shutdown()
 	{
 		Console.WriteLine("Shutdown event.");
+		_cameraService.Dispose();
 	}
 
 	private static bool ConfigureNetwork()
