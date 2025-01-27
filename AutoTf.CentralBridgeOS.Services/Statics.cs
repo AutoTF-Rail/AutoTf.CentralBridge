@@ -12,7 +12,7 @@ public static class Statics
 	// There is nothing "to destroy" on the server anyway.
 	public static string Username { get; set; }
 	public static string Password { get; set; }
-	public static Action? ShutdownEvent;
+	public static Action ShutdownEvent = null!;
 	public static Action? SyncEvent;
 	
 	// A list of all devices (tablets) MAC addresses that have logged in and are allowed to use the API.

@@ -21,6 +21,7 @@ public class Program
 		_logger.Log("Starting for EVU: " + Statics.EvuName);
 		
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+		Statics.ShutdownEvent = Shutdown;
 		
 		builder.Services.AddControllers();
 		builder.Services.AddSingleton(_cameraService);
@@ -44,12 +45,18 @@ public class Program
 
 		app.Lifetime.ApplicationStopping.Register(() =>
 		{
-			Statics.ShutdownEvent?.Invoke();
+			Console.WriteLine("Invoking shutdown.");
+			Statics.ShutdownEvent.Invoke();
 			bluetoothService.RemoveBeacon();
 			_netManager.Dispose();
 		});
 		
 		app.Run("http://0.0.0.0:80");
+	}
+
+	private static void Shutdown()
+	{
+		Console.WriteLine("Shutdown event.");
 	}
 
 	private static bool ConfigureNetwork()
