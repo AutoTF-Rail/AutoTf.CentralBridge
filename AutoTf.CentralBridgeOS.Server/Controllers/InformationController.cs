@@ -121,6 +121,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
+			Console.WriteLine("Processing login...");
 			if (!_codeValidator.ValidateCode(code, serialNumber, timestamp))
 			{
 				_logger.Log($"Device: {macAddr} tried to login with key {code} and timestamp {timestamp} but failed.");
@@ -131,9 +132,11 @@ public class InformationController : ControllerBase
 			_logger.Log($"Device: {macAddr} logged in with key {serialNumber} successfully.");
 			return Ok();
 		}
-		catch
+		catch (Exception ex)
 		{
-			return BadRequest();
+			Console.WriteLine("Error during login: ");
+			Console.WriteLine(ex.Message);
+			return BadRequest(ex.Message);
 		}
 	}
 }
