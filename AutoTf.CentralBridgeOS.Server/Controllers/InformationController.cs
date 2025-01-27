@@ -32,21 +32,37 @@ public class InformationController : ControllerBase
 	[HttpGet("latestFramePreview")]
 	public IActionResult LatestFramePreview()
 	{
-		Mat frame = _cameraService.LatestFramePreview;
+		try
+		{
+			Mat frame = _cameraService.LatestFrame;
 
-		byte[] imageBytes = new MemoryStream(frame.ToImage<Bgr, byte>().Bytes).ToArray();
+			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
 
-		return File(imageBytes, "image/png");
+			return File(imageBytes, "image/png");
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("Failed to supply preview frame:");
+			Console.WriteLine(e.Message);
+		}
 	}
 
 	[HttpGet("latestFrame")]
 	public IActionResult LatestFrame()
 	{
-		Mat frame = _cameraService.LatestFrame;
+		try
+		{
+			Mat frame = _cameraService.LatestFrame;
 
-		byte[] imageBytes = CvInvoke.Imencode(".png", frame);
+			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
 
-		return File(imageBytes, "image/png");
+			return File(imageBytes, "image/png");
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("Failed to supply frame:");
+			Console.WriteLine(e.Message);
+		}
 	}
 
 	[HttpGet("trainId")]
