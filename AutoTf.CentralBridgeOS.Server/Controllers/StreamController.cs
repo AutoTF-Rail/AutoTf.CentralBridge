@@ -61,7 +61,7 @@ public class StreamController : ControllerBase
             
 		if (frame != null && !frame.IsEmpty)
 		{
-			return CvInvoke.Imencode(".png", frame);
+			return CvInvoke.Imencode(".jpeg", frame);
 		}
 
 		return null;
