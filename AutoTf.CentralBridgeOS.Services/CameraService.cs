@@ -73,7 +73,8 @@ public class CameraService : IDisposable
         {
             lock (_frameLockPreview)
             {
-                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(1280, 720));
+                _latestFramePreview.Dispose();
+                CvInvoke.Resize(_latestFrame.Clone(), _latestFramePreview, new Size(1280, 720));
                 return _latestFramePreview.Clone();
             }
         }
