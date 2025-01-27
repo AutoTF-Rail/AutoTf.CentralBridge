@@ -43,6 +43,7 @@ public class InformationController : ControllerBase
 	public IActionResult LatestFrame()
 	{
 		Mat frame = _cameraService.LatestFrame;
+		CvInvoke.Imwrite("latest.png", frame);
 
 		byte[] imageBytes = new MemoryStream(frame.ToImage<Bgr, byte>().Bytes).ToArray();
 
