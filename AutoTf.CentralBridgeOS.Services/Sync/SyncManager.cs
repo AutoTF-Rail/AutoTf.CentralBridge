@@ -25,8 +25,8 @@ public class SyncManager
 	{
 		_fileManager = fileManager;
 		
-		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSync", DateTime.Now.Subtract(TimeSpan.FromDays(1999)).ToString("o")));
-		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSyncTry", DateTime.Now.Subtract(TimeSpan.FromDays(1999)).ToString("o")));
+		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSync", DateTime.Now.ToString("dd.MM.yyyyTHH:mm:ss")));
+		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSyncTry", DateTime.Now.ToString("dd.MM.yyyyTHH:mm:ss")));
 
 		Statics.ShutdownEvent += Dispose;
 		_keySync = new KeySync(_logger, fileManager);

@@ -40,10 +40,10 @@ public class DataSync : Sync
 		// Upload all previous collected recordings
 		
 		// Delete files
-		foreach (string recording in recordings)
-		{
-			File.Delete(recording);
-		}
+		// foreach (string recording in recordings)
+		// {
+		// 	File.Delete(recording);
+		// }
 	}
 
 	private async Task UpdateStatus()
