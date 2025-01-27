@@ -118,22 +118,4 @@ public class InformationController : ControllerBase
 			return BadRequest();
 		}
 	}
-	
-	[HttpPost("hello")]
-	public IActionResult Hello([FromQuery, Required] string macAddr, [FromQuery, Required] string loginUsername)
-	{
-		try
-		{
-			_logger.Log($"Device {macAddr} said hello as {loginUsername}");
-			_networkManager.DeviceSaidHelloEvent.Invoke(macAddr);
-			
-			return Ok();
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine("Hello error:");
-			Console.WriteLine(ex.Message);
-			return BadRequest();
-		}
-	}
 }
