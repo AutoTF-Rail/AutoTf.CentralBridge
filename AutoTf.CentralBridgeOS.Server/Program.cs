@@ -57,8 +57,10 @@ public class Program
 		_logger.Log("Configuring network");
 		
 		string interfaceName = "wlan1";
-		string ssid = "CentralBridge-" + Statics.GenerateRandomString();
+		string ssid = "CentralBridge-" + _fileManager.ReadFile("trainNumber", Statics.GenerateRandomString());
+		
 		Statics.CurrentSsid = ssid;
+		
 		string password = "CentralBridgePW";
 		try
 		{

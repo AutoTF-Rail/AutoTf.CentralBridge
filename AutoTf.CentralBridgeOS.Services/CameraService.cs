@@ -12,8 +12,11 @@ public class CameraService : IDisposable
     private readonly VideoWriter _videoWriter;
     private Mat _latestFrame = null!;
     private readonly object _frameLock = new object();
+    private Mat _latestFramePreview = null!;
+    private readonly object _frameLockPreview = new object();
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     private Task? _frameCaptureTask;
+    private int failedReads = 0;
 
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
     {
@@ -54,6 +57,18 @@ public class CameraService : IDisposable
         Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
     }
 
+    public Mat LatestFramePreview
+    {
+        get
+        {
+            lock (_frameLockPreview)
+            {
+                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(1280, 720));
+                return _latestFramePreview.Clone();
+            }
+        }
+    }
+
     public Mat LatestFrame
     {
         get
@@ -75,6 +90,7 @@ public class CameraService : IDisposable
                 if (!_videoCapture.Read(frame))
                 {
                     Console.WriteLine("Could not read frame from device.");
+                    failedReads++;
                     await Task.Delay(50);
                     continue;
                 }
@@ -82,6 +98,7 @@ public class CameraService : IDisposable
                 if (frame.IsEmpty)
                 {
                     Console.WriteLine("Frame was empty.");
+                    failedReads++;
                     await Task.Delay(50);
                     continue;
                 }
@@ -97,7 +114,7 @@ public class CameraService : IDisposable
                 _videoWriter.Write(frame);
                 frame.Dispose();
 
-            } while (!cancellationToken.IsCancellationRequested);
+            } while (!cancellationToken.IsCancellationRequested && failedReads < 5);
         }
         catch (Exception ex)
         {

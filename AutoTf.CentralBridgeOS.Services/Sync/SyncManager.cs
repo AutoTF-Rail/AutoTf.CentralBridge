@@ -6,6 +6,8 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 
 public class SyncManager
 {
+	private readonly FileManager _fileManager;
+
 	// ReSharper disable once NotAccessedField.Local
 	private readonly KeySync _keySync;
 	// ReSharper disable once NotAccessedField.Local
@@ -16,11 +18,16 @@ public class SyncManager
 	private readonly Logger _logger = Statics.Logger;
 	private readonly Timer _syncTimer = new Timer(150000);
 
-	public static DateTime LastSynced = DateTime.Now;
-	public static DateTime LastSyncTry = DateTime.Now;
+	public static DateTime LastSynced;
+	public static DateTime LastSyncTry;
 
 	public SyncManager(FileManager fileManager, CameraService cameraService)
 	{
+		_fileManager = fileManager;
+		
+		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSync"));
+		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSyncTry"));
+
 		Statics.ShutdownEvent += Dispose;
 		_keySync = new KeySync(_logger, fileManager);
 		_macSync = new MacSync(_logger, fileManager);
@@ -44,6 +51,8 @@ public class SyncManager
 	private void SyncSyncTimerElapsed(object? sender, ElapsedEventArgs e)
 	{
 		LastSyncTry = DateTime.Now;
+		_fileManager.WriteAllText("lastSyncTry", LastSyncTry.ToString("MM/dd/yyyyTHH:mm:ss"));
+		
 		_logger.Log("Checking for internet.");
 		if (NetworkConfigurator.IsInternetAvailable())
 		{
@@ -59,6 +68,7 @@ public class SyncManager
 	private void TrySync()
 	{
 		LastSynced = DateTime.Now;
+		_fileManager.WriteAllText("lastSync", LastSynced.ToString("MM/dd/yyyyTHH:mm:ss"));
 		
 		Statics.SyncEvent?.Invoke();
 		

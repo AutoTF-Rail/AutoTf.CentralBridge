@@ -3,6 +3,8 @@ using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
+using Emgu.CV;
+using Emgu.CV.Structure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -14,12 +16,49 @@ public class InformationController : ControllerBase
 {
 	private readonly NetworkManager _networkManager;
 	private readonly CodeValidator _codeValidator;
+	private readonly FileManager _fileManager;
+	private readonly CameraService _cameraService;
 	private readonly Logger _logger = Statics.Logger;
 
-	public InformationController(NetworkManager networkManager, CodeValidator codeValidator)
+	public InformationController(NetworkManager networkManager, CodeValidator codeValidator, FileManager fileManager, CameraService cameraService)
 	{
 		_networkManager = networkManager;
 		_codeValidator = codeValidator;
+		_fileManager = fileManager;
+		_cameraService = cameraService;
+		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
+	}
+
+	[HttpGet("latestFramePreview")]
+	public IActionResult LatestFramePreview()
+	{
+		Mat frame = _cameraService.LatestFramePreview;
+
+		byte[] imageBytes = new MemoryStream(frame.ToImage<Bgr, byte>().Bytes).ToArray();
+
+		return File(imageBytes, "image/png");
+	}
+
+	[HttpGet("latestFrame")]
+	public IActionResult LatestFrame()
+	{
+		Mat frame = _cameraService.LatestFrame;
+
+		byte[] imageBytes = new MemoryStream(frame.ToImage<Bgr, byte>().Bytes).ToArray();
+
+		return File(imageBytes, "image/png");
+	}
+
+	[HttpGet("trainId")]
+	public IActionResult TrainId()
+	{
+		return Content(_fileManager.ReadFile("trainId"));
+	}
+
+	[HttpGet("trainName")]
+	public IActionResult TrainName()
+	{
+		return Content(_fileManager.ReadFile("TrainName"));
 	}
 
 	[HttpGet("lastsynctry")]
@@ -85,7 +124,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			_logger.Log($"Device {macAddr} said hello as loginUsername");
+			_logger.Log($"Device {macAddr} said hello as {loginUsername}");
 			_networkManager.DeviceSaidHelloEvent.Invoke(macAddr);
 			
 			return Ok();
