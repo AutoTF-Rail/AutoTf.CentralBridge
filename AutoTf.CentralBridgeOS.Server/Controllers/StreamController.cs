@@ -32,7 +32,7 @@ public class StreamController : ControllerBase
 	{
 		try
 		{
-			TimeSpan frameInterval = TimeSpan.FromMilliseconds(50);
+			TimeSpan frameInterval = TimeSpan.FromMilliseconds(100);
 
 			while (!cancellationToken.IsCancellationRequested)
 			{
