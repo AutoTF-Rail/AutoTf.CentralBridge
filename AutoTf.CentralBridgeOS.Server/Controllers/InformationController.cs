@@ -44,11 +44,7 @@ public class InformationController : ControllerBase
 	{
 		Mat frame = _cameraService.LatestFrame;
 
-		byte[] imageBytes;
-		using (MemoryStream ms = new MemoryStream(frame.ToImage<Bgr, byte>().Bytes))
-		{
-			imageBytes = ms.ToArray();
-		}
+		byte[] imageBytes = CvInvoke.Imencode(".png", frame);
 
 		return File(imageBytes, "image/png");
 	}
