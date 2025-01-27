@@ -45,9 +45,7 @@ public class InformationController : ControllerBase
 		Mat frame = _cameraService.LatestFrame;
 		CvInvoke.Imwrite("latest.png", frame);
 
-		byte[] imageBytes = new MemoryStream(frame.ToImage<Bgr, byte>().Bytes).ToArray();
-
-		return File(imageBytes, "image/png");
+		return File("latest.png", "image/png");
 	}
 
 	[HttpGet("trainId")]
