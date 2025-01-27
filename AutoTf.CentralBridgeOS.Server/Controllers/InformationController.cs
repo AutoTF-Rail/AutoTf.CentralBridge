@@ -38,6 +38,7 @@ public class InformationController : ControllerBase
 
 			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
 
+			frame.Dispose();
 			return File(imageBytes, "image/png");
 		}
 		catch (Exception e)
@@ -57,12 +58,14 @@ public class InformationController : ControllerBase
 
 			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
 
+			frame.Dispose();
 			return File(imageBytes, "image/png");
 		}
 		catch (Exception e)
 		{
 			Console.WriteLine("Failed to supply frame:");
 			Console.WriteLine(e.Message);
+			Console.WriteLine(e.StackTrace);
 			return BadRequest(e.Message);
 		}
 	}
