@@ -16,7 +16,7 @@ public class CameraService : IDisposable
     private readonly object _frameLockPreview = new object();
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     private Task? _frameCaptureTask;
-    private int failedReads = 0;
+    private int _failedReads = 0;
 
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
     {
@@ -43,6 +43,7 @@ public class CameraService : IDisposable
 
     public void IntervalCapture(bool first = false)
     {
+        _failedReads = 0;
         if (!first)
         {
             _videoCapture.Stop();
@@ -90,7 +91,7 @@ public class CameraService : IDisposable
                 if (!_videoCapture.Read(frame))
                 {
                     Console.WriteLine("Could not read frame from device.");
-                    failedReads++;
+                    _failedReads++;
                     await Task.Delay(50);
                     continue;
                 }
@@ -98,7 +99,7 @@ public class CameraService : IDisposable
                 if (frame.IsEmpty)
                 {
                     Console.WriteLine("Frame was empty.");
-                    failedReads++;
+                    _failedReads++;
                     await Task.Delay(50);
                     continue;
                 }
@@ -114,7 +115,7 @@ public class CameraService : IDisposable
                 _videoWriter.Write(frame);
                 frame.Dispose();
 
-            } while (!cancellationToken.IsCancellationRequested && failedReads < 5);
+            } while (!cancellationToken.IsCancellationRequested && _failedReads < 5);
         }
         catch (Exception ex)
         {
