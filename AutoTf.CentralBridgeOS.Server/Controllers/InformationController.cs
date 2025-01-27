@@ -129,8 +129,10 @@ public class InformationController : ControllerBase
 			
 			return Ok();
 		}
-		catch
+		catch (Exception ex)
 		{
+			Console.WriteLine("Hello error:");
+			Console.WriteLine(ex.Message);
 			return BadRequest();
 		}
 	}
