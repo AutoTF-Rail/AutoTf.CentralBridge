@@ -9,7 +9,7 @@ public class CameraService : IDisposable
     private readonly int _frameWidth;
     private readonly int _frameHeight;
     private readonly VideoCapture _videoCapture;
-    private VideoWriter _videoWriter;
+    private VideoWriter? _videoWriter;
     private Mat? _latestFrame;
     private readonly object _frameLock = new object();
     private Mat? _latestFramePreview;
@@ -17,6 +17,7 @@ public class CameraService : IDisposable
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     private Task? _frameCaptureTask;
     private int _failedReads = 0;
+    
 
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
     {
@@ -34,6 +35,9 @@ public class CameraService : IDisposable
                 
             Directory.CreateDirectory("recordings");
             
+            if(!NetworkConfigurator.IsInternetAvailable())
+                IntervalCapture();
+            
             Console.WriteLine("Is capture open: " + _videoCapture.IsOpened);
             Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
 
@@ -45,26 +49,31 @@ public class CameraService : IDisposable
         }
     }
 
-    public void IntervalCapture(bool first = false)
+    // We don't need to call this method on startup, because the sync does it (Only if internet is available)
+    public void IntervalCapture()
     {
         try
         {
             _failedReads = 0;
-            if (!first)
-            {
+            if(_videoWriter != null)
                 _videoWriter.Dispose();
-            }
             
-            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-                VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
-        
-            _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+            StartVideoWriter();
         }
         catch (Exception e)
         {
             Console.WriteLine("Error during capture interval:");
             Console.WriteLine(e);
         }
+    }
+
+    // This needs to be a seperate method, so that we don't start 
+    private void StartVideoWriter()
+    {
+        _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
+            VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
+        
+        _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
     }
 
     public Mat? LatestFramePreview
