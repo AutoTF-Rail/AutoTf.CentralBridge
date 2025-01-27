@@ -43,6 +43,8 @@ public class Program
 		BluetoothService bluetoothService = app.Services.GetRequiredService<BluetoothService>();
 		bluetoothService.StartBeaconAsync();
 
+		app.UseWebSockets();
+		
 		app.Lifetime.ApplicationStopping.Register(() =>
 		{
 			Console.WriteLine("Invoking shutdown.");
