@@ -44,6 +44,7 @@ public class InformationController : ControllerBase
 		{
 			Console.WriteLine("Failed to supply preview frame:");
 			Console.WriteLine(e.Message);
+			return BadRequest(e.Message);
 		}
 	}
 
@@ -62,6 +63,7 @@ public class InformationController : ControllerBase
 		{
 			Console.WriteLine("Failed to supply frame:");
 			Console.WriteLine(e.Message);
+			return BadRequest(e.Message);
 		}
 	}
 
