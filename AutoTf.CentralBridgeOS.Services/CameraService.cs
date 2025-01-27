@@ -8,8 +8,8 @@ public class CameraService : IDisposable
 {
     private readonly int _frameWidth;
     private readonly int _frameHeight;
-    private VideoCapture _videoCapture;
-    private readonly VideoWriter _videoWriter;
+    private readonly VideoCapture _videoCapture;
+    private VideoWriter _videoWriter;
     private Mat? _latestFrame;
     private readonly object _frameLock = new object();
     private Mat? _latestFramePreview;
@@ -26,13 +26,17 @@ public class CameraService : IDisposable
             _frameHeight = frameHeight;
             
             Statics.ShutdownEvent += Dispose;
-            IntervalCapture(true);
 
+            _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
+            _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
+            _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
+            _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'))
+                
             Directory.CreateDirectory("recordings");
-            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-                VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(frameWidth, frameHeight), true);
-        
-            _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+            
+            Console.WriteLine("Is capture open: " + _videoCapture.IsOpened);
+            Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
+
         }
         catch (Exception e)
         {
@@ -48,17 +52,13 @@ public class CameraService : IDisposable
             _failedReads = 0;
             if (!first)
             {
-                _videoCapture.Stop();
-                _videoCapture.Release();
-                _videoCapture.Dispose();
+                _videoWriter.Dispose();
             }
-
-            _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
-            _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
-            _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
-            _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
-            Console.WriteLine("Is capture open: " + _videoCapture.IsOpened);
-            Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
+            
+            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
+                VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
+        
+            _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
         }
         catch (Exception e)
         {
@@ -135,6 +135,7 @@ public class CameraService : IDisposable
             if (_failedReads == 5)
             {
                 Console.WriteLine("Stopped capture due to failed reads.");
+                _videoWriter.Dispose();
             }
         }
         catch (Exception ex)
