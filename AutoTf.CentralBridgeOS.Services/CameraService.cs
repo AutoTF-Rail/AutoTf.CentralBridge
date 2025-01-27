@@ -125,7 +125,7 @@ public class CameraService : IDisposable
                     _latestFramePreview.Dispose();
 
                 _latestFramePreview = new Mat();
-                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(1280, 720));
+                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
 
                 _videoWriter.Write(frame);
                 frame.Dispose();

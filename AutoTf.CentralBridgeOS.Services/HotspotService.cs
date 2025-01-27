@@ -47,6 +47,9 @@ public class HotspotService : IDisposable
                                "wpa_key_mgmt=WPA-PSK\n" +
                                "rsn_pairwise=CCMP\n" + 
                                "macaddr_acl=1\n" + 
+                               "ht_capab=[HT40+][SHORT-GI-20][SHORT-GI-40]\n" + 
+                               "ieee80211n=1\n" + 
+                               "tx_queue_data3_aifs=7\n" + 
                                "accept_mac_file=/etc/hostapd/accepted_macs.txt\n";
         
         File.WriteAllText(configPath, hostapdConfig);

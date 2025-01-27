@@ -29,8 +29,31 @@ public class NetworkManager : IDisposable
 		_watcher.Path = Path.GetDirectoryName(leasesFilePath)!;
 		_watcher.Filter = Path.GetFileName(leasesFilePath);
 		_watcher.Changed += OnLeasesFileChanged;
+		_watcher.Deleted += OnDeleted;
 
 		_watcher.EnableRaisingEvents = true;
+	}
+
+	private void OnDeleted(object sender, FileSystemEventArgs e)
+	{
+		_logger.Log("A device has disconnected from the hotspot.");
+		string[] lines = File.ReadAllLines(e.FullPath);
+		
+		foreach (string line in lines)
+		{
+			// time, MAC, IP, name, id
+			string[] parts = line.Split(' ');
+
+			if (parts.Length <= 1) 
+				continue;
+			
+			_logger.Log("Device:");
+			_logger.Log("MAC: " + parts[1]);
+			_logger.Log("IP: " + parts[2]);
+			_logger.Log("Host: " + parts[3]);
+			if (Statics.AllowedDevices.Contains(parts[1]))
+				Statics.AllowedDevices.Remove(parts[1]);
+		}
 	}
 
 	private void OnLeasesFileChanged(object sender, FileSystemEventArgs e)
