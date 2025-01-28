@@ -23,6 +23,23 @@ public class InformationController : ControllerBase
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
 	}
 
+	[HttpPost("version")]
+	public IActionResult Version()
+	{
+		try
+		{
+			_logger.Log("ROOT-C: Version was requested.");
+			
+			return Ok(Statics.GetGitVersion());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("ROOT-C: Could not report version:");
+			_logger.Log(e.Message);
+			return BadRequest("ROOT-C: Could not report version.");
+		}
+	}
+
 	[HttpGet("trainId")]
 	public IActionResult TrainId()
 	{

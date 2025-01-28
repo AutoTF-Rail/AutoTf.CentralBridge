@@ -17,7 +17,6 @@ public class CameraService : IDisposable
     private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
     private Task? _frameCaptureTask;
     private int _failedReads = 0;
-    
 
     public CameraService(int frameWidth = 1920, int frameHeight = 1080)
     {

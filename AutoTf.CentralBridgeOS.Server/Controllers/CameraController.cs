@@ -1,6 +1,7 @@
 using System.Net.WebSockets;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -16,11 +17,28 @@ public class CameraController : ControllerBase
 {
 	private readonly CameraService _cameraService;
 	private readonly Logger _logger;
+	private readonly SyncManager _syncManager;
 
-	public CameraController(CameraService cameraService, Logger logger)
+	public CameraController(CameraService cameraService, Logger logger, SyncManager syncManager)
 	{
 		_cameraService = cameraService;
 		_logger = logger;
+		_syncManager = syncManager;
+	}
+
+	[HttpGet("nextSave")]
+	public IActionResult NextSave()
+	{
+		try
+		{
+			return Content(_syncManager.NextInterval().ToString("o"));
+		}
+		catch (Exception e)
+		{
+			_logger.Log("CAM-C: Could not supply next save:");
+			_logger.Log(e.Message);
+			return BadRequest("Could not supply next save.");
+		}
 	}
 	
 	[Route("stream")]
@@ -28,6 +46,12 @@ public class CameraController : ControllerBase
 	{
 		try
 		{
+			if (!Request.Headers.IsAllowedDevice())
+			{
+				Response.StatusCode = 401;
+				return;
+			}
+			
 			if (!HttpContext.WebSockets.IsWebSocketRequest)
 			{
 				Response.StatusCode = 400;

@@ -17,6 +17,7 @@ public class SyncManager
 	
 	private readonly Logger _logger = Statics.Logger;
 	private readonly Timer _syncTimer = new Timer(150000);
+	private DateTime _nextElapseTime;
 
 	public static DateTime LastSynced;
 	public static DateTime LastSyncTry;
@@ -39,9 +40,15 @@ public class SyncManager
 		}
 		StartInternetListener();
 	}
+
+	public DateTime NextInterval()
+	{
+		return _nextElapseTime;
+	}
 	
 	private void StartInternetListener()
 	{
+		_nextElapseTime = DateTime.Now.AddMilliseconds(150000);
 		_syncTimer.Elapsed += SyncSyncTimerElapsed;
 		_syncTimer.Start();
 		
@@ -50,6 +57,7 @@ public class SyncManager
 
 	private void SyncSyncTimerElapsed(object? sender, ElapsedEventArgs e)
 	{
+		_nextElapseTime = DateTime.Now.AddMilliseconds(150000);
 		LastSyncTry = DateTime.Now;
 		_fileManager.WriteAllText("lastSyncTry", LastSyncTry.ToString("o"));
 		
