@@ -16,7 +16,6 @@ public static class Program
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 		
 		NetworkManager unused = new NetworkManager();
-		BluetoothService unused1 = new BluetoothService();
 		
 		FileManager fileManager = new FileManager();
 		CameraService cameraService = new CameraService();
@@ -30,6 +29,9 @@ public static class Program
 		
 		if (!hotspotService.Configure())
 			Logger.Log("HOTSPOT: Could not start hotspot.");
+		
+		// Bluetooth needs the SSID to be set 
+		BluetoothService unused1 = new BluetoothService();
 
 		builder.Services.Configure<HostOptions>(x => x.ShutdownTimeout = TimeSpan.FromSeconds(20));
 
