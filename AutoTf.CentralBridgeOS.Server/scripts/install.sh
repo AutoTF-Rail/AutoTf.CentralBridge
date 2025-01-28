@@ -22,21 +22,37 @@ echo "Setting up the script to run at startup..."
 
 cat <<EOF | sudo tee /etc/systemd/system/startupScript.service
 [Unit]
-Description=Run startup script
+Description=Auto Start Bridge
 After=network.target
 
 [Service]
-Type=simple
-ExecStart=/bin/bash /home/display/AutoTf.CentralBridgeOS/AutoTf.CentralBridgeOS/scripts/startup.sh
-User=root
-Group=root
+ExecStart=/usr/local/bin/dotnet run --no-build -m -c RELEASE
+WorkingDirectory=/home/CentralBridge/AutoTf.CentralBridgeOS/AutoTf.CentralBridgeOS.Server
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+Environment="HOME=/home/CentralBridge"
+Environment="DOTNET_CLI_HOME=/home/CentralBridge"
+Environment="APP_NON_INTERACTIVE=true"
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
+
 sudo systemctl enable startupScript.service
 sudo systemctl start startupScript.service
+
+# Add disable_splash=1 to /boot/firmware/config.txt if it doesn't exist
+config_file="/boot/firmware/config.txt"
+if ! grep -q "^disable_splash=1" $config_file; then
+    echo "Adding disable_splash=1 to $config_file"
+    echo "disable_splash=1" | sudo tee -a $config_file > /dev/null
+else
+    echo "disable_splash=1 is already present in $config_file"
+fi
 
 echo "Rebooting the system..."
 sudo reboot
