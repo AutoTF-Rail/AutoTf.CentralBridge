@@ -1,6 +1,6 @@
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
-using AutoTf.Logging;
+using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridgeOS.Server;
 
@@ -22,6 +22,7 @@ public static class Program
 		HotspotService hotspotService = new HotspotService(fileManager);
 		
 		builder.Services.AddControllers();
+		builder.Services.AddSingleton(Logger);
 		builder.Services.AddSingleton(fileManager);
 		builder.Services.AddSingleton(cameraService);
 		builder.Services.AddSingleton<CodeValidator>();
