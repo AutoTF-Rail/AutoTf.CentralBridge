@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridgeOS.Server.Controllers;
 
-[Route("/")]
 public class RootController : ControllerBase
 {
 	private readonly CameraService _cameraService;
@@ -23,7 +22,7 @@ public class RootController : ControllerBase
 		return Content("Meow");
 	}
 
-	[HttpPost("update")]
+	[HttpPost("/update")]
 	public IActionResult Update()
 	{
 		try
