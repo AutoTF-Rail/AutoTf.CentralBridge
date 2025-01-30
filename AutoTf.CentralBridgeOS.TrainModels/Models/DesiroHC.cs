@@ -10,7 +10,7 @@ public sealed class DesiroHC : DefaultModel
 		Initialize();
 	}
 
-	internal override void Initialize()
+	public override void Initialize()
 	{
 		Levers.Add(0, new LeverModel()
 		{
