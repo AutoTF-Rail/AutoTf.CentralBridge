@@ -30,10 +30,7 @@ public class SystemController : ControllerBase
 			string prevDir = Directory.GetCurrentDirectory();
 		
 			Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridgeOS/AutoTf.CentralBridgeOS.Server");
-			CommandExecuter.ExecuteSilent("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github\"", true);
-			CommandExecuter.ExecuteSilent("git reset --hard", true);
-			CommandExecuter.ExecuteSilent("git pull", true);
-			CommandExecuter.ExecuteSilent("dotnet build -c RELEASE -m", true);
+			CommandExecuter.ExecuteSilent("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github\" && git reset --hard && git pull && dotnet build -c RELEASE -m", true);
 		
 			Directory.SetCurrentDirectory(prevDir);
 
