@@ -10,8 +10,6 @@
 
     <ItemGroup>
       <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250106-1316" />
-      <PackageReference Include="AutoTf.SerialProtocol" Version="1.0.0-20250118170053" />
-      <PackageReference Include="AutoTf.SerialProtocol.Models" Version="1.0.0-20250118170053" />
       <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
       <PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.10.0.5680" />
       <PackageReference Include="Iot.Device.Bindings" Version="3.2.0" />
