@@ -39,6 +39,7 @@ public class RootController : ControllerBase
 		
 			Directory.SetCurrentDirectory("/home/display/AutoTf.TabletOS/AutoTf.TabletOS.Avalonia");
 		
+			CommandExecuter.ExecuteSilent("git reset --hard", true);
 			CommandExecuter.ExecuteSilent("git pull", true);
 			CommandExecuter.ExecuteSilent("dotnet build -c RELEASE -m", true);
 		
