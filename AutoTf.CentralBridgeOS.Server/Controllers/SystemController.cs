@@ -29,11 +29,8 @@ public class SystemController : ControllerBase
 			_logger.Log("ROOT-C: Update was requested.");
 			string prevDir = Directory.GetCurrentDirectory();
 		
-			CommandExecuter.ExecuteSilent("eval $(\"ssh-agent\")", true);
-			CommandExecuter.ExecuteSilent("ssh-add /home/CentralBridge/github", true);
-		
 			Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridgeOS/AutoTf.CentralBridgeOS.Server");
-		
+			CommandExecuter.ExecuteSilent("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github\"", true);
 			CommandExecuter.ExecuteSilent("git reset --hard", true);
 			CommandExecuter.ExecuteSilent("git pull", true);
 			CommandExecuter.ExecuteSilent("dotnet build -c RELEASE -m", true);
