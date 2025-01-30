@@ -44,18 +44,18 @@ public class MotorManager : IDisposable
 			return;
 		
 		_pca = new Pca9685(_i2CDevice);
-		_pca.PwmFrequency = 50;
 	}
 
 	public void SetMotorAngle(int channel, double angle)
 	{
 		angle = Math.Max(0, Math.Min(270, angle));
 
-		double pulseWidth = 500 + (angle / 270.0) * (2500 - 500); 
+		double pulseWidth = 500 + (angle / 270.0) * (2500 - 500);
 
-		double dutyCycle = (pulseWidth - 500) / 2000.0;
-		_logger.Log($"Motor: Setting {channel} to {dutyCycle}");
-		_pca.SetDutyCycle(channel, dutyCycle);
+		double dutyCycle = pulseWidth / (1000.0 / PwmFrequency);
+		
+		_logger.Log($"Motor: Setting {channel} to {dutyCycle / 100}");
+		_pca.SetDutyCycle(channel, dutyCycle / 100);
 	}
 	
 	public void MoveToMiddle()
