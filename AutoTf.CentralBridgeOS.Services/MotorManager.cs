@@ -1,4 +1,5 @@
 using System.Device.I2c;
+using AutoTf.Logging;
 using Iot.Device.Pwm;
 
 namespace AutoTf.CentralBridgeOS.Services;
@@ -9,6 +10,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 // 5: SCL 6: GND
 public class MotorManager : IDisposable
 {
+	private readonly Logger _logger;
 	private const int PwmFrequency = 50;
 	private const double MinPulseWidthMs = 0.5;
 	private const double MaxPulseWidthMs = 2.5;
@@ -20,8 +22,9 @@ public class MotorManager : IDisposable
 	
 	private bool? _areMotorsAvailable;
 	
-	public MotorManager()
+	public MotorManager(Logger logger)
 	{
+		_logger = logger;
 		Initialize();
 	}
 
@@ -49,6 +52,7 @@ public class MotorManager : IDisposable
 		double pulseWidthMs = MinPulseWidthMs + (angle / 270.0) * (MaxPulseWidthMs - MinPulseWidthMs);
 
 		double dutyCycle = pulseWidthMs / (1000.0 / PwmFrequency) * 100;
+		_logger.Log($"Motor: Setting {channel} to {dutyCycle / 100}");
 		_pca.SetDutyCycle(channel, dutyCycle / 100);
 	}
 	

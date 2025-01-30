@@ -81,6 +81,7 @@ public class TrainController : ControllerBase
 		{
 			if (!Request.Headers.IsAllowedDevice())
 				return Unauthorized();
+			_logger.Log($"TC-C: Setting lever: {data.LeverIndex} to {data.Percentage}%");
 			
 			_trainModel.SetLever(data.LeverIndex, data.Percentage);
 			return Ok();

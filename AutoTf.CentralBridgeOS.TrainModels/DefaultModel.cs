@@ -1,17 +1,20 @@
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
+using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.TrainModels;
 
 public class DefaultModel : ITrainModel
 {
 	private readonly MotorManager _motorManager;
+	private readonly Logger _logger;
 
 	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
 
-	public DefaultModel(MotorManager motorManager)
+	public DefaultModel(MotorManager motorManager, Logger logger)
 	{
 		_motorManager = motorManager;
+		_logger = logger;
 	}
 
 	public virtual void Initialize()
@@ -74,11 +77,13 @@ public class DefaultModel : ITrainModel
 			else
 				angle = lever.MiddleAngle + (percentage * -1 / 100) * (lever.MinimumAngle - lever.MinimumAngle);
 			
+			_logger.Log($"Default Train: Setting Combined Lever to: {angle}");
 			_motorManager.SetMotorAngle(index, angle);
 		}
 		else if (lever.Type == LeverType.MainBrake)
 		{
 			double angle = lever.MinimumAngle + (percentage / 100) * (lever.MaximumAngle - lever.MinimumAngle);
+			_logger.Log($"Default Train: Setting MainBrake to: {angle}");
 			_motorManager.SetMotorAngle(index, angle);
 		}
 	}
