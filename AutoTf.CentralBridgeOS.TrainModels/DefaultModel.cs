@@ -3,7 +3,7 @@ using AutoTf.CentralBridgeOS.Services;
 
 namespace AutoTf.CentralBridgeOS.TrainModels;
 
-public abstract class DefaultModel : ITrainModel
+public class DefaultModel : ITrainModel
 {
 	private readonly MotorManager _motorManager;
 
