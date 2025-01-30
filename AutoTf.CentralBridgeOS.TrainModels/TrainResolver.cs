@@ -20,9 +20,13 @@ public static class TrainResolver
 		
 		if (trainModelMap.TryGetValue(trainType, out Type? type))
 		{
-			return (serviceProvider.GetService(type) as ITrainModel)!;
+			ITrainModel? trainModel = serviceProvider.GetService(type) as ITrainModel;
+			trainModel!.Initialize();
+			return trainModel;
 		}
 
-		return (serviceProvider.GetService(typeof(DefaultModel)) as ITrainModel)!;
+		ITrainModel? train = serviceProvider.GetService(typeof(DefaultModel)) as ITrainModel;
+		train!.Initialize();
+		return train;
 	}
 }

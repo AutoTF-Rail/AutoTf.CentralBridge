@@ -8,4 +8,5 @@ public interface ITrainModel
 	public void SetLever(int index, double percentage);
 	public LeverType GetLeverType(int index);
 	public double? GetLeverPercentage(int index);
+	void Initialize();
 }

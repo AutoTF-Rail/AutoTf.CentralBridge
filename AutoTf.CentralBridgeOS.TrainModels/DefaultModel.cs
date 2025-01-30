@@ -14,8 +14,9 @@ public class DefaultModel : ITrainModel
 		_motorManager = motorManager;
 	}
 
-	internal virtual void Initialize()
+	public virtual void Initialize()
 	{
+		// TODO: Log which train model is being used.
 		Levers.Add(0, new LeverModel()
 		{
 			Type = LeverType.CombinedThrottle,
