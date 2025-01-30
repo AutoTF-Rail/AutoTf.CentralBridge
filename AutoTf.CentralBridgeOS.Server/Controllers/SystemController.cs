@@ -5,18 +5,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridgeOS.Server.Controllers;
 
-[Route("/")]
-public class RootController : ControllerBase
+[ApiController]
+[Route("/system")]
+public class SystemController : ControllerBase
 {
 	private readonly CameraService _cameraService;
 	private readonly Logger _logger;
 
-	public RootController(CameraService cameraService, Logger logger)
+	public SystemController(CameraService cameraService, Logger logger)
 	{
 		_cameraService = cameraService;
 		_logger = logger;
 	}
-
+	
 	[HttpPost("update")]
 	public IActionResult Update()
 	{
