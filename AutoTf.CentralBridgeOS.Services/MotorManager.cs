@@ -53,7 +53,7 @@ public class MotorManager : IDisposable
 
 		double pulseWidth = 500 + (angle / 270.0) * (2500 - 500); 
 
-		double dutyCycle = pulseWidth / 1000.0;
+		double dutyCycle = (pulseWidth - 500) / 2000.0;
 		_logger.Log($"Motor: Setting {channel} to {dutyCycle}");
 		_pca.SetDutyCycle(channel, dutyCycle);
 	}
