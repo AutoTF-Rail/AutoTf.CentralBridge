@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridgeOS.Server.Controllers;
 
+[Route("/")]
 public class RootController : ControllerBase
 {
 	private readonly CameraService _cameraService;
@@ -14,12 +15,6 @@ public class RootController : ControllerBase
 	{
 		_cameraService = cameraService;
 		_logger = logger;
-	}
-	
-	[HttpGet]
-	public IActionResult Index()
-	{
-		return Content("Meow");
 	}
 
 	[HttpPost("update")]
