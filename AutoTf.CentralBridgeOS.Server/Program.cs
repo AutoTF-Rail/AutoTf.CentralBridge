@@ -28,6 +28,7 @@ public static class Program
 		builder.Services.AddSingleton(fileManager);
 		builder.Services.AddSingleton(cameraService);
 		builder.Services.AddSingleton<CodeValidator>();
+		builder.Services.AddSingleton<MotorManager>();
 		builder.Services.AddSingleton(new SyncManager(fileManager, cameraService));
 
 		builder.Services.AddSingleton<ITrainModel>(provider => TrainResolver.Resolve(provider, fileManager.ReadFile("TrainName")));
