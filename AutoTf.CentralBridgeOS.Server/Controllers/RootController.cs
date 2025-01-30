@@ -22,7 +22,7 @@ public class RootController : ControllerBase
 		return Content("Meow");
 	}
 
-	[HttpPost("/update")]
+	[HttpPost("update")]
 	public IActionResult Update()
 	{
 		try
