@@ -32,6 +32,7 @@ public class MotorManager : IDisposable
 	{
 		Statics.ShutdownEvent += Dispose;
 		InitializeI2CConnection();
+		MoveToMiddle();
 	}
 
 	private void InitializeI2CConnection()
