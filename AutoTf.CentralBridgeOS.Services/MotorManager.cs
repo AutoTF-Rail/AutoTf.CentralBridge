@@ -44,6 +44,7 @@ public class MotorManager : IDisposable
 			return;
 		
 		_pca = new Pca9685(_i2CDevice);
+		_pca.PwmFrequency = 50;
 	}
 
 	public void SetMotorAngle(int channel, double angle)
