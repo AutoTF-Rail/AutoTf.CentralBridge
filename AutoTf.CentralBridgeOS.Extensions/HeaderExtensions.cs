@@ -12,10 +12,10 @@ public static class HeaderExtensions
 		{
 			if (!dict.TryGetValue("macAddr", out StringValues addr))
 				return false;
-			if (addr.Count != 0)
+			if (addr.Count < 0)
 				return false;
-			if (!Statics.AllowedDevices.Contains(addr[0]!))
-				return false;
+			
+			return Statics.AllowedDevices.Contains(addr[0]!);
 		}
 		catch
 		{
