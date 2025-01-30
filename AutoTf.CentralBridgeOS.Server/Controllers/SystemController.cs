@@ -32,7 +32,7 @@ public class SystemController : ControllerBase
 			CommandExecuter.ExecuteSilent("eval $(\"ssh-agent\")", true);
 			CommandExecuter.ExecuteSilent("ssh-add /home/CentralBridge/github", true);
 		
-			Directory.SetCurrentDirectory("/home/display/AutoTf.TabletOS/AutoTf.TabletOS.Avalonia");
+			Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridgeOS/AutoTf.CentralBridgeOS.Server");
 		
 			CommandExecuter.ExecuteSilent("git reset --hard", true);
 			CommandExecuter.ExecuteSilent("git pull", true);
