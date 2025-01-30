@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Mode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Extensions", "AutoTf.CentralBridgeOS.Extensions\AutoTf.CentralBridgeOS.Extensions.csproj", "{94653547-CB18-4773-9BF5-F4CDC78612BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.TrainModels", "AutoTf.CentralBridgeOS.TrainModels\AutoTf.CentralBridgeOS.TrainModels.csproj", "{490A202C-CFE3-46E8-9116-24CFFE6ED7F2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{94653547-CB18-4773-9BF5-F4CDC78612BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94653547-CB18-4773-9BF5-F4CDC78612BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94653547-CB18-4773-9BF5-F4CDC78612BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{490A202C-CFE3-46E8-9116-24CFFE6ED7F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{490A202C-CFE3-46E8-9116-24CFFE6ED7F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{490A202C-CFE3-46E8-9116-24CFFE6ED7F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{490A202C-CFE3-46E8-9116-24CFFE6ED7F2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

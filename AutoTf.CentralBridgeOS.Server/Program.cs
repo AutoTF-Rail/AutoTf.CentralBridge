@@ -1,5 +1,7 @@
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
+using AutoTf.CentralBridgeOS.TrainModels;
+using AutoTf.CentralBridgeOS.TrainModels.Models;
 using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridgeOS.Server;
@@ -27,6 +29,10 @@ public static class Program
 		builder.Services.AddSingleton(cameraService);
 		builder.Services.AddSingleton<CodeValidator>();
 		builder.Services.AddSingleton(new SyncManager(fileManager, cameraService));
+
+		builder.Services.AddSingleton<ITrainModel>(provider => TrainResolver.Resolve(provider, fileManager.ReadFile("TrainName")));
+
+		RegisterTrains(builder.Services);
 		
 		if (!hotspotService.Configure())
 			Logger.Log("HOTSPOT: Could not start hotspot.");
@@ -48,5 +54,12 @@ public static class Program
 		});
 		
 		app.Run("http://0.0.0.0:80");
+	}
+
+	private static void RegisterTrains(IServiceCollection builderServices)
+	{
+		builderServices.AddSingleton<DesiroHC>();
+		builderServices.AddSingleton<DesiroML>();
+		builderServices.AddSingleton<DefaultModel>();
 	}
 }

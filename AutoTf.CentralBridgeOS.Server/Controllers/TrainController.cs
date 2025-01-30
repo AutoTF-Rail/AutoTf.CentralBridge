@@ -1,0 +1,95 @@
+using System.ComponentModel.DataAnnotations;
+using AutoTf.CentralBridgeOS.Extensions;
+using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.TrainModels;
+using AutoTf.Logging;
+using Microsoft.AspNetCore.Mvc;
+
+namespace AutoTf.CentralBridgeOS.Server.Controllers;
+
+[ApiController]
+[Route("/control")]
+public class TrainController : ControllerBase
+{
+	private readonly Logger _logger;
+	private readonly ITrainModel _trainModel;
+
+	public TrainController(Logger logger, ITrainModel trainModel)
+	{
+		_logger = logger;
+		_trainModel = trainModel;
+	}
+
+	[HttpGet("leverCount")]
+	public IActionResult LeverCount()
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			return Content(_trainModel.LeverCount().ToString());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while supplying lever count:");
+			_logger.Log(e.Message);
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpGet("leverPosition")]
+	public IActionResult LeverPosition([FromQuery, Required] int leverIndex)
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			return Content(_trainModel.GetLeverPercentage(leverIndex).ToString() ?? string.Empty);
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while supplying lever position:");
+			_logger.Log(e.Message);
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpGet("leverType")]
+	public IActionResult LeverType([FromQuery, Required] int leverIndex)
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			return Content(_trainModel.GetLeverType(leverIndex).ToString());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while supplying lever type:");
+			_logger.Log(e.Message);
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpPost("setLever")]
+	public IActionResult SetLever([FromBody, Required] LeverSetModel data)
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+			
+			_trainModel.SetLever(data.LeverIndex, data.Percentage);
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while supplying lever type:");
+			_logger.Log(e.Message);
+			return BadRequest(e.Message);
+		}
+	}
+}
