@@ -72,9 +72,9 @@ public class DefaultModel : ITrainModel
 		{
 			double angle;
 			if (percentage >= 0)
-				angle = lever.MiddleAngle + (percentage / 100) * (lever.MaximumAngle - lever.MiddleAngle);
+				angle = lever.MiddleAngle + (percentage / 100) * (lever.MiddleAngle - lever.MaximumAngle);
 			else
-				angle = lever.MiddleAngle + (percentage / 100) * (lever.MiddleAngle - lever.MinimumAngle);
+				angle = lever.MiddleAngle + (percentage / 100) * (lever.MinimumAngle - lever.MiddleAngle);
 			
 			_logger.Log($"Default Train: Setting Combined Lever to: {angle}");
 			_motorManager.SetMotorAngle(index, angle);

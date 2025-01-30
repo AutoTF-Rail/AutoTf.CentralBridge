@@ -53,9 +53,9 @@ public class MotorManager : IDisposable
 
 		double pulseWidthMs = MinPulseWidthMs + (angle / 270.0) * (MaxPulseWidthMs - MinPulseWidthMs);
 
-		double dutyCycle = pulseWidthMs / (1000.0 / PwmFrequency);
+		double dutyCycle = (pulseWidthMs / (1000.0 / PwmFrequency)) * 100;
 		_logger.Log($"Motor: Setting {channel} to {dutyCycle}");
-		_pca.SetDutyCycle(channel, dutyCycle);
+		_pca.SetDutyCycle(channel, dutyCycle / 100);
 	}
 	
 	public void MoveToMiddle()
