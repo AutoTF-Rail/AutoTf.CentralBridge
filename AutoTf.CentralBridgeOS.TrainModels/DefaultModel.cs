@@ -19,6 +19,9 @@ public class DefaultModel : ITrainModel
 
 	public virtual void Initialize()
 	{
+		if (!_motorManager.AreMotorsAvailable())
+			return;
+		
 		// TODO: Log which train model is being used.
 		Levers.Add(0, new LeverModel()
 		{
