@@ -23,7 +23,7 @@ public class InformationController : ControllerBase
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
 	}
 
-	[HttpPost("version")]
+	[HttpGet("version")]
 	public IActionResult Version()
 	{
 		try
@@ -75,7 +75,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			return Content(SyncManager.LastSyncTry.ToString("dd.MM.yyyy HH:mm:ss"));
+			return Content(SyncManager.LastSyncTry.ToString("o"));
 		}
 		catch (Exception e)
 		{
@@ -90,7 +90,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			return Content(SyncManager.LastSynced.ToString("dd.MM.yyyy HH:mm:ss"));
+			return Content(SyncManager.LastSynced.ToString("o"));
 		}
 		catch (Exception e)
 		{
