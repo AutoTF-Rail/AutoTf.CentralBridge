@@ -18,7 +18,7 @@ public class MotorManager : IDisposable
 	
 	private I2cDevice _i2CDevice;
 	private I2cConnectionSettings _i2CSettings;
-	private Pca9685 _pca;
+	private Pca9685? _pca;
 	
 	private bool? _areMotorsAvailable;
 	
@@ -32,7 +32,6 @@ public class MotorManager : IDisposable
 	{
 		Statics.ShutdownEvent += Dispose;
 		InitializeI2CConnection();
-		MoveToMiddle();
 	}
 
 	private void InitializeI2CConnection()
@@ -44,10 +43,13 @@ public class MotorManager : IDisposable
 			return;
 		
 		_pca = new Pca9685(_i2CDevice);
+		MoveToMiddle();
 	}
 
 	public void SetMotorAngle(int channel, double angle)
 	{
+		if (_pca == null)
+			return;
 		angle = Math.Max(0, Math.Min(270, angle));
 
 		double pulseWidth = 500 + (angle / 270.0) * (2500 - 500);
@@ -60,12 +62,16 @@ public class MotorManager : IDisposable
 	
 	public void MoveToMiddle()
 	{
+		if (_pca == null)
+			return;
 		double dutyCycle = NeutralPulseWidthMs / (1000.0 / PwmFrequency) * 100;
 		_pca.SetDutyCycle(0, dutyCycle / 100);
 	}
 
 	public double GetMotorAngle(int channel)
 	{
+		if (_pca == null)
+			return -1000;
 		double dutyCycle = _pca.GetDutyCycle(channel) * 100;
 
 		double pulseWidthMs = (dutyCycle / 100) * (1000.0 / PwmFrequency);
@@ -76,26 +82,21 @@ public class MotorManager : IDisposable
 	}
 	
 	public bool AreMotorsAvailable()
-	{
-		if (_areMotorsAvailable == null)
+	{ 
+		try
 		{
-			try
-			{
-				_i2CDevice.ReadByte();
-				_areMotorsAvailable = true;
-			}
-			catch
-			{
-				_areMotorsAvailable = false;
-			}
+			_i2CDevice.ReadByte(); 
+			return true; 
 		}
-
-		return (bool)_areMotorsAvailable;
+		catch
+		{
+			return false;
+		}
 	}
 
 	public void Dispose()
 	{
 		_i2CDevice.Dispose();
-		_pca.Dispose();
+		_pca?.Dispose();
 	}
 }
