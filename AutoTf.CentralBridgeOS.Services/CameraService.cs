@@ -27,10 +27,11 @@ public class CameraService : IDisposable
             
             Statics.ShutdownEvent += Dispose;
 
-            _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
+            _videoCapture = new VideoCapture(0, VideoCapture.API.Ffmpeg);
             _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
             _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
-            _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+            _videoCapture.Set(CapProp.Fps, 60);
+            // _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
                 
             Directory.CreateDirectory("recordings");
             
