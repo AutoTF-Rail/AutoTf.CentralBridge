@@ -17,6 +17,9 @@ public class KeySync : Sync
 	{
 		try
 		{
+			if (NetworkConfigurator.IsInternetAvailable())
+				return;
+			
 			// If there are any new, it just syncs them all. It's easier this way.
 			if (await CheckForNewKeys())
 				await SyncKeys();

@@ -20,9 +20,14 @@ public class DataSync : Sync
 	{
 		try
 		{
-			await UpdateStatus();
-			await UploadLogs();
-			await UploadVideo();
+			if (NetworkConfigurator.IsInternetAvailable())
+			{
+				await UpdateStatus();
+				await UploadLogs();
+				await UploadVideo();
+			}
+			else
+				_cameraService.IntervalCapture();
 		}
 		catch (Exception e)
 		{

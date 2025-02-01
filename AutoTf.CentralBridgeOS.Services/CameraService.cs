@@ -49,7 +49,7 @@ public class CameraService : IDisposable
     }
 
     // We don't need to call this method on startup, because the sync does it (Only if internet is available)
-    public void IntervalCapture()
+    public bool IntervalCapture(bool restart = true)
     {
         try
         {
@@ -59,18 +59,22 @@ public class CameraService : IDisposable
 
             if (_videoWriter != null)
             {
+                _videoWriter.Dispose();
                 _cancellationTokenSource.Cancel();
                 _frameCaptureTask!.Wait();
                 _frameCaptureTask!.Dispose();
-                _videoWriter.Dispose();
             }
 
-            StartVideoWriter();
+            if(restart)
+                StartVideoWriter();
+            
+            return true;
         }
         catch (Exception e)
         {
             Console.WriteLine("Error during capture interval:");
             Console.WriteLine(e);
+            return false;
         }
     }
 
@@ -155,7 +159,7 @@ public class CameraService : IDisposable
                     CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
                 }
 
-                _videoWriter.Write(frame);
+                _videoWriter?.Write(frame);
                 frame.Dispose();
 
             } while (!cancellationToken.IsCancellationRequested && _failedReads < 5);

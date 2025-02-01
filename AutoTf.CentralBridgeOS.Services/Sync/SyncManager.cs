@@ -62,21 +62,19 @@ public class SyncManager
 		_fileManager.WriteAllText("lastSyncTry", LastSyncTry.ToString("o"));
 		
 		_logger.Log("Checking for internet.");
-		if (NetworkConfigurator.IsInternetAvailable())
-		{
-			_logger.Log("Got internet connection.");
-			_logger.Log("Periodic sync check started.");
-			TrySync();
-			return;
-		}
 		
-		_logger.Log("VERBOSE: Train has left internet connection. Could not sync.");
+		_logger.Log("Periodic sync check started.");
+		TrySync();
+		// }
+		
+		// _logger.Log("VERBOSE: Train has left internet connection. Could not sync.");
 	}
 
 	private void TrySync()
 	{
 		LastSynced = DateTime.Now;
-		_fileManager.WriteAllText("lastSync", LastSynced.ToString("o"));
+		if (NetworkConfigurator.IsInternetAvailable())
+			_fileManager.WriteAllText("lastSync", LastSynced.ToString("o"));
 		
 		Statics.SyncEvent?.Invoke();
 		

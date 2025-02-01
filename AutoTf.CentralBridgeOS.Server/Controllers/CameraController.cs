@@ -129,7 +129,7 @@ public class CameraController : ControllerBase
 	{
 		try
 		{
-			TimeSpan frameInterval = TimeSpan.FromMilliseconds(100);
+			TimeSpan frameInterval = TimeSpan.FromMilliseconds(30);
 
 			while (!cancellationToken.IsCancellationRequested)
 			{
