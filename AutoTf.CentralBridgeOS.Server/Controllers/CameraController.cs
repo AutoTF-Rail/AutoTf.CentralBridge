@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
@@ -18,12 +20,70 @@ public class CameraController : ControllerBase
 	private readonly CameraService _cameraService;
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
+	private readonly UdpClient _udpClient;
+	private readonly List<IPEndPoint> _clients;
 
 	public CameraController(CameraService cameraService, Logger logger, SyncManager syncManager)
 	{
 		_cameraService = cameraService;
 		_logger = logger;
 		_syncManager = syncManager;
+		_udpClient = new UdpClient(5000);
+		_clients = new List<IPEndPoint>();
+	}
+	
+	[HttpGet("startStream")]
+	public IActionResult StartStream()
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+			{
+				return Unauthorized();
+			}
+			
+			IPAddress clientAddress = IPAddress.Parse(Request.HttpContext.Connection.RemoteIpAddress!.ToString());
+			IPEndPoint clientEndPoint = new IPEndPoint(clientAddress, 5001);
+
+			_clients.Add(clientEndPoint);
+
+			Task.Run(() => SendFramesToClients());
+
+			return Ok("Stream started.");
+		}
+		catch (Exception ex)
+		{
+			_logger.Log("CAM-C: Error during UDP stream request.");
+			_logger.Log(ex.Message);
+			return BadRequest("Could not start the stream.");
+		}
+	}
+
+	private async Task SendFramesToClients()
+	{
+		try
+		{
+			while (true)
+			{
+				byte[]? frame = _cameraService.LatestFramePreview.Convert(".jpeg");
+				
+				if (frame != null)
+				{
+					foreach (IPEndPoint client in _clients)
+					{
+						await _udpClient.SendAsync(frame, frame.Length, client);
+					}
+				}
+
+				await Task.Delay(30);
+				// TODO: Clean up clients: udpClients.Close()
+			}
+		}
+		catch (Exception ex)
+		{
+			_logger.Log("CAM-C: Error during UDP frame sending.");
+			_logger.Log(ex.Message);
+		}
 	}
 
 	[HttpGet("nextSave")]
@@ -40,6 +100,8 @@ public class CameraController : ControllerBase
 			return BadRequest("Could not supply next save.");
 		}
 	}
+	
+	
 	
 	[Route("stream")]
 	public async Task GetStream(CancellationToken cancellationToken)
