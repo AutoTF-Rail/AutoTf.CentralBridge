@@ -85,7 +85,7 @@ public class CameraService : IDisposable
         try
         {
             Console.WriteLine("Starting capture.");
-            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
+            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".avi",
                 VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
         
             _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
