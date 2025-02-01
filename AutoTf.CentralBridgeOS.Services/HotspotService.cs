@@ -20,7 +20,7 @@ public class HotspotService : IDisposable
         _logger.Log("HOTSPOT: Configuring network");
 		
         string interfaceName = "wlan1";
-        string ssid = "CentralBridge-" + _fileManager.ReadFile("trainNumber", Statics.GenerateRandomString());
+        string ssid = "CentralBridge-" + _fileManager.ReadFile("trainId", Statics.GenerateRandomString());
 		
         Statics.CurrentSsid = _fileManager.ReadFile("trainId");
 		
