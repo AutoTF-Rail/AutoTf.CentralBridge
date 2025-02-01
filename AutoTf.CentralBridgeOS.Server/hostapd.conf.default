@@ -15,7 +15,7 @@ wpa_strict_rekey=1
 accept_mac_file=/etc/hostapd/accepted_macs.txt
 
 
-ht_capab=[HT40+][SHORT-GI-20][SHORT-GI-40][TX-STBC][RX-STBC1]
+ht_capab=[HT40+][SHORT-GI-20][SHORT-GI-40][RX-STBC1]
 ieee80211n=1
 tx_queue_data3_aifs=1
 tx_queue_data3_cwmin=3

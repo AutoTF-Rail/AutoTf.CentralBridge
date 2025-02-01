@@ -82,7 +82,7 @@ public class HotspotService : IDisposable
                                "wpa_key_mgmt=WPA-PSK\n" +
                                "rsn_pairwise=CCMP\n" + 
                                "macaddr_acl=1\n" + 
-                               "ht_capab=[HT40+][SHORT-GI-20][SHORT-GI-40][TX-STBC][RX-STBC1]\n" + 
+                               "ht_capab=[HT40+][SHORT-GI-20][SHORT-GI-40][RX-STBC1]\n" + 
                                "ieee80211n=1\n" + 
                                "tx_queue_data3_aifs=1\n" + 
                                "tx_queue_data3_cwmin=3\n" + 
