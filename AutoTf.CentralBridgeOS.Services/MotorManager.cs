@@ -12,9 +12,10 @@ public class MotorManager : IDisposable
 {
 	private readonly Logger _logger;
 	private const int PwmFrequency = 50;
-	private const double MinPulseWidthMs = 0.5;
-	private const double MaxPulseWidthMs = 2.5;
-	private const double NeutralPulseWidthMs = 1.5;
+	private const double MinPulseWidth = 500.0;
+	private const double MaxPulseWidth = 2500.0;
+	private const double PwmPeriodMicroseconds = 1_000_000.0 / PwmFrequency;
+	private const int MaxServoAngle = 270;
 	
 	private I2cDevice _i2CDevice;
 	private I2cConnectionSettings _i2CSettings;
@@ -50,35 +51,31 @@ public class MotorManager : IDisposable
 	{
 		if (_pca == null)
 			return;
-		angle = Math.Max(0, Math.Min(270, angle));
 
-		double pulseWidth = 500 + (angle / 270.0) * (2500 - 500);
+		double pulseWidth = MinPulseWidth + (angle / MaxServoAngle) * (MaxPulseWidth - MinPulseWidth);
 
-		double dutyCycle = pulseWidth / (1000.0 / PwmFrequency);
-		
-		_logger.Log($"Motor: Setting {channel} to {dutyCycle / 100}");
-		_pca.SetDutyCycle(channel, dutyCycle / 100);
+		double dutyCycle = pulseWidth / PwmPeriodMicroseconds;
+
+		_pca.SetDutyCycle(channel, dutyCycle);
 	}
 	
 	public void MoveToMiddle()
 	{
-		if (_pca == null)
-			return;
-		double dutyCycle = NeutralPulseWidthMs / (1000.0 / PwmFrequency) * 100;
-		_pca.SetDutyCycle(0, dutyCycle / 100);
+		SetMotorAngle(0, 135);
 	}
 
 	public double GetMotorAngle(int channel)
 	{
 		if (_pca == null)
-			return -1000;
-		double dutyCycle = _pca.GetDutyCycle(channel) * 100;
-
-		double pulseWidthMs = (dutyCycle / 100) * (1000.0 / PwmFrequency);
-
-		double angle = (pulseWidthMs - MinPulseWidthMs) / (MaxPulseWidthMs - MinPulseWidthMs) * 270;
+			return -800;
 		
-		return angle;
+		double dutyCycle = _pca.GetDutyCycle(channel);
+
+		double pulseWidth = dutyCycle * PwmPeriodMicroseconds;
+
+		double angle = (pulseWidth - MinPulseWidth) / (MaxPulseWidth - MinPulseWidth) * MaxServoAngle;
+
+		return Math.Clamp(angle, 0, MaxServoAngle);
 	}
 	
 	public bool AreMotorsAvailable()
