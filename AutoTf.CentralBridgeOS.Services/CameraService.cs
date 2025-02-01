@@ -31,7 +31,7 @@ public class CameraService : IDisposable
             _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
             _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
             _videoCapture.Set(CapProp.Fps, 60);
-            // _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+            _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
                 
             Directory.CreateDirectory("recordings");
             
