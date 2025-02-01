@@ -27,12 +27,13 @@ public class CameraService : IDisposable
             
             Statics.ShutdownEvent += Dispose;
 
-            _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
+            _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2, new []{ new Tuple<CapProp, int>(CapProp.Fps, 30)});
             _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
             _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
             _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+            Console.WriteLine("Initial fps: " + _videoCapture.Get(CapProp.Fps));
             _videoCapture.Set(CapProp.Fps, 30);
-                
+            
             Directory.CreateDirectory("recordings");
             
             if(!NetworkConfigurator.IsInternetAvailable())
@@ -85,7 +86,7 @@ public class CameraService : IDisposable
     {
         try
         {
-            Console.WriteLine("Starting capture.");
+            Console.WriteLine("Starting writer at " + _videoCapture.Get(CapProp.Fps));
             _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
                 VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
         
