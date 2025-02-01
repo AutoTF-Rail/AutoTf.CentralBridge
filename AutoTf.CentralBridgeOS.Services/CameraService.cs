@@ -18,7 +18,7 @@ public class CameraService : IDisposable
     private Task? _frameCaptureTask;
     private int _failedReads = 0;
 
-    public CameraService(int frameWidth = 1920, int frameHeight = 1080)
+    public CameraService(int frameWidth = 1280, int frameHeight = 720)
     {
         try
         {
@@ -30,8 +30,8 @@ public class CameraService : IDisposable
             _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2);
             _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
             _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
-            _videoCapture.Set(CapProp.Fps, 60);
             _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
+            _videoCapture.Set(CapProp.Fps, 30);
                 
             Directory.CreateDirectory("recordings");
             
@@ -39,7 +39,8 @@ public class CameraService : IDisposable
                 IntervalCapture();
             
             Console.WriteLine("Is capture open: " + _videoCapture.IsOpened);
-            Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps.");
+            
+            Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps from " + _videoCapture.CaptureSource);
 
         }
         catch (Exception e)
