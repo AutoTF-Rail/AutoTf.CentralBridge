@@ -22,7 +22,7 @@ public class HotspotService : IDisposable
         string interfaceName = "wlan1";
         string ssid = "CentralBridge-" + _fileManager.ReadFile("trainNumber", Statics.GenerateRandomString());
 		
-        Statics.CurrentSsid = ssid;
+        Statics.CurrentSsid = _fileManager.ReadFile("trainId");
 		
         string password = "CentralBridgePW";
         try
