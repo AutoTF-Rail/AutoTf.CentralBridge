@@ -1,4 +1,5 @@
 using System.Drawing;
+using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 
@@ -6,96 +7,102 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class CameraService : IDisposable
 {
+    private readonly Logger _logger;
+    
     private readonly int _frameWidth;
     private readonly int _frameHeight;
+    
     private readonly VideoCapture _videoCapture;
     private VideoWriter? _videoWriter;
+    
     private Mat? _latestFrame;
-    private readonly object _frameLock = new object();
     private Mat? _latestFramePreview;
     private readonly object _frameLockPreview = new object();
-    private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-    private Task? _frameCaptureTask;
-    private int _failedReads = 0;
+    private readonly object _frameLock = new object();
 
-    public CameraService(int frameWidth = 1280, int frameHeight = 720)
+    public CameraService(Logger logger)
+    {
+        _logger = logger;
+        
+        Statics.ShutdownEvent += Dispose;
+        Directory.CreateDirectory("recordings");
+
+        _videoCapture = new VideoCapture("/dev/video0");
+        _videoCapture.Set(CapProp.Fps, 60);
+        
+        _frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
+        _frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
+        
+        _videoCapture.ImageGrabbed += VideoCaptureOnImageGrabbed;
+        _videoCapture.Start();
+        
+        _logger.Log($"CS: Starting video capture from {_videoCapture.CaptureSource} with: {_frameWidth}x{_frameHeight}/{_videoCapture.Get(CapProp.Fps)}fps.");
+    }
+
+    private void VideoCaptureOnImageGrabbed(object? sender, EventArgs e)
     {
         try
         {
-            _frameWidth = frameWidth;
-            _frameHeight = frameHeight;
+            lock (_frameLock)
+            {
+                if (_latestFrame != null)
+                    _latestFrame.Dispose();
+                
+                _latestFrame = new Mat();
+                _videoCapture.Retrieve(_latestFrame);
+            }
+        
+            lock (_frameLockPreview)
+            {
+                if (_latestFramePreview != null && !_latestFramePreview.IsEmpty)
+                    _latestFramePreview.Dispose();
+        
+                _latestFramePreview = new Mat();
+                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
+            }
             
-            Statics.ShutdownEvent += Dispose;
-
-            _videoCapture = new VideoCapture(0, VideoCapture.API.V4L2, new []{ new Tuple<CapProp, int>(CapProp.Fps, 30)});
-            _videoCapture.Set(CapProp.FrameWidth, _frameWidth);
-            _videoCapture.Set(CapProp.FrameHeight, _frameHeight);
-            _videoCapture.Set(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G'));
-            Console.WriteLine("Initial fps: " + _videoCapture.Get(CapProp.Fps));
-            _videoCapture.Set(CapProp.Fps, 30);
-            
-            Directory.CreateDirectory("recordings");
-            
-            if(!NetworkConfigurator.IsInternetAvailable())
-                IntervalCapture();
-            
-            Console.WriteLine("Is capture open: " + _videoCapture.IsOpened);
-            
-            Console.WriteLine("Starting capture at " + _videoCapture.Get(CapProp.Fps) + " fps from " + _videoCapture.CaptureSource);
-
+            _videoWriter?.Write(_latestFrame);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine("Error during ctor.");
-            Console.WriteLine(e);
+            _logger.Log("CS: Error during image grab:");
+            _logger.Log(ex.Message);
         }
     }
 
-    // We don't need to call this method on startup, because the sync does it (Only if internet is available)
-    public bool IntervalCapture(bool restart = true)
+    // We don't need to call this method on startup, because the sync does it.
+    public bool IntervalCapture()
     {
         try
         {
-            Console.WriteLine("Intervaling capture.");
+            _logger.Log("Intervaling capture.");
             
-            _failedReads = 0;
-
             if (_videoWriter != null)
-            {
                 _videoWriter.Dispose();
-                _cancellationTokenSource.Cancel();
-                _frameCaptureTask!.Wait();
-                _frameCaptureTask!.Dispose();
-            }
 
-            if(restart)
-                StartVideoWriter();
+            StartVideoWriter();
             
             return true;
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error during capture interval:");
-            Console.WriteLine(e);
+            _logger.Log("CS: Error during capture interval:");
+            _logger.Log(e.Message);
             return false;
         }
     }
 
-    // This needs to be a seperate method, so that we don't start 
     private void StartVideoWriter()
     {
         try
         {
-            Console.WriteLine("Starting writer at " + _videoCapture.Get(CapProp.Fps));
             _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-                VideoWriter.Fourcc('m', 'p', '4', 'v'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
-        
-            _frameCaptureTask = Task.Run(() => ReadFramesAsync(_cancellationTokenSource.Token));
+                VideoWriter.Fourcc('a', 'v', 'c', '1'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error during capture restart:");
-            Console.WriteLine(e);
+            _logger.Log("CS: Error during capture restart:");
+            _logger.Log(e.Message);
         }
     }
 
@@ -122,75 +129,21 @@ public class CameraService : IDisposable
         }
     }
 
-    private async Task ReadFramesAsync(CancellationToken cancellationToken)
+    public void Dispose()
     {
         try
         {
-            do
-            {
-                Mat frame = new Mat();
-                if (!_videoCapture.Read(frame))
-                {
-                    Console.WriteLine("Could not read frame from device.");
-                    _failedReads++;
-                    await Task.Delay(500);
-                    continue;
-                }
+            _logger.Log("CS: Disposing camera service.");
+            _videoCapture.Stop();
+            _videoWriter!.Dispose();
 
-                if (frame.IsEmpty)
-                {
-                    Console.WriteLine("Frame was empty.");
-                    _failedReads++;
-                    await Task.Delay(500);
-                    continue;
-                }
-
-                lock (_frameLock)
-                {
-                    if(_latestFrame != null)
-                        _latestFrame.Dispose();
-                    
-                    _latestFrame = frame.Clone();
-                }
-                
-                lock (_frameLockPreview)
-                {
-                    if (_latestFramePreview != null && !_latestFramePreview.IsEmpty)
-                        _latestFramePreview.Dispose();
-
-                    _latestFramePreview = new Mat();
-                    CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
-                }
-
-                _videoWriter?.Write(frame);
-                frame.Dispose();
-
-            } while (!cancellationToken.IsCancellationRequested && _failedReads < 5);
-
-            if (_failedReads == 5)
-            {
-                Console.WriteLine("Stopped capture due to failed reads.");
-                _videoWriter.Dispose();
-            }
+            _videoCapture.Release();
+            _videoCapture.Dispose();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine("An error occured while saving a frame:");
-            Console.WriteLine(ex.Message);
+            Console.WriteLine(e);
+            throw;
         }
-    }
-
-    public void Dispose()
-    {
-        Console.WriteLine("Disposing video capture");
-        _videoCapture.Stop();
-        _cancellationTokenSource.Cancel();
-
-        _frameCaptureTask?.Wait();
-
-        _videoCapture.Release();
-        _videoWriter.Dispose();
-        _videoCapture.Dispose();
-        _cancellationTokenSource.Dispose();
     }
 }

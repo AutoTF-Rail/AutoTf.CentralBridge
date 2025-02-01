@@ -20,7 +20,7 @@ public static class Program
 		NetworkManager unused = new NetworkManager();
 		
 		FileManager fileManager = new FileManager();
-		CameraService cameraService = new CameraService();
+		CameraService cameraService = new CameraService(Logger);
 		HotspotService hotspotService = new HotspotService(fileManager);
 		
 		builder.Services.AddControllers();
