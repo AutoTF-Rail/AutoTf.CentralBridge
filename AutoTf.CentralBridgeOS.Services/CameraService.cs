@@ -17,6 +17,7 @@ public class CameraService : IDisposable
     
     private Mat? _latestFrame;
     private Mat? _latestFramePreview;
+    public byte[]? LatestFramePreviewBytes;
     private readonly object _frameLockPreview = new object();
     private readonly object _frameLock = new object();
 
@@ -59,6 +60,7 @@ public class CameraService : IDisposable
         
                 _latestFramePreview = new Mat();
                 CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
+                LatestFramePreviewBytes = CvInvoke.Imencode(".jpg", _latestFramePreview);
             }
             
             _videoWriter?.Write(_latestFrame);
@@ -97,7 +99,8 @@ public class CameraService : IDisposable
         try
         {
             _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-                VideoWriter.Fourcc('a', 'v', 'c', '1'), _videoCapture.Get(CapProp.Fps), new Size(_frameWidth, _frameHeight), true);
+                VideoWriter.Fourcc('a', 'v', 'c', '1'), _videoCapture.Get(CapProp.Fps), new Size((int)_videoCapture.Get(CapProp.FrameWidth), (int)_videoCapture.Get(CapProp.FrameHeight)), true);
+            _logger.Log($"Starting capture with {_videoCapture.Get(CapProp.Fps)}FPS {_videoCapture.Get(CapProp.FrameWidth)}x{_videoCapture.Get(CapProp.FrameHeight)}");
         }
         catch (Exception e)
         {

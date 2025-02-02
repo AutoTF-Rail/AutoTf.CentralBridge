@@ -137,7 +137,7 @@ public class CameraController : ControllerBase
 			{
 				await Task.Run(async () =>
 				{
-					byte[]? frame = _cameraService.LatestFramePreview.Convert(".jpeg");
+					byte[]? frame = _cameraService.LatestFramePreviewBytes;
 					if (frame != null)
 					{
 						await webSocket.SendAsync(new ArraySegment<byte>(frame), WebSocketMessageType.Binary, true, cancellationToken);
