@@ -32,8 +32,8 @@ public class CameraService : IDisposable
         Statics.ShutdownEvent += Dispose;
         Directory.CreateDirectory("recordings");
 
-        _frameWidth = 1280;
-        _frameHeight = 720;
+        _frameWidth = 1920;
+        _frameHeight = 1080;
 
         _logger.Log($"CS: Starting video capture with { _frameWidth}x{_frameHeight}, 15 FPS.");
 
@@ -42,7 +42,7 @@ public class CameraService : IDisposable
 
     private void StartFFmpegProcess()
     {
-        string ffmpegArgs = $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -f image2pipe -loglevel error -vcodec mjpeg -";
+        string ffmpegArgs = $"-f v4l2 -framerate 30 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -f image2pipe -loglevel error -vcodec mjpeg -";
 
         _ffmpegProcess = new Process
         {

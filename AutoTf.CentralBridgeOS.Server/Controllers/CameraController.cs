@@ -99,7 +99,7 @@ public class CameraController : ControllerBase
 	
 	private async Task BroadcastFrames()
 	{
-		TimeSpan frameInterval = TimeSpan.FromMilliseconds(1000 / 15);
+		TimeSpan frameInterval = TimeSpan.FromMilliseconds(1000 / 30);
 
 		while (_canStream)
 		{
