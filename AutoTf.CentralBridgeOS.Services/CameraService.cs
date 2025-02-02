@@ -75,8 +75,8 @@ public class CameraService : IDisposable
                 CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
             }
             
-            if(!_restartingCapture)
-                _videoWriter?.Write(_latestFrame);
+            if(!_restartingCapture && _videoWriter != null)
+                _videoWriter.Write(_latestFrame);
         }
         catch (Exception ex)
         {
@@ -111,8 +111,8 @@ public class CameraService : IDisposable
         {
             _restartingCapture = true;
             _videoWriter?.Dispose();
-            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".avi",
-                VideoWriter.Fourcc('M', 'J', 'P', 'G'), 15, new Size(_frameWidth, _frameHeight), true);
+            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
+                VideoWriter.Fourcc('X', '2', '6', '4'), 15, new Size(_frameWidth, _frameHeight), true);
             _logger.Log($"Starting capture with {15}FPS {_frameWidth}x{_frameHeight}");
         
             _restartingCapture = false;

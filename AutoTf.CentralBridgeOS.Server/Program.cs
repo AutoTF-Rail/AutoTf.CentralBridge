@@ -17,6 +17,8 @@ public static class Program
 			Logger.Log("Starting up----------------------------");
 			Logger.Log("Starting for EVU: " + Statics.EvuName);
 			
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+			
 			WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 			builder.Logging.AddDebug();
 			
@@ -65,6 +67,11 @@ public static class Program
 			Console.WriteLine("Root error:");
 			Console.WriteLine(e);
 		}
+	}
+
+	private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+	{
+		throw new NotImplementedException();
 	}
 
 	private static void RegisterTrains(IServiceCollection builderServices)
