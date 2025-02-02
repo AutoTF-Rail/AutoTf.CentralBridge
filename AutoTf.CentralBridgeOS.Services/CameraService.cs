@@ -37,8 +37,8 @@ public class CameraService : IDisposable
         });
 
         
-        _frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
-        _frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
+        _frameWidth = 1280;
+        _frameHeight = 720;
         
         _videoCapture.ImageGrabbed += VideoCaptureOnImageGrabbed;
         _videoCapture.Start();
@@ -112,8 +112,8 @@ public class CameraService : IDisposable
             _restartingCapture = true;
             _videoWriter?.Dispose();
             _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".avi",
-                VideoWriter.Fourcc('M', 'J', 'P', 'G'), 15, new Size((int)_videoCapture.Get(CapProp.FrameWidth), (int)_videoCapture.Get(CapProp.FrameHeight)), true);
-            _logger.Log($"Starting capture with {15}FPS {_videoCapture.Get(CapProp.FrameWidth)}x{_videoCapture.Get(CapProp.FrameHeight)}");
+                VideoWriter.Fourcc('M', 'J', 'P', 'G'), 15, new Size(_frameWidth, _frameHeight), true);
+            _logger.Log($"Starting capture with {15}FPS {_frameWidth}x{_frameHeight}");
         
             _restartingCapture = false;
         }
