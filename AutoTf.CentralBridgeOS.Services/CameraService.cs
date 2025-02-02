@@ -112,7 +112,7 @@ public class CameraService : IDisposable
             _restartingCapture = true;
             _videoWriter?.Dispose();
             _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-                VideoWriter.Fourcc('X', '2', '6', '4'), 15, new Size(_frameWidth, _frameHeight), true);
+                VideoWriter.Fourcc('a', 'v', 'c', '1'), 15, new Size(_frameWidth, _frameHeight), true);
             _logger.Log($"Starting capture with {15}FPS {_frameWidth}x{_frameHeight}");
         
             _restartingCapture = false;
