@@ -11,7 +11,6 @@ rsn_pairwise=CCMP
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
 macaddr_acl=1
-wpa_strict_rekey=1
 accept_mac_file=/etc/hostapd/accepted_macs.txt
 
 
