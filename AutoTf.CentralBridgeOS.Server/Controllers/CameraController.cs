@@ -69,6 +69,7 @@ public class CameraController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("CAM-C: Error during WebSocket initialization.");
+			_logger.Log(e.Message);
 		}
 	}
 
@@ -136,7 +137,7 @@ public class CameraController : ControllerBase
 		{
 			TimeSpan frameInterval = TimeSpan.FromMilliseconds(30);
 			
-			while (!cancellationToken.IsCancellationRequested)
+			while (!cancellationToken.IsCancellationRequested && webSocket.State == WebSocketState.Open)
 			{
 				byte[]? frame = _cameraService.LatestFramePreview.Convert(".jpeg");
 				if (frame != null)
@@ -155,6 +156,8 @@ public class CameraController : ControllerBase
 		finally
 		{
 			await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by server", cancellationToken);
+			webSocket.Dispose();
+			_sockets.Remove(webSocket);
 		}
 	}
 }
