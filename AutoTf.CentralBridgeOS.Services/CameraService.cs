@@ -46,6 +46,8 @@ public class CameraService : IDisposable
         _logger.Log($"CS: Starting video capture from {_videoCapture.CaptureSource} with: {_frameWidth}x{_frameHeight}/{_videoCapture.Get(CapProp.Fps)}fps.");
     }
 
+    // TODO: Report back to user when update has been complete
+    
     private void VideoCaptureOnImageGrabbed(object? sender, EventArgs e)
     {
         try
@@ -56,7 +58,9 @@ public class CameraService : IDisposable
                     _latestFrame.Dispose();
                 
                 _latestFrame = new Mat();
-                _videoCapture.Retrieve(_latestFrame);
+                
+                if (!_videoCapture.Retrieve(_latestFrame))
+                    return;
             }
         
             lock (_frameLockPreview)
