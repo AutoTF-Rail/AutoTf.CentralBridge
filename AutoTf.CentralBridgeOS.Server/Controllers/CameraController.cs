@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.WebSockets;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
@@ -59,6 +60,7 @@ public class CameraController : ControllerBase
 			}
 
 			WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
+			
 			await HandleWebSocketAsync(webSocket, cancellationToken);
 		}
 		catch (Exception e)
@@ -83,7 +85,7 @@ public class CameraController : ControllerBase
 				frame.SetTo(new MCvScalar(0, 0, 0));
 			}
 
-			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
+			byte[] imageBytes = CvInvoke.Imencode(".jpg", frame);
 
 			frame.Dispose();
 			return File(imageBytes, "image/png");
@@ -129,17 +131,28 @@ public class CameraController : ControllerBase
 	{
 		try
 		{
-			TimeSpan frameInterval = TimeSpan.FromMilliseconds(30);
-
+			// Stopwatch stopwatch = Stopwatch.StartNew();
+			
 			while (!cancellationToken.IsCancellationRequested)
 			{
-				byte[]? frame = _cameraService.LatestFramePreview.Convert(".jpeg");
-				if (frame != null)
+				await Task.Run(async () =>
 				{
-					await webSocket.SendAsync(new ArraySegment<byte>(frame), WebSocketMessageType.Binary, true, cancellationToken);
-				}
-
-				await Task.Delay(frameInterval, cancellationToken);
+					byte[]? frame = _cameraService.LatestFramePreview.Convert(".jpeg");
+					if (frame != null)
+					{
+						await webSocket.SendAsync(new ArraySegment<byte>(frame), WebSocketMessageType.Binary, true, cancellationToken);
+					}
+					
+					// long elapsedTime = stopwatch.ElapsedMilliseconds;
+					// int targetInterval = 30;
+					// long timeToWait = targetInterval - elapsedTime;
+					// if (timeToWait > 0)
+					// {
+					// 	await Task.Delay(Convert.ToInt32(timeToWait), cancellationToken);
+					// }
+					// stopwatch.Restart();
+				}, cancellationToken);
+				await Task.Delay(30, cancellationToken);
 			}
 		}
 		catch (Exception ex)
