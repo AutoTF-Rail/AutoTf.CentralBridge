@@ -42,7 +42,7 @@ public class CameraService : IDisposable
 
     private void StartFFmpegProcess()
     {
-        var ffmpegArgs = $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -f image2pipe -vcodec mjpeg -";
+        string ffmpegArgs = $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -f image2pipe -loglevel error -vcodec mjpeg -";
 
         _ffmpegProcess = new Process
         {
