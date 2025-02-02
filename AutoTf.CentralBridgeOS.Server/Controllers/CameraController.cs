@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
@@ -20,14 +22,99 @@ public class CameraController : ControllerBase
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
 	private List<WebSocket> _sockets = new List<WebSocket>();
+	private List<IPEndPoint> _receivers = new List<IPEndPoint>(); 
+	private UdpClient _udpClient;
+	private const int UdpPort = 12345;
 
+	private bool _canStream = true;
+	
 	public CameraController(CameraService cameraService, Logger logger, SyncManager syncManager)
 	{
 		_cameraService = cameraService;
 		_logger = logger;
 		_syncManager = syncManager;
+		_udpClient = new UdpClient();
+		_udpClient.EnableBroadcast = true;
 
-		Statics.ShutdownEvent += () => _sockets.ForEach(x => x.Dispose());
+		Statics.ShutdownEvent += () =>
+		{
+			_canStream = false;
+			_sockets.ForEach(x => x.Dispose());
+		};
+
+		Task.Run(BroadcastFrames);
+	}
+	
+	[HttpPost("startStream")]
+	public IActionResult StartStream()
+	{
+		try
+		{
+			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
+			
+			if (ipAddress != null)
+			{
+				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, UdpPort);
+				_receivers.Add(receiverEndpoint);
+                
+				_logger.Log($"Added receiver: {receiverEndpoint}");
+				return Ok("Receiver added successfully.");
+			}
+			
+			return BadRequest("Could not retrieve client IP address.");
+		}
+		catch (Exception ex)
+		{
+			_logger.Log("CAM-C: Error in startStream.");
+			_logger.Log(ex.Message);
+			return BadRequest("Failed to add receiver.");
+		}
+	}
+	
+	[HttpPost("stopStream")]
+	public IActionResult StopStream()
+	{
+		try
+		{
+			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
+			
+			if (ipAddress != null)
+			{
+				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, UdpPort);
+				_receivers.Remove(receiverEndpoint); 
+				
+				_logger.Log($"Removed receiver: {receiverEndpoint}");
+				return Ok("Receiver removed successfully.");
+			}
+			
+			return BadRequest("Could not retrieve client IP address.");
+		}
+		catch (Exception ex)
+		{
+			_logger.Log("CAM-C: Error in stopStream.");
+			_logger.Log(ex.Message);
+			return BadRequest("Failed to remove receiver.");
+		}
+	}
+	
+	private async Task BroadcastFrames()
+	{
+		TimeSpan frameInterval = TimeSpan.FromMilliseconds(30);
+
+		while (_canStream)
+		{
+			Mat? frameMat = _cameraService.LatestFramePreview;
+			if (frameMat != null)
+			{
+				byte[] frame = frameMat.Convert(".jpeg")!;
+				foreach (IPEndPoint receiver in _receivers)
+				{
+					await _udpClient.SendAsync(frame, frame.Length, receiver);
+				}
+				frameMat.Dispose();
+			}
+			await Task.Delay(frameInterval);
+		}
 	}
 
 	[HttpGet("nextSave")]
