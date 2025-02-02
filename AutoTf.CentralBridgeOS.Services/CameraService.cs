@@ -128,7 +128,6 @@ public class CameraService : IDisposable
     {
         get
         {
-            
             lock (_frameLockPreview)
             {
                 return _latestFramePreview?.Clone();
