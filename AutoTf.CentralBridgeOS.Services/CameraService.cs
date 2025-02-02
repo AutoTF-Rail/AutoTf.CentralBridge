@@ -28,7 +28,14 @@ public class CameraService : IDisposable
         Statics.ShutdownEvent += Dispose;
         Directory.CreateDirectory("recordings");
 
-        _videoCapture = new VideoCapture("/dev/video0");
+        _videoCapture = new VideoCapture("/dev/video0", VideoCapture.API.V4L2, new []
+        {
+            new Tuple<CapProp, int>(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G')),
+            new Tuple<CapProp, int>(CapProp.FrameWidth, 1280),
+            new Tuple<CapProp, int>(CapProp.FrameHeight, 720),
+            new Tuple<CapProp, int>(CapProp.Fps, 15)
+        });
+
         
         _frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
         _frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
@@ -61,7 +68,7 @@ public class CameraService : IDisposable
                 CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
             }
             
-            if(!restartingCapture)
+            if(!_restartingCapture)
                 _videoWriter?.Write(_latestFrame);
         }
         catch (Exception ex)
@@ -71,22 +78,16 @@ public class CameraService : IDisposable
         }
     }
 
-    private bool restartingCapture = false;
+    private bool _restartingCapture = false;
 
     // We don't need to call this method on startup, because the sync does it.
     public bool IntervalCapture()
     {
         try
         {
-            restartingCapture = true;
             _logger.Log("Intervaling capture.");
-            
-            if (_videoWriter != null)
-                _videoWriter.Dispose();
 
             StartVideoWriter();
-
-            restartingCapture = false;
             return true;
         }
         catch (Exception e)
@@ -101,9 +102,13 @@ public class CameraService : IDisposable
     {
         try
         {
-            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
-                VideoWriter.Fourcc('a', 'v', 'c', '1'), _videoCapture.Get(CapProp.Fps), new Size((int)_videoCapture.Get(CapProp.FrameWidth), (int)_videoCapture.Get(CapProp.FrameHeight)), true);
-            _logger.Log($"Starting capture with {_videoCapture.Get(CapProp.Fps)}FPS {_videoCapture.Get(CapProp.FrameWidth)}x{_videoCapture.Get(CapProp.FrameHeight)}");
+            _restartingCapture = true;
+            _videoWriter?.Dispose();
+            _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".avi",
+                VideoWriter.Fourcc('M', 'J', 'P', 'G'), 15, new Size((int)_videoCapture.Get(CapProp.FrameWidth), (int)_videoCapture.Get(CapProp.FrameHeight)), true);
+            _logger.Log($"Starting capture with {15}FPS {_videoCapture.Get(CapProp.FrameWidth)}x{_videoCapture.Get(CapProp.FrameHeight)}");
+        
+            _restartingCapture = false;
         }
         catch (Exception e)
         {
@@ -140,7 +145,7 @@ public class CameraService : IDisposable
         try
         {
             _logger.Log("CS: Disposing camera service.");
-            restartingCapture = true;
+            _restartingCapture = true;
             _videoCapture.Stop();
             _videoWriter!.Dispose();
 
