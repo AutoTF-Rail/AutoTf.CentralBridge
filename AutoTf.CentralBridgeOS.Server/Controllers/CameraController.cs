@@ -103,15 +103,13 @@ public class CameraController : ControllerBase
 
 		while (_canStream)
 		{
-			Mat? frameMat = _cameraService.LatestFramePreview;
-			if (frameMat != null)
+			byte[]? frame = _cameraService.LatestFramePreview;
+			if (frame != null)
 			{
-				byte[] frame = frameMat.Convert(".jpeg")!;
 				foreach (IPEndPoint receiver in _receivers)
 				{
 					await _udpClient.SendAsync(frame, frame.Length, receiver);
 				}
-				frameMat.Dispose();
 			}
 			await Task.Delay(frameInterval);
 		}
@@ -168,17 +166,11 @@ public class CameraController : ControllerBase
 			if (!Request.Headers.IsAllowedDevice())
 				return Unauthorized();
 			
-			Mat? frame = _cameraService.LatestFramePreview;
+			byte[]? imageBytes = _cameraService.LatestFrame;
+
+			if (imageBytes == null)
+				return BadRequest();
 			
-			if (frame == null)
-			{
-				frame = new Mat(360, 640, DepthType.Cv8U, 3);
-				frame.SetTo(new MCvScalar(0, 0, 0));
-			}
-
-			byte[] imageBytes = CvInvoke.Imencode(".jpg", frame);
-
-			frame.Dispose();
 			return File(imageBytes, "image/png");
 		}
 		catch (Exception e)
@@ -196,18 +188,12 @@ public class CameraController : ControllerBase
 		{
 			if (!Request.Headers.IsAllowedDevice())
 				return Unauthorized();
-			
-			Mat? frame = _cameraService.LatestFrame;
-			
-			if (frame == null)
-			{
-				frame = new Mat(360, 640, DepthType.Cv8U, 3);
-				frame.SetTo(new MCvScalar(0, 0, 0));
-			}
 
-			byte[] imageBytes = CvInvoke.Imencode(".png", frame);
+			byte[]? imageBytes = _cameraService.LatestFrame;
 
-			frame.Dispose();
+			if (imageBytes == null)
+				return BadRequest();
+			
 			return File(imageBytes, "image/png");
 		}
 		catch (Exception e)
@@ -223,10 +209,11 @@ public class CameraController : ControllerBase
 		try
 		{
 			TimeSpan frameInterval = TimeSpan.FromMilliseconds(30);
-			
+
 			while (!cancellationToken.IsCancellationRequested && webSocket.State == WebSocketState.Open)
 			{
-				byte[]? frame = _cameraService.LatestFramePreview.Convert(".jpeg");
+				byte[]? frame = _cameraService.LatestFrame;
+
 				if (frame != null)
 				{
 					await webSocket.SendAsync(new ArraySegment<byte>(frame), WebSocketMessageType.Binary, true, cancellationToken);

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using AutoTf.Logging;
 using Emgu.CV;
@@ -8,18 +9,21 @@ namespace AutoTf.CentralBridgeOS.Services;
 public class CameraService : IDisposable
 {
     private readonly Logger _logger;
-    
+
     private readonly int _frameWidth;
     private readonly int _frameHeight;
-    
-    private readonly VideoCapture _videoCapture;
+
     private VideoWriter? _videoWriter;
-    
-    private Mat? _latestFrame;
-    private Mat? _latestFramePreview;
-    
+    private byte[]? _latestFrameBytes;
+    private byte[]? _latestFramePreviewBytes;
+
     private readonly object _frameLockPreview = new object();
     private readonly object _frameLock = new object();
+
+    private Process? _ffmpegProcess;
+    private StreamReader? _ffmpegOutput;
+
+    private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
     public CameraService(Logger logger)
     {
@@ -28,72 +32,99 @@ public class CameraService : IDisposable
         Statics.ShutdownEvent += Dispose;
         Directory.CreateDirectory("recordings");
 
-        _videoCapture = new VideoCapture("/dev/video0", VideoCapture.API.V4L2, new []
-        {
-            new Tuple<CapProp, int>(CapProp.FourCC, VideoWriter.Fourcc('M', 'J', 'P', 'G')),
-            new Tuple<CapProp, int>(CapProp.FrameWidth, 1280),
-            new Tuple<CapProp, int>(CapProp.FrameHeight, 720),
-            new Tuple<CapProp, int>(CapProp.Fps, 15)
-        });
-
-        
         _frameWidth = 1280;
         _frameHeight = 720;
-        
-        _videoCapture.ImageGrabbed += VideoCaptureOnImageGrabbed;
-        _videoCapture.Start();
-        
-        _logger.Log($"CS: Starting video capture from {_videoCapture.CaptureSource} with: {_frameWidth}x{_frameHeight}/{_videoCapture.Get(CapProp.Fps)}fps.");
+
+        _logger.Log($"CS: Starting video capture with { _frameWidth}x{_frameHeight}, 15 FPS.");
+
+        StartFFmpegProcess();
     }
 
-    // TODO: Report back to user when update has been complete
-    
-    private void VideoCaptureOnImageGrabbed(object? sender, EventArgs e)
+    private void StartFFmpegProcess()
+    {
+        var ffmpegArgs = $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -f image2pipe -vcodec mjpeg -";
+
+        _ffmpegProcess = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "ffmpeg",
+                Arguments = ffmpegArgs,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        _ffmpegProcess.Start();
+        _ffmpegOutput = _ffmpegProcess.StandardOutput;
+
+        Task.Run(() => CaptureFrames(_cancellationTokenSource.Token));
+    }
+
+    private async Task CaptureFrames(CancellationToken cancellationToken)
     {
         try
         {
-            lock (_frameLock)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                if (_latestFrame != null)
-                    _latestFrame.Dispose();
-                
-                _latestFrame = new Mat();
+                byte[] buffer = new byte[1024 * 1024];
+                int bytesRead = await _ffmpegOutput!.BaseStream.ReadAsync(buffer, 0, buffer.Length, cancellationToken);
 
-                if (!_videoCapture.Retrieve(_latestFrame))
+                if (bytesRead > 0)
                 {
-                    _logger.Log("Returning from retrieve due to frame being empty.");
-                    return;
+                    lock (_frameLock)
+                    {
+                        _latestFrameBytes = new byte[bytesRead];
+                        Array.Copy(buffer, _latestFrameBytes, bytesRead);
+                    }
+
+                    CreatePreviewFrame(_latestFrameBytes);
                 }
             }
-        
-            lock (_frameLockPreview)
-            {
-                if (_latestFramePreview != null && !_latestFramePreview.IsEmpty)
-                    _latestFramePreview.Dispose();
-        
-                _latestFramePreview = new Mat();
-                CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
-            }
-            
-            if(!_restartingCapture && _videoWriter != null)
-                _videoWriter.Write(_latestFrame);
         }
         catch (Exception ex)
         {
-            _logger.Log("CS: Error during image grab:");
+            _logger.Log("CS: Error during frame capture.");
             _logger.Log(ex.Message);
         }
     }
 
-    private bool _restartingCapture = false;
+    private void CreatePreviewFrame(byte[] frameBytes)
+    {
+        lock (_frameLockPreview)
+        {
+            _latestFramePreviewBytes = frameBytes;
+        }
+    }
 
-    // We don't need to call this method on startup, because the sync does it.
+    public byte[]? LatestFramePreview
+    {
+        get
+        {
+            lock (_frameLockPreview)
+            {
+                return _latestFramePreviewBytes?.ToArray();
+            }
+        }
+    }
+
+    public byte[]? LatestFrame
+    {
+        get
+        {
+            lock (_frameLock)
+            {
+                return _latestFrameBytes?.ToArray();
+            }
+        }
+    }
+
     public bool IntervalCapture()
     {
         try
         {
-            _logger.Log("Intervaling capture.");
-
+            _logger.Log("Interval capture starting.");
             StartVideoWriter();
             return true;
         }
@@ -109,13 +140,11 @@ public class CameraService : IDisposable
     {
         try
         {
-            _restartingCapture = true;
             _videoWriter?.Dispose();
             _videoWriter = new VideoWriter("recordings/" + DateTime.Now.ToString("dd.MM.yyyy-HH:mm:ss") + ".mp4",
                 VideoWriter.Fourcc('a', 'v', 'c', '1'), 15, new Size(_frameWidth, _frameHeight), true);
-            _logger.Log($"Starting capture with {15}FPS {_frameWidth}x{_frameHeight}");
-        
-            _restartingCapture = false;
+
+            _logger.Log($"Starting capture with {15} FPS {_frameWidth}x{_frameHeight}");
         }
         catch (Exception e)
         {
@@ -124,39 +153,19 @@ public class CameraService : IDisposable
         }
     }
 
-    public Mat? LatestFramePreview
-    {
-        get
-        {
-            lock (_frameLockPreview)
-            {
-                return _latestFramePreview?.Clone();
-            }
-        }
-    }
-
-    public Mat? LatestFrame
-    {
-        get
-        {
-            lock (_frameLock)
-            {
-                return _latestFrame?.Clone();
-            }
-        }
-    }
-
     public void Dispose()
     {
         try
         {
             _logger.Log("CS: Disposing camera service.");
-            _restartingCapture = true;
-            _videoCapture.Stop();
-            _videoWriter!.Dispose();
 
-            _videoCapture.Release();
-            _videoCapture.Dispose();
+            _cancellationTokenSource.Cancel();
+            _ffmpegProcess?.WaitForExit();
+            _ffmpegProcess?.Dispose();
+            _ffmpegOutput?.Dispose();
+
+            _videoWriter?.Dispose();
+
             _logger.Log("CS: Disposed camera service.");
         }
         catch (Exception e)
