@@ -17,7 +17,7 @@ public class CameraService : IDisposable
     
     private Mat? _latestFrame;
     private Mat? _latestFramePreview;
-    public byte[]? LatestFramePreviewBytes;
+    
     private readonly object _frameLockPreview = new object();
     private readonly object _frameLock = new object();
 
@@ -29,7 +29,9 @@ public class CameraService : IDisposable
         Directory.CreateDirectory("recordings");
 
         _videoCapture = new VideoCapture("/dev/video0");
-        _videoCapture.Set(CapProp.Fps, 60);
+        _videoCapture.Set(CapProp.HwAcceleration, 1);
+        _videoCapture.Set(CapProp.FrameWidth, 1280);
+        _videoCapture.Set(CapProp.FrameHeight, 720);
         
         _frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
         _frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
@@ -60,10 +62,10 @@ public class CameraService : IDisposable
         
                 _latestFramePreview = new Mat();
                 CvInvoke.Resize(_latestFrame, _latestFramePreview, new Size(640, 360));
-                LatestFramePreviewBytes = CvInvoke.Imencode(".jpg", _latestFramePreview);
             }
             
-            _videoWriter?.Write(_latestFrame);
+            if(!restartingCapture)
+                _videoWriter?.Write(_latestFrame);
         }
         catch (Exception ex)
         {
@@ -72,18 +74,22 @@ public class CameraService : IDisposable
         }
     }
 
+    private bool restartingCapture = false;
+
     // We don't need to call this method on startup, because the sync does it.
     public bool IntervalCapture()
     {
         try
         {
+            restartingCapture = true;
             _logger.Log("Intervaling capture.");
             
             if (_videoWriter != null)
                 _videoWriter.Dispose();
 
             StartVideoWriter();
-            
+
+            restartingCapture = false;
             return true;
         }
         catch (Exception e)
@@ -137,11 +143,13 @@ public class CameraService : IDisposable
         try
         {
             _logger.Log("CS: Disposing camera service.");
+            restartingCapture = true;
             _videoCapture.Stop();
             _videoWriter!.Dispose();
 
             _videoCapture.Release();
             _videoCapture.Dispose();
+            _logger.Log("CS: Disposed camera service.");
         }
         catch (Exception e)
         {

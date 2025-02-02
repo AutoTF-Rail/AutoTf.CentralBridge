@@ -19,12 +19,15 @@ public class CameraController : ControllerBase
 	private readonly CameraService _cameraService;
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
+	private List<WebSocket> _sockets = new List<WebSocket>();
 
 	public CameraController(CameraService cameraService, Logger logger, SyncManager syncManager)
 	{
 		_cameraService = cameraService;
 		_logger = logger;
 		_syncManager = syncManager;
+
+		Statics.ShutdownEvent += () => _sockets.ForEach(x => x.Dispose());
 	}
 
 	[HttpGet("nextSave")]
@@ -60,7 +63,7 @@ public class CameraController : ControllerBase
 			}
 
 			WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-			
+			_sockets.Add(webSocket);
 			await HandleWebSocketAsync(webSocket, cancellationToken);
 		}
 		catch (Exception e)
@@ -135,9 +138,9 @@ public class CameraController : ControllerBase
 			
 			while (!cancellationToken.IsCancellationRequested)
 			{
-				await Task.Run(async () =>
-				{
-					byte[]? frame = _cameraService.LatestFramePreviewBytes;
+				// await Task.Run(async () =>
+				// {
+					byte[]? frame = _cameraService.LatestFramePreview.Convert(".jpg");
 					if (frame != null)
 					{
 						await webSocket.SendAsync(new ArraySegment<byte>(frame), WebSocketMessageType.Binary, true, cancellationToken);
@@ -151,8 +154,8 @@ public class CameraController : ControllerBase
 					// 	await Task.Delay(Convert.ToInt32(timeToWait), cancellationToken);
 					// }
 					// stopwatch.Restart();
-				}, cancellationToken);
-				await Task.Delay(30, cancellationToken);
+				// }, cancellationToken);
+				await Task.Delay(12, cancellationToken);
 			}
 		}
 		catch (Exception ex)
