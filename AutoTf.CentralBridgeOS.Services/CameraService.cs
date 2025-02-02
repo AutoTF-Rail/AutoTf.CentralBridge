@@ -29,9 +29,6 @@ public class CameraService : IDisposable
         Directory.CreateDirectory("recordings");
 
         _videoCapture = new VideoCapture("/dev/video0");
-        _videoCapture.Set(CapProp.HwAcceleration, 1);
-        _videoCapture.Set(CapProp.FrameWidth, 1280);
-        _videoCapture.Set(CapProp.FrameHeight, 720);
         
         _frameWidth = (int)_videoCapture.Get(CapProp.FrameWidth);
         _frameHeight = (int)_videoCapture.Get(CapProp.FrameHeight);
