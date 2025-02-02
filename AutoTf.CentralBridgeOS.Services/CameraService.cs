@@ -58,9 +58,12 @@ public class CameraService : IDisposable
                     _latestFrame.Dispose();
                 
                 _latestFrame = new Mat();
-                
+
                 if (!_videoCapture.Retrieve(_latestFrame))
+                {
+                    _logger.Log("Returning from retrieve due to frame being empty.");
                     return;
+                }
             }
         
             lock (_frameLockPreview)
