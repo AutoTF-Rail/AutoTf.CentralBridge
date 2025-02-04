@@ -43,7 +43,7 @@ public class CameraService : IDisposable
     private void StartFFmpegProcess()
     {
         string ffmpegArgs =
-            $"-f v4l2 -framerate 30 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -f image2pipe -loglevel error -vcodec mjpeg - ";
+            $"-f v4l2 -framerate 30 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -loglevel error -f mpegts udp://127.0.0.1:5000";
                             // $"-f v4l2 -framerate 15 -video_size 1280x720 recordings/output_{DateTime.Now:dd.MMyyyy_HH:mm:ss}.mp4"; // TODO: Save to file
 
         _ffmpegProcess = new Process

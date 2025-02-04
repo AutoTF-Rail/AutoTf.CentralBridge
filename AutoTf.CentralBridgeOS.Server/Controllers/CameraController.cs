@@ -1,14 +1,8 @@
-using System.Diagnostics;
 using System.Net;
-using System.Net.Sockets;
-using System.Net.WebSockets;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
-using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridgeOS.Server.Controllers;
@@ -21,28 +15,22 @@ public class CameraController : ControllerBase
 	private readonly CameraService _cameraService;
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
-	private List<WebSocket> _sockets = new List<WebSocket>();
-	private List<IPEndPoint> _receivers = new List<IPEndPoint>(); 
-	private UdpClient _udpClient;
+	private readonly UdpProxyService _udpProxy;
 	private const int UdpPort = 12345;
 
 	private bool _canStream = true;
 	
-	public CameraController(CameraService cameraService, Logger logger, SyncManager syncManager)
+	public CameraController(CameraService cameraService, Logger logger, SyncManager syncManager, UdpProxyService udpProxy)
 	{
 		_cameraService = cameraService;
 		_logger = logger;
 		_syncManager = syncManager;
-		_udpClient = new UdpClient();
-		_udpClient.EnableBroadcast = true;
+		_udpProxy = udpProxy;
 
 		Statics.ShutdownEvent += () =>
 		{
 			_canStream = false;
-			_sockets.ForEach(x => x.Dispose());
 		};
-
-		Task.Run(BroadcastFrames);
 	}
 	
 	[HttpPost("startStream")]
@@ -55,7 +43,7 @@ public class CameraController : ControllerBase
 			if (ipAddress != null)
 			{
 				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, UdpPort);
-				_receivers.Add(receiverEndpoint);
+				_udpProxy.AddClient(receiverEndpoint);
                 
 				_logger.Log($"Added receiver: {receiverEndpoint}");
 				return Ok("Receiver added successfully.");
@@ -81,7 +69,7 @@ public class CameraController : ControllerBase
 			if (ipAddress != null)
 			{
 				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, UdpPort);
-				_receivers.Remove(receiverEndpoint); 
+				_udpProxy.RemoveClient(receiverEndpoint);
 				
 				_logger.Log($"Removed receiver: {receiverEndpoint}");
 				return Ok("Receiver removed successfully.");
@@ -94,24 +82,6 @@ public class CameraController : ControllerBase
 			_logger.Log("CAM-C: Error in stopStream.");
 			_logger.Log(ex.Message);
 			return BadRequest("Failed to remove receiver.");
-		}
-	}
-	
-	private async Task BroadcastFrames()
-	{
-		TimeSpan frameInterval = TimeSpan.FromMilliseconds(1000 / 30);
-
-		while (_canStream)
-		{
-			byte[]? frame = _cameraService.LatestFramePreview;
-			if (frame != null)
-			{
-				foreach (IPEndPoint receiver in _receivers)
-				{
-					await _udpClient.SendAsync(frame, frame.Length, receiver);
-				}
-			}
-			await Task.Delay(frameInterval);
 		}
 	}
 
@@ -127,34 +97,6 @@ public class CameraController : ControllerBase
 			_logger.Log("CAM-C: Could not supply next save:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply next save.");
-		}
-	}
-	
-	[Route("stream")]
-	public async Task GetStream(CancellationToken cancellationToken)
-	{
-		try
-		{
-			if (!Request.Headers.IsAllowedDevice())
-			{
-				Response.StatusCode = 401;
-				return;
-			}
-			
-			if (!HttpContext.WebSockets.IsWebSocketRequest)
-			{
-				Response.StatusCode = 400;
-				return;
-			}
-
-			WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
-			_sockets.Add(webSocket);
-			await HandleWebSocketAsync(webSocket, cancellationToken);
-		}
-		catch (Exception e)
-		{
-			_logger.Log("CAM-C: Error during WebSocket initialization.");
-			_logger.Log(e.Message);
 		}
 	}
 
@@ -201,37 +143,6 @@ public class CameraController : ControllerBase
 			_logger.Log("CAM-C: Failed to supply frame:");
 			_logger.Log(e.Message);
 			return BadRequest(e.Message);
-		}
-	}
-	
-	private async Task HandleWebSocketAsync(WebSocket webSocket, CancellationToken cancellationToken)
-	{
-		try
-		{
-			TimeSpan frameInterval = TimeSpan.FromMilliseconds(30);
-
-			while (!cancellationToken.IsCancellationRequested && webSocket.State == WebSocketState.Open)
-			{
-				byte[]? frame = _cameraService.LatestFrame;
-
-				if (frame != null)
-				{
-					await webSocket.SendAsync(new ArraySegment<byte>(frame), WebSocketMessageType.Binary, true, cancellationToken);
-				}
-
-				await Task.Delay(frameInterval, cancellationToken);
-			}
-		}
-		catch (Exception ex)
-		{
-			_logger.Log("CAM-C: Error in WebSocket communication:");
-			_logger.Log(ex.Message);
-		}
-		finally
-		{
-			await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by server", cancellationToken);
-			webSocket.Dispose();
-			_sockets.Remove(webSocket);
 		}
 	}
 }
