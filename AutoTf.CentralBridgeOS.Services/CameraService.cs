@@ -41,8 +41,7 @@ public class CameraService : IDisposable
     private void StartFFmpegProcess()
     {
         string ffmpegArgs =
-            $"-f v4l2 -framerate 30 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -loglevel error -c:v mjpeg -f mjpeg udp://127.0.0.1:5000";
-                            // $"-f v4l2 -framerate 15 -video_size 1280x720 recordings/output_{DateTime.Now:dd.MMyyyy_HH:mm:ss}.mp4"; // TODO: Save to file
+            $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -loglevel error -c:v mjpeg -rtbufsize 1500k -preset ultrafast -tune zero_latency -f mjpeg udp://127.0.0.1:5000"; // TODO: Save to file
 
         _ffmpegProcess = new Process
         {
@@ -51,10 +50,15 @@ public class CameraService : IDisposable
                 FileName = "ffmpeg",
                 Arguments = ffmpegArgs,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                RedirectStandardError = true
             }
         };
-
+        _ffmpegProcess.ErrorDataReceived += (sender, e) =>
+        {
+            if (e.Data != null)
+                _logger.Log($"FFmpeg Error: {e.Data}");
+        };
         _ffmpegProcess.Start();
     }
 

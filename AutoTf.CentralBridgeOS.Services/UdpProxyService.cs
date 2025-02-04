@@ -8,7 +8,11 @@ public class UdpProxyService
 	private readonly UdpClient _ffmpegInput;
 	private readonly List<IPEndPoint> _clients = new List<IPEndPoint>();
 	private readonly CancellationTokenSource _cancelToken = new CancellationTokenSource();
+	private List<byte> _buffer = new List<byte>();
 
+	private readonly byte[] jpegFrameStart = new byte[] { 0xFF, 0xD8 };
+	private readonly byte[] jpegFrameEnd = new byte[] { 0xFF, 0xD9 }; 
+	
 	public UdpProxyService()
 	{
 		Statics.ShutdownEvent += _cancelToken.Cancel;
@@ -35,20 +39,52 @@ public class UdpProxyService
 	{
 		while (true)
 		{
-			try
-			{
-				UdpReceiveResult received = await _ffmpegInput.ReceiveAsync();
+			UdpReceiveResult received = await _ffmpegInput.ReceiveAsync();
+			byte[] receivedData = received.Buffer;
 
-				foreach (IPEndPoint client in _clients)
+			_buffer.AddRange(receivedData);
+
+			while (_buffer.Count > 0)
+			{
+				int startIndex = IndexOfSequence(_buffer, jpegFrameStart);
+				int endIndex = IndexOfSequence(_buffer, jpegFrameEnd);
+
+				if (startIndex >= 0 && endIndex > startIndex)
 				{
-					using UdpClient udpClient = new UdpClient();
-					await udpClient.SendAsync(received.Buffer, received.Buffer.Length, client);
+					byte[] frameBytes = _buffer.GetRange(startIndex, endIndex - startIndex + 2).ToArray();
+
+					foreach (IPEndPoint client in _clients)
+					{
+						using UdpClient udpClient = new UdpClient();
+						await udpClient.SendAsync(frameBytes, frameBytes.Length, client);
+					}
+
+					_buffer.RemoveRange(0, endIndex + 2); 
+				}
+				else
+				{
+					break;
 				}
 			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"Error forwarding packets: {ex.Message}");
-			}
 		}
+	}
+	
+	private int IndexOfSequence(List<byte> source, byte[] sequence)
+	{
+		int maxFirstIndex = source.Count - sequence.Length + 1;
+		for (int i = 0; i < maxFirstIndex; i++)
+		{
+			bool isMatch = true;
+			for (int j = 0; j < sequence.Length; j++)
+			{
+				if (source[i + j] != sequence[j])
+				{
+					isMatch = false;
+					break;
+				}
+			}
+			if (isMatch) return i;
+		}
+		return -1;
 	}
 }
