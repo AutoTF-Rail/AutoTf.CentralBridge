@@ -26,8 +26,6 @@ public class DataSync : Sync
 				await UploadLogs();
 				await UploadVideo();
 			}
-			else
-				_cameraService.IntervalCapture();
 		}
 		catch (Exception e)
 		{
@@ -40,7 +38,6 @@ public class DataSync : Sync
 	{
 		Logger.Log("SYNC-D: Uploading videos.");
 		// string[] recordings = Directory.GetFiles("recordings/");
-		_cameraService.IntervalCapture();
 		// TODO: Upload
 		// Upload all previous collected recordings
 		

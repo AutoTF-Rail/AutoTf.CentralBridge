@@ -51,7 +51,6 @@ public class SystemController : ControllerBase
 		if (!Request.Headers.IsAllowedDevice())
 			return Unauthorized();
 		
-		bool _ = _cameraService.IntervalCapture();
 		CommandExecuter.ExecuteSilent("shutdown now", true);
 		return Ok();
 	}
@@ -62,7 +61,6 @@ public class SystemController : ControllerBase
 		if (!Request.Headers.IsAllowedDevice())
 			return Unauthorized();
 		
-		_cameraService.IntervalCapture();
 		CommandExecuter.ExecuteSilent("reboot now", true);
 		return Ok();
 	}
