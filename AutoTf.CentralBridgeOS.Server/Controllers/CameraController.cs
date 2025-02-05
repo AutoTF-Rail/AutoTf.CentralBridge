@@ -1,5 +1,4 @@
 using System.Net;
-using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
@@ -12,25 +11,16 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 [Route("/camera")]
 public class CameraController : ControllerBase
 {
-	private readonly CameraService _cameraService;
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
 	private readonly UdpProxyService _udpProxy;
 	private const int UdpPort = 12345;
-
-	private bool _canStream = true;
 	
-	public CameraController(CameraService cameraService, Logger logger, SyncManager syncManager, UdpProxyService udpProxy)
+	public CameraController(Logger logger, SyncManager syncManager, UdpProxyService udpProxy)
 	{
-		_cameraService = cameraService;
 		_logger = logger;
 		_syncManager = syncManager;
 		_udpProxy = udpProxy;
-
-		Statics.ShutdownEvent += () =>
-		{
-			_canStream = false;
-		};
 	}
 	
 	[HttpPost("startStream")]
@@ -97,52 +87,6 @@ public class CameraController : ControllerBase
 			_logger.Log("CAM-C: Could not supply next save:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply next save.");
-		}
-	}
-
-	[HttpGet("latestFramePreview")]
-	public IActionResult LatestFramePreview()
-	{
-		try
-		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-			
-			byte[]? imageBytes = _cameraService.LatestFrame;
-
-			if (imageBytes == null)
-				return BadRequest();
-			
-			return File(imageBytes, "image/png");
-		}
-		catch (Exception e)
-		{
-			_logger.Log("CAM-C: Failed to supply preview frame:");
-			_logger.Log(e.Message);
-			return BadRequest(e.Message);
-		}
-	}
-
-	[HttpGet("latestFrame")]
-	public IActionResult LatestFrame()
-	{
-		try
-		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
-			byte[]? imageBytes = _cameraService.LatestFrame;
-
-			if (imageBytes == null)
-				return BadRequest();
-			
-			return File(imageBytes, "image/png");
-		}
-		catch (Exception e)
-		{
-			_logger.Log("CAM-C: Failed to supply frame:");
-			_logger.Log(e.Message);
-			return BadRequest(e.Message);
 		}
 	}
 }

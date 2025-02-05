@@ -1,3 +1,4 @@
+using System;
 using System.Timers;
 using AutoTf.Logging;
 using Timer = System.Timers.Timer;

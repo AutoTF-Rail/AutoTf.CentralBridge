@@ -1,3 +1,4 @@
+using System;
 using System.Device.I2c;
 using AutoTf.Logging;
 using Iot.Device.Pwm;

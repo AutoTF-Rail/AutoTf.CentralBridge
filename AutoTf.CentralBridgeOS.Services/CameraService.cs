@@ -1,5 +1,9 @@
+using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -12,9 +16,6 @@ public class CameraService : IDisposable
 
     private readonly int _frameWidth;
     private readonly int _frameHeight;
-
-    private byte[]? _latestFrameBytes;
-    private byte[]? _latestFramePreviewBytes;
 
     private readonly object _frameLockPreview = new object();
     private readonly object _frameLock = new object();
@@ -41,8 +42,10 @@ public class CameraService : IDisposable
     private void StartFFmpegProcess()
     {
         string ffmpegArgs =
-            $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -loglevel error -c:v mjpeg -rtbufsize 1500k -preset ultrafast -tune zero_latency -f mjpeg udp://127.0.0.1:5000"; // TODO: Save to file
-
+            $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 " +
+            $"-i /dev/video0 -map 0:v -loglevel error -c:v mjpeg -rtbufsize 1500k -preset ultrafast -tune zero_latency " +
+            $"f tee \"[f=segment:segment_time=150:strftime=1]recordings/output-%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:5000\"";
+        
         _ffmpegProcess = new Process
         {
             StartInfo = new ProcessStartInfo
@@ -60,28 +63,6 @@ public class CameraService : IDisposable
                 _logger.Log($"FFmpeg Error: {e.Data}");
         };
         _ffmpegProcess.Start();
-    }
-
-    public byte[]? LatestFramePreview
-    {
-        get
-        {
-            lock (_frameLockPreview)
-            {
-                return _latestFramePreviewBytes?.ToArray();
-            }
-        }
-    }
-
-    public byte[]? LatestFrame
-    {
-        get
-        {
-            lock (_frameLock)
-            {
-                return _latestFrameBytes?.ToArray();
-            }
-        }
     }
 
     public void Dispose()

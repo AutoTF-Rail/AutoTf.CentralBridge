@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
@@ -11,13 +14,19 @@ public class UdpProxyService
 	private List<byte> _buffer = new List<byte>();
 
 	private readonly byte[] jpegFrameStart = new byte[] { 0xFF, 0xD8 };
-	private readonly byte[] jpegFrameEnd = new byte[] { 0xFF, 0xD9 }; 
+	private readonly byte[] jpegFrameEnd = new byte[] { 0xFF, 0xD9 };
+	private bool _canStream = true;
 	
 	public UdpProxyService()
 	{
 		Statics.ShutdownEvent += _cancelToken.Cancel;
 		
 		_ffmpegInput = new UdpClient(5000);
+		
+		Statics.ShutdownEvent += () =>
+		{
+			_canStream = false;
+		};
 		
 		Task.Run(ForwardPackets, _cancelToken.Token);
 	}
@@ -37,7 +46,7 @@ public class UdpProxyService
 
 	private async Task ForwardPackets()
 	{
-		while (true)
+		while (_canStream)
 		{
 			UdpReceiveResult received = await _ffmpegInput.ReceiveAsync();
 			byte[] receivedData = received.Buffer;
