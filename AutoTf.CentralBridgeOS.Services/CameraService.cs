@@ -43,9 +43,8 @@ public class CameraService : IDisposable
     {
         string ffmpegArgs =
             $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 " +
-            $"-i /dev/video0 -map 0:v -loglevel error -c:v mjpeg -rtbufsize 1500k -preset ultrafast -tune zero_latency " +
+            $"-i /dev/video0 -map 0:v -loglevel error -c:v mjpeg -pix_fmt yuvj420p -rtbufsize 1500k -preset ultrafast -tune zero_latency " +
             $"f tee \"[f=segment:segment_time=150:strftime=1]recordings/output-%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:5000\"";
-        
         _ffmpegProcess = new Process
         {
             StartInfo = new ProcessStartInfo
