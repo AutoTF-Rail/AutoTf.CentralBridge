@@ -31,8 +31,8 @@ public class CameraService : IDisposable
         Statics.ShutdownEvent += Dispose;
         Directory.CreateDirectory("recordings");
 
-        _frameWidth = 1920;
-        _frameHeight = 1080;
+        _frameWidth = 1280;
+        _frameHeight = 720;
 
         _logger.Log($"CS: Starting video capture with { _frameWidth}x{_frameHeight}, 15 FPS.");
 
@@ -44,8 +44,8 @@ public class CameraService : IDisposable
         string ffmpegArgs =
             $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 " +
             $"-i /dev/video0 -map 0:v -loglevel error -c:v mjpeg -pix_fmt yuvj420p -rtbufsize 1500k -preset ultrafast -tune zero_latency " +
-            $"-f tee \"[f=segment:segment_time=150:strftime=1]recordings/output-%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:5000\"";
-        // ffmpeg -f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 -i /dev/video0 -map 0:v -loglevel error -c:v mjpeg -pix_fmt yuvj420p -rtbufsize 1500k -preset ultrafast -tune zero_latency 
+            $"-f tee \"[f=segment:segment_time=150:reset_timestamps=1:strftime=1]recordings/output-%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:5000\"";
+        
         _ffmpegProcess = new Process
         {
             StartInfo = new ProcessStartInfo
