@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
@@ -14,6 +15,7 @@ public class InformationController : ControllerBase
 	private readonly CodeValidator _codeValidator;
 	private readonly FileManager _fileManager;
 	private readonly Logger _logger;
+	private readonly string _logDir = "/var/log/AutoTF/AutoTf.CentralBridgeOS.Server/";
 
 	public InformationController(Logger logger, CodeValidator codeValidator, FileManager fileManager)
 	{
@@ -23,20 +25,51 @@ public class InformationController : ControllerBase
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
 	}
 
+	[HttpGet("logdates")]
+	public IActionResult LogDates()
+	{
+		try
+		{
+			string[] files = Directory.GetFiles(_logDir).Order().ToArray();
+			return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not get log dates:");
+			_logger.Log(e.Message);
+			return BadRequest("INFO-C: Could not get log dates.");
+		}
+	}
+
+	[HttpGet("logs")]
+	public IActionResult Logs([FromQuery, Required] string date)
+	{
+		try
+		{
+			return Content(JsonSerializer.Serialize(System.IO.File.ReadAllLines(_logDir + date + ".txt").Reverse()));
+		}
+		catch (Exception e)
+		{
+			_logger.Log($"INFO-C: Could not get logs for date {date}:");
+			_logger.Log(e.Message);
+			return BadRequest($"INFO-C: Could not get logs for date {date}j.");
+		}
+	}
+
 	[HttpGet("version")]
 	public IActionResult Version()
 	{
 		try
 		{
-			_logger.Log("ROOT-C: Version was requested.");
+			_logger.Log("INFO-C: Version was requested.");
 			
 			return Ok(Statics.GetGitVersion());
 		}
 		catch (Exception e)
 		{
-			_logger.Log("ROOT-C: Could not report version:");
+			_logger.Log("INFO-C: Could not report version:");
 			_logger.Log(e.Message);
-			return BadRequest("ROOT-C: Could not report version.");
+			return BadRequest("INFO-C: Could not report version.");
 		}
 	}
 
