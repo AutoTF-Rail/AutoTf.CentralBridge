@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
@@ -14,7 +15,6 @@ public class CameraController : ControllerBase
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
 	private readonly UdpProxyService _udpProxy;
-	private const int UdpPort = 12345;
 	
 	public CameraController(Logger logger, SyncManager syncManager, UdpProxyService udpProxy)
 	{
@@ -24,15 +24,16 @@ public class CameraController : ControllerBase
 	}
 	
 	[HttpPost("startStream")]
-	public IActionResult StartStream()
+	public IActionResult StartStream([FromQuery, Required] int port, [FromQuery, Required] int cameraIndex)
 	{
 		try
 		{
+			// TODO: Implement camera index for multiple cameras
 			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
 			
 			if (ipAddress != null)
 			{
-				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, UdpPort);
+				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, port);
 				_udpProxy.AddClient(receiverEndpoint);
                 
 				_logger.Log($"Added receiver: {receiverEndpoint}");
@@ -50,7 +51,7 @@ public class CameraController : ControllerBase
 	}
 	
 	[HttpPost("stopStream")]
-	public IActionResult StopStream()
+	public IActionResult StopStream([FromQuery, Required] int cameraIndex)
 	{
 		try
 		{
@@ -58,10 +59,9 @@ public class CameraController : ControllerBase
 			
 			if (ipAddress != null)
 			{
-				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, UdpPort);
-				_udpProxy.RemoveClient(receiverEndpoint);
+				_udpProxy.RemoveClient(ipAddress);
 				
-				_logger.Log($"Removed receiver: {receiverEndpoint}");
+				_logger.Log($"Removed receiver: {ipAddress}");
 				return Ok("Receiver removed successfully.");
 			}
 			

@@ -39,9 +39,9 @@ public class UdpProxyService
 		}
 	}
 
-	public void RemoveClient(IPEndPoint clientEndpoint)
+	public void RemoveClient(IPAddress clientIp)
 	{
-		_clients.Remove(clientEndpoint);
+		_clients.RemoveAll(x => Equals(x.Address, clientIp));
 	}
 
 	private async Task ForwardPackets()
