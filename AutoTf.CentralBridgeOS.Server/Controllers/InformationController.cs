@@ -25,6 +25,22 @@ public class InformationController : ControllerBase
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
 	}
 
+	[HttpGet("cameracount")]
+	public IActionResult CameraCount()
+	{
+		try
+		{
+			return Content(JsonSerializer.Serialize(1));
+			// TODO: Implement camera count
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not supply camera count:");
+			_logger.Log(e.Message);
+			return BadRequest("INFO-C: Could not supply camera count.");
+		}
+	}
+
 	[HttpGet("logdates")]
 	public IActionResult LogDates()
 	{
