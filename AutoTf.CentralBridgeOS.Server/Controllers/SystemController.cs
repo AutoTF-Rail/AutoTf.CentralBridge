@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
@@ -18,6 +20,33 @@ public class SystemController : ControllerBase
 		_logger = logger;
 	}
 	
+	[HttpPatch("setdate")]
+	public IActionResult SetDate([FromBody, Required] DateTime date)
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+			
+			_logger.Log($"ROOT-C: Date set was requested for date {date.ToString(CultureInfo.InvariantCulture)}.");
+			
+			_logger.Log(CommandExecuter.ExecuteCommand($"date -s \"{date:yyyy-MM-dd HH:mm:ss}\""));
+
+			_logger.Log("ROOT-C: Restarting after date set.");
+			
+			Statics.ShutdownEvent.Invoke();
+			CommandExecuter.ExecuteSilent("shutdown now", true);
+			
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("ROOT-C: Could not update:");
+			_logger.Log(e.Message);
+			return BadRequest("ROOT-C: Could not update.");
+		}
+	}
+	
 	[HttpPost("update")]
 	public IActionResult Update()
 	{
@@ -30,7 +59,7 @@ public class SystemController : ControllerBase
 			string prevDir = Directory.GetCurrentDirectory();
 		
 			Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridgeOS/AutoTf.CentralBridgeOS.Server");
-			CommandExecuter.ExecuteSilent("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github && git reset --hard && git pull && dotnet build -c RELEASE -m\"", true);
+			_logger.Log(CommandExecuter.ExecuteCommand("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github && git reset --hard && git pull && dotnet build -c RELEASE -m\""));
 		
 			Directory.SetCurrentDirectory(prevDir);
 
@@ -48,8 +77,11 @@ public class SystemController : ControllerBase
 	[HttpPost("shutdown")]
 	public IActionResult Shutdown()
 	{
+		// TODO: Notify user of shutdown
 		if (!Request.Headers.IsAllowedDevice())
 			return Unauthorized();
+		
+		Statics.ShutdownEvent.Invoke();
 		
 		CommandExecuter.ExecuteSilent("shutdown now", true);
 		return Ok();
@@ -58,8 +90,11 @@ public class SystemController : ControllerBase
 	[HttpPost("restart")]
 	public IActionResult Restart()
 	{
+		// TODO: Notify user of restart
 		if (!Request.Headers.IsAllowedDevice())
 			return Unauthorized();
+		
+		Statics.ShutdownEvent.Invoke();
 		
 		CommandExecuter.ExecuteSilent("reboot now", true);
 		return Ok();
