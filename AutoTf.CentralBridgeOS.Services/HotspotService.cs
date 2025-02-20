@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Services;
@@ -25,6 +23,7 @@ public class HotspotService : IDisposable
         string ssid = "CentralBridge-" + _fileManager.ReadFile("trainId", Statics.GenerateRandomString());
 		
         Statics.CurrentSsid = "CentralBridge-" + _fileManager.ReadFile("trainId");
+        _logger.Log("Starting with SSID: " + Statics.CurrentSsid);
 		
         string password = "CentralBridgePW";
         try
@@ -78,7 +77,7 @@ public class HotspotService : IDisposable
                                "wpa=2\n" +
                                "ctrl_interface=/var/run/hostapd\n" +
                                "ctrl_interface_group=0\n" +
-                               "ignore_broadcast_ssid=1\n" +
+                               "ignore_broadcast_ssid=2\n" +
                                $"wpa_passphrase={password}\n" +
                                "wpa_key_mgmt=WPA-PSK\n" +
                                "rsn_pairwise=CCMP\n" + 

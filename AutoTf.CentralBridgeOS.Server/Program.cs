@@ -14,7 +14,7 @@ public static class Program
 	{
 		try
 		{
-			Logger.Log("Starting up----------------------------");
+			Logger.Log("Starting up at " + DateTime.Now.ToString("hh:mm:ss"));
 			Logger.Log("Starting for EVU: " + Statics.EvuName);
 			
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
