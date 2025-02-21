@@ -33,7 +33,7 @@ public class TrainController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("TC-C: Error while supplying lever count:");
-			_logger.Log(e.Message);
+			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
 	}
@@ -51,7 +51,7 @@ public class TrainController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("TC-C: Error while supplying lever position:");
-			_logger.Log(e.Message);
+			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
 	}
@@ -69,7 +69,7 @@ public class TrainController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("TC-C: Error while supplying lever type:");
-			_logger.Log(e.Message);
+			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
 	}
@@ -89,7 +89,7 @@ public class TrainController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("TC-C: Error while supplying lever type:");
-			_logger.Log(e.Message);
+			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
 	}

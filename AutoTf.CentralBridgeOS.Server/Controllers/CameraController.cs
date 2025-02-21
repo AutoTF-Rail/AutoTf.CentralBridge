@@ -45,7 +45,7 @@ public class CameraController : ControllerBase
 		catch (Exception ex)
 		{
 			_logger.Log("CAM-C: Error in startStream.");
-			_logger.Log(ex.Message);
+			_logger.Log(ex.ToString());
 			return BadRequest("Failed to add receiver.");
 		}
 	}
@@ -70,7 +70,7 @@ public class CameraController : ControllerBase
 		catch (Exception ex)
 		{
 			_logger.Log("CAM-C: Error in stopStream.");
-			_logger.Log(ex.Message);
+			_logger.Log(ex.ToString());
 			return BadRequest("Failed to remove receiver.");
 		}
 	}

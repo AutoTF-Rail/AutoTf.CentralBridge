@@ -31,7 +31,7 @@ public class KeySync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("ERROR: Failed to sync keys.");
-			Logger.Log("ERROR: " + e.Message);
+			Logger.Log(e.ToString());
 		}
 	}
 	
@@ -54,7 +54,7 @@ public class KeySync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("SYNC: ERROR: An error occured while syncing keys.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 		}
 	}
 	
@@ -77,7 +77,7 @@ public class KeySync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("SYNC: ERROR: An error occured while checking for new keys.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 			return false;
 		}
 	}

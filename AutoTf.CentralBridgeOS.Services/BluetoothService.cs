@@ -23,7 +23,7 @@ public class BluetoothService : IDisposable
 			string lengthByte = length.ToString("X2");
 			string adData = $"{lengthByte}09{hexMessage}";
 
-			_logger.Log("BLUETOOTH: Trying to start BLE as: " + adData);
+			_logger.Log($"BLUETOOTH: Trying to start BLE as: {adData}");
 			
 			string command = $"btmgmt add-adv -d {adData} {_instanceId}";
 
@@ -32,7 +32,7 @@ public class BluetoothService : IDisposable
 		catch (Exception e)
 		{
 			_logger.Log("BLUETOOTH: ERROR: Bluetooth beacon threw an error");
-			_logger.Log($"BLUETOOTH: ERROR: {e.Message}");
+			_logger.Log(e.ToString());
 		}
 	}
 	

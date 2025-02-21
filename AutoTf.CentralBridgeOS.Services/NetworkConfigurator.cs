@@ -79,7 +79,7 @@ public class NetworkConfigurator
 		
 		if (match.Success)
 		{
-			_logger.Log("Found interface at: " + match.Groups[1].Value);
+			_logger.Log($"Found interface at: {match.Groups[1].Value}");
 			return match.Groups[1].Value;
 		}
 

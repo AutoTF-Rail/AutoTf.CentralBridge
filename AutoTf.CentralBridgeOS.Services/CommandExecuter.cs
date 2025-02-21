@@ -57,7 +57,9 @@ public static class CommandExecuter
 		}
 		catch (Exception e)
 		{
-			Statics.Logger.Log((ignoreExceptions ? "IGNORED:" : "") + e.Message);
+			if(ignoreExceptions)
+				Statics.Logger.Log("Ignored exception:");
+			Statics.Logger.Log(e.ToString());
 			if (!ignoreExceptions)
 				throw;
 		}

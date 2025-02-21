@@ -36,7 +36,7 @@ public class InformationController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("INFO-C: Could not supply camera count:");
-			_logger.Log(e.Message);
+			_logger.Log(e.ToString());
 			return BadRequest("INFO-C: Could not supply camera count.");
 		}
 	}
@@ -52,7 +52,7 @@ public class InformationController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("INFO-C: Could not get log dates:");
-			_logger.Log(e.Message);
+			_logger.Log(e.ToString());
 			return BadRequest("INFO-C: Could not get log dates.");
 		}
 	}

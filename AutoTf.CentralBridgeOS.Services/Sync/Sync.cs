@@ -20,7 +20,7 @@ public abstract class Sync
 		FileManager = fileManager;
 		
 		RootDomain = $"https://{Statics.EvuName}.server.autotf.de";
-		Logger.Log("Set server domain to: " + RootDomain);
+		Logger.Log($"Set server domain to: {RootDomain}");
 	}
 
 	protected async Task<string> SendGet(string endpoint)
@@ -42,7 +42,7 @@ public abstract class Sync
 		catch (Exception e)
 		{
 			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 			throw;
 		}
 	}
@@ -66,7 +66,7 @@ public abstract class Sync
 		catch (Exception e)
 		{
 			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 			throw;
 		}
 	}
@@ -90,7 +90,7 @@ public abstract class Sync
 		catch (Exception e)
 		{
 			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 			throw;
 		}
 	}

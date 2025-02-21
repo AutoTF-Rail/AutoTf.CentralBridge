@@ -34,7 +34,7 @@ public class DataSync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("SYNC-D: ERROR: Failed to sync mac addresses.");
-			Logger.Log("SYNC-D: ERROR: " + e.Message);
+			Logger.Log(e.ToString());
 		}
 	}
 
@@ -67,7 +67,7 @@ public class DataSync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("SYNC-D: ERROR: An error occured while updating the status.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 		}
 	}
 	
@@ -96,7 +96,7 @@ public class DataSync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("SYNC-D: ERROR: Failed to upload logs.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 		}
 	}
 }

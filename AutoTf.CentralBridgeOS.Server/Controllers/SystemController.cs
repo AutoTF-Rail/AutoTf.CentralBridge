@@ -11,12 +11,10 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 [Route("/system")]
 public class SystemController : ControllerBase
 {
-	private readonly CameraService _cameraService;
 	private readonly Logger _logger;
 
-	public SystemController(CameraService cameraService, Logger logger)
+	public SystemController(Logger logger)
 	{
-		_cameraService = cameraService;
 		_logger = logger;
 	}
 	
@@ -42,7 +40,7 @@ public class SystemController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("ROOT-C: Could not update:");
-			_logger.Log(e.Message);
+			_logger.Log(e.ToString());
 			return BadRequest("ROOT-C: Could not update.");
 		}
 	}
@@ -81,6 +79,7 @@ public class SystemController : ControllerBase
 		if (!Request.Headers.IsAllowedDevice())
 			return Unauthorized();
 		
+		// While the application calls this on shutdown, we need to do so as well. We cannot just exit the app here instead because then shutdown now wouldn't be called. That's why we also can't use IHostedService.
 		Statics.ShutdownEvent.Invoke();
 		
 		CommandExecuter.ExecuteSilent("shutdown now", true);

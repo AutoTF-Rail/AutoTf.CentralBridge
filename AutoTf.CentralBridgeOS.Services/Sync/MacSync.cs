@@ -28,7 +28,7 @@ public class MacSync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("ERROR: Failed to sync mac addresses.");
-			Logger.Log("ERROR: " + e.Message);
+			Logger.Log(e.ToString());
 		}
 	}
 	
@@ -52,7 +52,7 @@ public class MacSync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("SYNC: ERROR: An error occured while syncing MAC Addresses.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 		}
 	}
 	
@@ -75,7 +75,7 @@ public class MacSync : Sync
 		catch (Exception e)
 		{
 			Logger.Log("SYNC: ERROR: An error occured while checking for new MAC addresses.");
-			Logger.Log(e.Message);
+			Logger.Log(e.ToString());
 			return false;
 		}
 	}

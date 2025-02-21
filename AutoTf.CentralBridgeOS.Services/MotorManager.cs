@@ -5,7 +5,7 @@ using Iot.Device.Pwm;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-// Pins config:
+// Pins config (RPI4, pins on the right side view, top to bottom):
 // 1: EMPTY 2: VCC
 // 3: SDA 4: V+
 // 5: SCL 6: GND

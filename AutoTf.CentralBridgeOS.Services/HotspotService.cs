@@ -40,7 +40,7 @@ public class HotspotService : IDisposable
         catch (Exception ex)
         {
             _logger.Log("HOTSPOT: ERROR: Could not configure network");
-            _logger.Log($"HOTSPOT: ERROR: {ex.Message}");
+            _logger.Log(ex.ToString());
             return false;
         }
 
