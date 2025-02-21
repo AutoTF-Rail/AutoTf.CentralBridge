@@ -19,7 +19,7 @@ public class DefaultModel : ITrainModel
 
 	public virtual void Initialize()
 	{
-		if (!_motorManager.AreMotorsAvailable())
+		if (!_motorManager.AreMotorsAvailable)
 			return;
 		
 		// TODO: Log which train model is being used.
@@ -65,6 +65,31 @@ public class DefaultModel : ITrainModel
 		}
 
 		return null;
+	}
+
+	public bool AreMotorsReleased()
+	{
+		return _motorManager.AreMotorsReleased;
+	}
+
+	public void EngageMotors()
+	{
+		_motorManager.AreMotorsReleased = false;
+	}
+
+	public void ReleaseMotor(int index)
+	{
+		_motorManager.TurnOffMotor(index);
+	}
+
+	public void EngageMotor(int index)
+	{
+		_motorManager.TurnOnMotor(index);
+	}
+
+	public void ReleaseMotors()
+	{
+		_motorManager.AreMotorsReleased = true;
 	}
 
 	public void SetLever(int index, double percentage)

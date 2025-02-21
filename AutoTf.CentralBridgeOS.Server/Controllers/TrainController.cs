@@ -20,6 +20,100 @@ public class TrainController : ControllerBase
 		_trainModel = trainModel;
 	}
 
+	[HttpGet("areMotorsReleased")]
+	public IActionResult AreMotorsReleased()
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+			
+			return Content(_trainModel.AreMotorsReleased().ToString());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while supplying AreMotorsReleased:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpPost("releaseMotor")]
+	public IActionResult ReleaseMotor([FromBody, Required] int motorIndex)
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			_trainModel.ReleaseMotor(motorIndex);
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			_logger.Log($"TC-C: Error while releasing motor {motorIndex}:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpPost("releaseMotors")]
+	public IActionResult ReleaseMotors()
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			_trainModel.ReleaseMotors();
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while releasing motors:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpPost("engageMotor")]
+	public IActionResult EngageMotor([FromBody, Required] int motorIndex)
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			_trainModel.EngageMotor(motorIndex);
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			_logger.Log($"TC-C: Error while engaging motor {motorIndex}:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpPost("engageMotors")]
+	public IActionResult EngageMotors()
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			_trainModel.EngageMotors();
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while engaging motors:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
 	[HttpGet("leverCount")]
 	public IActionResult LeverCount()
 	{

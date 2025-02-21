@@ -1,4 +1,3 @@
-using System;
 using System.Device.I2c;
 using AutoTf.Logging;
 using Iot.Device.Pwm;
@@ -18,12 +17,15 @@ public class MotorManager : IDisposable
 	private const double PwmPeriodMicroseconds = 1_000_000.0 / PwmFrequency;
 	private const int MaxServoAngle = 270;
 	
-	private I2cDevice _i2CDevice;
-	private I2cConnectionSettings _i2CSettings;
+	private I2cDevice _i2CDevice = null!;
+	private I2cConnectionSettings _i2CSettings = null!;
 	private Pca9685? _pca;
 	
 	private bool? _areMotorsAvailable;
+
+	private bool _areMotorsReleased;
 	
+	// TODO: Listen on a certain pin for a button press to physically disable the motors.
 	public MotorManager(Logger logger)
 	{
 		_logger = logger;
@@ -41,7 +43,7 @@ public class MotorManager : IDisposable
 		_i2CSettings = new I2cConnectionSettings(1, Pca9685.I2cAddressBase);
 		_i2CDevice = I2cDevice.Create(_i2CSettings);
 
-		if (!AreMotorsAvailable())
+		if (!AreMotorsAvailable)
 			return;
 		
 		_pca = new Pca9685(_i2CDevice);
@@ -50,14 +52,16 @@ public class MotorManager : IDisposable
 
 	public void SetMotorAngle(int channel, double angle)
 	{
-		if (_pca == null)
+		if (!AreMotorsAvailable)
+			return;
+		if (_areMotorsReleased)
 			return;
 
 		double pulseWidth = MinPulseWidth + (angle / MaxServoAngle) * (MaxPulseWidth - MinPulseWidth);
 
 		double dutyCycle = pulseWidth / PwmPeriodMicroseconds;
 
-		_pca.SetDutyCycle(channel, dutyCycle);
+		_pca!.SetDutyCycle(channel, dutyCycle);
 	}
 	
 	public void MoveToMiddle()
@@ -67,10 +71,12 @@ public class MotorManager : IDisposable
 
 	public double GetMotorAngle(int channel)
 	{
-		if (_pca == null)
+		if (!AreMotorsAvailable)
 			return -800;
+		if (_areMotorsReleased)
+			return -900;
 		
-		double dutyCycle = _pca.GetDutyCycle(channel);
+		double dutyCycle = _pca!.GetDutyCycle(channel);
 
 		double pulseWidth = dutyCycle * PwmPeriodMicroseconds;
 
@@ -78,17 +84,76 @@ public class MotorManager : IDisposable
 
 		return Math.Clamp(angle, 0, MaxServoAngle);
 	}
+
+	public void TurnOffMotor(int channel)
+	{
+		if (!AreMotorsAvailable)
+			return;
+		
+		_pca!.SetDutyCycle(channel, 0);
+	}
+
+	public void TurnOnMotor(int channel)
+	{
+		if (!AreMotorsAvailable)
+			return;
+		
+		_pca!.SetDutyCycle(channel, 1.0);
+	}
 	
-	public bool AreMotorsAvailable()
-	{ 
-		try
+	/// <summary>
+	/// This is a bool given from the actual i2C connection.
+	/// </summary>
+	public bool AreMotorsAvailable
+	{
+		get
 		{
-			_i2CDevice.ReadByte(); 
-			return true; 
+			if (_areMotorsAvailable == null)
+			{
+				try
+				{
+					 _i2CDevice.ReadByte();
+					 _areMotorsAvailable = true;
+				}
+				catch
+				{
+					_areMotorsAvailable = false;
+				}
+			}
+
+			return (bool)_areMotorsAvailable;
 		}
-		catch
+	}
+
+	/// <summary>
+	/// This is like a overall block, to turn off all motors. If you set this to true, motors will be turned off by setting their pwm to 0.
+	/// They can then not be moved again until this value is set to false.
+	/// When turned back on, their pwm is set to 4096
+	/// </summary>
+	public bool AreMotorsReleased
+	{
+		get => _areMotorsReleased;
+		set
 		{
-			return false;
+			_areMotorsReleased = value;
+
+			if (!_areMotorsReleased)
+			{
+				for (int i = 0; i < 16; i++)
+				{
+					TurnOnMotor(i);
+					// TODO: Add sound feedback?
+				}
+				_logger.Log("Motors have been engaged.");
+				return;
+			}
+			
+			_logger.Log("Turning off all motors.");
+			for (int i = 0; i < 16; i++)
+			{
+				TurnOffMotor(i);
+				// TODO: Add sound feedback?
+			}
 		}
 	}
 
