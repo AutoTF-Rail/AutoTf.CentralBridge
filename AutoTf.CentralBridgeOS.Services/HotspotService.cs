@@ -26,16 +26,30 @@ public class HotspotService : IDisposable
         _logger.Log($"Starting with SSID: {Statics.CurrentSsid}");
 		
         string password = "CentralBridgePW";
+        
         try
         {
-            NetworkConfigurator.SetStaticIpAddress("192.168.0.1", "24");
+            string ipEnding = "1";
+            if (IpAlreadyInUse("192.168.0.1"))
+            {
+                ipEnding = "2";
+                Statics.IsMasterBridge = false;
+            }
+            else 
+                Statics.IsMasterBridge = true;
+
+            string ownIp = "192.168.0." + ipEnding;
+            
+            NetworkConfigurator.SetStaticIpAddress(ownIp, "24");
             NetworkConfigurator.SetStaticIpAddress("192.168.1.1", "24", "wlan1");
             _logger.Log("HOTSPOT: Successfully set local IP.");
 			
+            // TODO: Check if this creates conflicts/transfers are seamless when moving between Bridges
             StartWifi(interfaceName, ssid, password);
-            SetupDhcpConfig(interfaceName);
+            if(ipEnding == "1")
+                SetupDhcpConfig(interfaceName);
 			
-            _logger.Log($"HOTSPOT: Started WIFI as: {ssid}");
+            _logger.Log($"HOTSPOT: Started WIFI as: {ssid} with LAN IP {ownIp} as Master: {Statics.IsMasterBridge}");
         }
         catch (Exception ex)
         {
@@ -46,12 +60,16 @@ public class HotspotService : IDisposable
 
         return true;
     }
-    
+
+    private bool IpAlreadyInUse(string ip)
+    {
+        return !CommandExecuter.ExecuteCommand("timeout 4s arp " + ip).Contains("-- no entry");
+    }
+
     // Only call this once the NetworkManager has tried to sync. Due to MAC Addresses maybe still being synced.
     private void StartWifi(string interfaceName, string ssid, string password)
     {
         string configPath = "/etc/hostapd/hostapd.conf";
-        string defaultConfigPath = "hostapd.conf.default";
 
         // Create it, if it doesn't exist
         _fileManager.ReadAllLines("/etc/hostapd/accepted_macs.txt");

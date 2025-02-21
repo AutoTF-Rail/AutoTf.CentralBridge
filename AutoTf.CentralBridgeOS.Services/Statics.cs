@@ -9,6 +9,8 @@ namespace AutoTf.CentralBridgeOS.Services;
 public static class Statics
 {
 	public static readonly Logger Logger = new Logger(true);
+	public static bool IsMasterBridge { get; set; }
+	
 	public static string CurrentSsid { get; set; }
 
 	public static string EvuName { get; set; }
