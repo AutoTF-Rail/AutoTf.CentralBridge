@@ -53,6 +53,7 @@ public class UdpProxyService
 
 			_buffer.AddRange(receivedData);
 
+			using UdpClient udpClient = new UdpClient();
 			while (_buffer.Count > 0)
 			{
 				int startIndex = IndexOfSequence(_buffer, jpegFrameStart);
@@ -64,7 +65,6 @@ public class UdpProxyService
 
 					foreach (IPEndPoint client in _clients)
 					{
-						using UdpClient udpClient = new UdpClient();
 						await udpClient.SendAsync(frameBytes, frameBytes.Length, client);
 					}
 
