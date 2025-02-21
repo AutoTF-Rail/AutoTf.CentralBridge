@@ -62,7 +62,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			return Content(JsonSerializer.Serialize(System.IO.File.ReadAllLines(_logDir + date + ".txt").Reverse()));
+			return Content(JsonSerializer.Serialize(System.IO.File.ReadAllLines(_logDir + date + ".txt")));
 		}
 		catch (Exception e)
 		{
