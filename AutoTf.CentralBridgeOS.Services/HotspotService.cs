@@ -12,7 +12,7 @@ public class HotspotService : IDisposable
     public HotspotService(FileManager fileManager)
     {
         _fileManager = fileManager;
-        Statics.ShutdownEvent += StopWifi;
+        Statics.ShutdownEvent += Dispose;
     }
     
     public bool Configure()
@@ -23,7 +23,7 @@ public class HotspotService : IDisposable
         string ssid = "CentralBridge-" + _fileManager.ReadFile("trainId", Statics.GenerateRandomString());
 		
         Statics.CurrentSsid = "CentralBridge-" + _fileManager.ReadFile("trainId");
-        _logger.Log("Starting with SSID: " + Statics.CurrentSsid);
+        _logger.Log($"Starting with SSID: {Statics.CurrentSsid}");
 		
         string password = "CentralBridgePW";
         try
@@ -57,17 +57,6 @@ public class HotspotService : IDisposable
         _fileManager.ReadAllLines("/etc/hostapd/accepted_macs.txt");
 
         CheckDependencies();
-
-        if (!File.Exists(configPath))
-        {
-            _logger.Log("HOTSPOT: Config not found.");
-            
-            if (!File.Exists(defaultConfigPath))
-                throw new FileNotFoundException("HOTSPOT: ERROR: Default hostapd config not found in program directory!");
-            
-            File.Copy(defaultConfigPath, configPath, true);
-            _logger.Log($"HOTSPOT: Default config copied to {configPath}");
-        }
 
         string hostapdConfig = $"interface={interfaceName}\n" +
                                "driver=nl80211\n" +
@@ -110,12 +99,6 @@ public class HotspotService : IDisposable
         _logger.Log("HOTSPOT: DHCP server configuration updated successfully!");
     }
 
-    public void StopWifi()
-    {
-        CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
-        _logger.Log("HOTSPOT: WiFi hotspot stopped.");
-    }
-
     private void CheckDependencies()
     {
         string[] requiredTools = { "hostapd", "iw", "dnsmasq" };
@@ -138,6 +121,7 @@ public class HotspotService : IDisposable
 
     public void Dispose()
     {
+        _logger.Log("HOTSPOT: Shutting down.");
         CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
         CommandExecuter.ExecuteSilent("sudo systemctl stop dnsmasq", true);
         CommandExecuter.ExecuteSilent("sudo killall hostapd", true);
