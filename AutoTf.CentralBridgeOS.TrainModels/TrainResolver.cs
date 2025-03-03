@@ -20,11 +20,13 @@ public static class TrainResolver
 		
 		if (trainModelMap.TryGetValue(trainType, out Type? type))
 		{
+			Statics.Logger.Log($"Starting with train model {trainType}.");
 			ITrainModel? trainModel = serviceProvider.GetService(type) as ITrainModel;
 			trainModel!.Initialize();
 			return trainModel;
 		}
 
+		Statics.Logger.Log($"Starting with default train model.");
 		ITrainModel? train = serviceProvider.GetService(typeof(DefaultModel)) as ITrainModel;
 		train!.Initialize();
 		return train;

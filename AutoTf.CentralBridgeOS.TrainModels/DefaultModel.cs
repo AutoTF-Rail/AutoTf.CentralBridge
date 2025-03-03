@@ -22,7 +22,6 @@ public class DefaultModel : ITrainModel
 		if (!_motorManager.AreMotorsAvailable)
 			return;
 		
-		// TODO: Log which train model is being used.
 		Levers.Add(0, new LeverModel()
 		{
 			Type = LeverType.CombinedThrottle,
