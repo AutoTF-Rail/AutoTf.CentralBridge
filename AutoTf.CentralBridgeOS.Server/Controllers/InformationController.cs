@@ -25,6 +25,21 @@ public class InformationController : ControllerBase
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
 	}
 
+	[HttpGet("serviceState")]
+	public IActionResult GetServiceState()
+	{
+		try
+		{
+			return Content(Statics.ServiceState.ToString());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("INFO-C: Could not supply service state:");
+			_logger.Log(e.ToString());
+			return BadRequest("INFO-C: Could not supply service state.");
+		}
+	}
+
 	[HttpGet("cameracount")]
 	public IActionResult CameraCount()
 	{

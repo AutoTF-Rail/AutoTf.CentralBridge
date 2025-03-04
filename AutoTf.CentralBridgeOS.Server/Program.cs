@@ -1,7 +1,9 @@
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
+using Microsoft.AspNetCore.Components;
 using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridgeOS.Server;
@@ -14,7 +16,8 @@ public static class Program
 	{
 		try
 		{
-			Logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} for EVU: {Statics.EvuName}");
+			LoadServiceState();
+			Logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} for EVU {Statics.EvuName} with service state {Statics.ServiceState}.");
 			
 			WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 			builder.Logging.AddDebug();
@@ -76,5 +79,21 @@ public static class Program
 		builderServices.AddSingleton<DesiroHC>();
 		builderServices.AddSingleton<DesiroML>();
 		builderServices.AddSingleton<DefaultModel>();
+	}
+	
+	private static void LoadServiceState()
+	{
+		string[] lines = File.ReadAllLines("/proc/meminfo");
+        
+		foreach (string line in lines)
+		{
+			if (!line.StartsWith("MemTotal:")) 
+				continue;
+            
+			string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			long memTotalGb = long.Parse(parts[1]) / 1024 / 1024 / 1024;
+
+			Statics.ServiceState = memTotalGb > 3000 ? BridgeServiceState.Master : BridgeServiceState.Slave;
+		}
 	}
 }

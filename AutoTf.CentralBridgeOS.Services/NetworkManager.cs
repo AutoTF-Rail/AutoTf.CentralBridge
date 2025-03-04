@@ -55,6 +55,7 @@ public class NetworkManager : IDisposable
 			}
 		}
 
+		_logger.Log($"Previous devices: {_knownDevices} | New devices: {currentDevices}");
 		foreach (string mac in _knownDevices)
 		{
 			if (!currentDevices.Contains(mac))
