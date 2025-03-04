@@ -40,22 +40,6 @@ public class InformationController : ControllerBase
 		}
 	}
 
-	[HttpGet("cameracount")]
-	public IActionResult CameraCount()
-	{
-		try
-		{
-			return Content(JsonSerializer.Serialize(1));
-			// TODO: Implement camera count
-		}
-		catch (Exception e)
-		{
-			_logger.Log("INFO-C: Could not supply camera count:");
-			_logger.Log(e.ToString());
-			return BadRequest("INFO-C: Could not supply camera count.");
-		}
-	}
-
 	[HttpGet("logdates")]
 	public IActionResult LogDates()
 	{

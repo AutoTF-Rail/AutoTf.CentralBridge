@@ -17,7 +17,7 @@ public static class Program
 		try
 		{
 			LoadServiceState();
-			Logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} for EVU {Statics.EvuName} with service state {Statics.ServiceState}.");
+			Logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} with service state {Statics.ServiceState}.");
 			
 			WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 			builder.Logging.AddDebug();
