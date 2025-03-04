@@ -20,7 +20,6 @@ public abstract class Sync
 		FileManager = fileManager;
 		
 		RootDomain = $"https://{Statics.EvuName}.server.autotf.de";
-		Logger.Log($"Set server domain to: {RootDomain}");
 	}
 
 	protected async Task<string> SendGet(string endpoint)

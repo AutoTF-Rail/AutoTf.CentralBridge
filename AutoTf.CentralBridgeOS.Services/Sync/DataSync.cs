@@ -28,12 +28,13 @@ public class DataSync : Sync
 			{
 				await UpdateStatus();
 				await UploadLogs();
-				await UploadVideo();
+				// TODO: Enable when implemented
+				// await UploadVideo();
 			}
 		}
 		catch (Exception e)
 		{
-			Logger.Log("SYNC-D: ERROR: Failed to sync mac addresses.");
+			Logger.Log("SYNC-D: ERROR: Failed to sync data.");
 			Logger.Log(e.ToString());
 		}
 	}
