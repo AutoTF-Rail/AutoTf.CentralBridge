@@ -91,7 +91,7 @@ public static class Program
 				continue;
             
 			string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-			long memTotalGb = long.Parse(parts[1]) / 1024 / 1024 / 1024;
+			long memTotalGb = long.Parse(parts[1]) / 1024;
 
 			Statics.ServiceState = memTotalGb > 3000 ? BridgeServiceState.Master : BridgeServiceState.Slave;
 		}
