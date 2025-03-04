@@ -25,18 +25,18 @@ public class InformationController : ControllerBase
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
 	}
 
-	[HttpGet("isMaster")]
-	public IActionResult IsMaster()
+	[HttpGet("serviceState")]
+	public IActionResult GetServiceState()
 	{
 		try
 		{
-			return Content(Statics.IsMasterBridge.ToString());
+			return Content(Statics.ServiceState.ToString());
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply master bool:");
+			_logger.Log("INFO-C: Could not supply service state:");
 			_logger.Log(e.ToString());
-			return BadRequest("INFO-C: Could not supply master bool.");
+			return BadRequest("INFO-C: Could not supply service state.");
 		}
 	}
 

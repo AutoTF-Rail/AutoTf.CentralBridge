@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Services;
@@ -9,7 +10,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 public static class Statics
 {
 	public static readonly Logger Logger = new Logger(true);
-	public static bool IsMasterBridge { get; set; }
+	public static BridgeServiceState ServiceState { get; set; } = BridgeServiceState.Unknown;
 	
 	public static string CurrentSsid { get; set; }
 

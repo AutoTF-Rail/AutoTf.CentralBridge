@@ -1,3 +1,4 @@
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Services;
@@ -30,14 +31,9 @@ public class HotspotService : IDisposable
         try
         {
             string ipEnding = "1";
-            if (IpAlreadyInUse("192.168.0.1"))
-            {
+            if (Statics.ServiceState != BridgeServiceState.Master)
                 ipEnding = "2";
-                Statics.IsMasterBridge = false;
-            }
-            else 
-                Statics.IsMasterBridge = true;
-
+            
             string ownIp = "192.168.0." + ipEnding;
             
             NetworkConfigurator.SetStaticIpAddress(ownIp, "24");
@@ -49,7 +45,7 @@ public class HotspotService : IDisposable
             if(ipEnding == "1")
                 SetupDhcpConfig(interfaceName);
 			
-            _logger.Log($"HOTSPOT: Started WIFI as: {ssid} with LAN IP {ownIp} as Master: {Statics.IsMasterBridge}");
+            _logger.Log($"HOTSPOT: Started WIFI as: {ssid} with LAN IP {ownIp}.");
         }
         catch (Exception ex)
         {
@@ -59,11 +55,6 @@ public class HotspotService : IDisposable
         }
 
         return true;
-    }
-
-    private bool IpAlreadyInUse(string ip)
-    {
-        return !CommandExecuter.ExecuteCommand("timeout 4s arp " + ip).Contains("-- no entry");
     }
 
     // Only call this once the NetworkManager has tried to sync. Due to MAC Addresses maybe still being synced.

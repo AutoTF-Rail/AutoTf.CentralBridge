@@ -18,6 +18,10 @@
       <PackageReference Include="Yubico.YubiKey" Version="1.12.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Models\AutoTf.CentralBridgeOS.Models.csproj" />
+    </ItemGroup>
+
     <PropertyGroup>
         <UseRidGraph>true</UseRidGraph>
     </PropertyGroup>

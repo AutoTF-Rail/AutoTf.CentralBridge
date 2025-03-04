@@ -79,6 +79,8 @@ public class SystemController : ControllerBase
 		if (!Request.Headers.IsAllowedDevice())
 			return Unauthorized();
 		
+		_logger.Log("SC: Shutdown was requested.");
+		
 		// While the application calls this on shutdown, we need to do so as well. We cannot just exit the app here instead because then shutdown now wouldn't be called. That's why we also can't use IHostedService.
 		Statics.ShutdownEvent.Invoke();
 		
