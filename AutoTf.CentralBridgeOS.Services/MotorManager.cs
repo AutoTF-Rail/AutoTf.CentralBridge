@@ -35,10 +35,18 @@ public class MotorManager : IHostedService
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
 		InitializeI2CConnection();
+		ListenForEngagePin();
 
 		return Task.CompletedTask;
 	}
 
+	private void ListenForEngagePin()
+	{
+		// TODO: Implement loop for pin listen
+
+		bool isHigh = false;
+		AreMotorsReleased = isHigh;
+		// TOOD: Notify user if released.
 	}
 
 	private void InitializeI2CConnection()
