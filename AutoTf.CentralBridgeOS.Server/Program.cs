@@ -52,15 +52,20 @@ public static class Program
 		builder.Services.AddSingleton<TrainSessionService>();
 		builder.Services.AddSingleton<FileManager>();
 		builder.Services.AddSingleton<CodeValidator>();
+		builder.Services.AddSingleton<MotorManager>();
 		
 		builder.Services.AddHostedService<NetworkManager>();
 		builder.Services.AddHostedService<CameraService>();
 		builder.Services.AddHostedService<HotspotService>();
 		builder.Services.AddHostedService<UdpProxyService>();
-		builder.Services.AddHostedService<MotorManager>();
 		builder.Services.AddHostedService<SyncManager>();
 		builder.Services.AddHostedService<BluetoothService>();
 		
+		builder.Services.AddHostedService(provider =>
+		{
+			MotorManager motorManager = provider.GetRequiredService<MotorManager>();
+			return motorManager;
+		});
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
 		{
