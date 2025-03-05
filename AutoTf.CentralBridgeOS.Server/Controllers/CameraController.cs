@@ -24,11 +24,12 @@ public class CameraController : ControllerBase
 	}
 	
 	[HttpPost("startStream")]
-	public IActionResult StartStream([FromQuery, Required] int port, [FromQuery, Required] int cameraIndex)
+	public IActionResult StartStream([FromQuery, Required] int port)
 	{
 		try
 		{
 			// TODO: Implement camera index for multiple cameras
+			// If another is already running, turn that one off and turn the new one on.
 			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
 			
 			if (ipAddress != null)
@@ -51,7 +52,7 @@ public class CameraController : ControllerBase
 	}
 	
 	[HttpPost("stopStream")]
-	public IActionResult StopStream([FromQuery, Required] int cameraIndex)
+	public IActionResult StopStream()
 	{
 		try
 		{
