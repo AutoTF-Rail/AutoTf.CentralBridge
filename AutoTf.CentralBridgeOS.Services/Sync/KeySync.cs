@@ -11,7 +11,7 @@ public class KeySync : Sync
 {
 	private string[] _latestList;
 	
-	public KeySync(Logger logger, FileManager fileManager) : base(logger, fileManager)
+	public KeySync(Logger logger, FileManager fileManager, TrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
 	{
 		Statics.SyncEvent += Sync;
 		_latestList = FileManager.ReadAllLines("keys");

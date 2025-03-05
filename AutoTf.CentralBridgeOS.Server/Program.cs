@@ -3,7 +3,6 @@ using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
-using Microsoft.AspNetCore.Components;
 using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridgeOS.Server;
@@ -16,26 +15,29 @@ public static class Program
 	{
 		try
 		{
-			LoadServiceState();
-			Logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} with service state {Statics.ServiceState}.");
+			Logger.Log($"Assembling at {DateTime.Now:hh:mm:ss}.");
 			
 			WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-			builder.Logging.AddDebug();
 			
 			NetworkManager unused = new NetworkManager();
-			
 			FileManager fileManager = new FileManager();
+			
+			TrainSessionService trainSessionService = new TrainSessionService(fileManager);
+			trainSessionService.LocalServiceState = LoadServiceState();
+			
 			CameraService cameraService = new CameraService(Logger);
-			HotspotService hotspotService = new HotspotService(fileManager);
+			HotspotService hotspotService = new HotspotService(fileManager, trainSessionService);
+
 			
 			builder.Services.AddControllers();
 			builder.Services.AddSingleton(Logger);
 			builder.Services.AddSingleton(fileManager);
 			builder.Services.AddSingleton(cameraService);
+			builder.Services.AddSingleton(trainSessionService);
 			builder.Services.AddSingleton<CodeValidator>();
 			builder.Services.AddSingleton<UdpProxyService>();
 			builder.Services.AddSingleton<MotorManager>();
-			builder.Services.AddSingleton(new SyncManager(fileManager, cameraService));
+			builder.Services.AddSingleton(new SyncManager(fileManager, cameraService, trainSessionService));
 
 			builder.Services.AddSingleton<ITrainModel>(provider => TrainResolver.Resolve(provider, fileManager.ReadFile("TrainName")));
 			
@@ -50,6 +52,8 @@ public static class Program
 
 			builder.Services.Configure<HostOptions>(x => x.ShutdownTimeout = TimeSpan.FromSeconds(20));
 
+			Logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} for EVU {trainSessionService.EvuName} with service state {trainSessionService.LocalServiceState}.");
+			
 			WebApplication app = builder.Build();
 			
 			app.MapControllers();
@@ -81,7 +85,7 @@ public static class Program
 		builderServices.AddSingleton<DefaultModel>();
 	}
 	
-	private static void LoadServiceState()
+	private static BridgeServiceState LoadServiceState()
 	{
 		string[] lines = File.ReadAllLines("/proc/meminfo");
         
@@ -93,7 +97,9 @@ public static class Program
 			string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 			long memTotalMb = long.Parse(parts[1]) / 1024;
 
-			Statics.ServiceState = memTotalMb > 3000 ? BridgeServiceState.Master : BridgeServiceState.Slave;
+			return memTotalMb > 3000 ? BridgeServiceState.Master : BridgeServiceState.Slave;
 		}
+
+		return BridgeServiceState.Unknown;
 	}
 }

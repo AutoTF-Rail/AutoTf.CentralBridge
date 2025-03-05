@@ -14,14 +14,16 @@ public class InformationController : ControllerBase
 {
 	private readonly CodeValidator _codeValidator;
 	private readonly FileManager _fileManager;
+	private readonly TrainSessionService _trainSessionService;
 	private readonly Logger _logger;
 	private readonly string _logDir = "/var/log/AutoTF/AutoTf.CentralBridgeOS.Server/";
 
-	public InformationController(Logger logger, CodeValidator codeValidator, FileManager fileManager)
+	public InformationController(Logger logger, CodeValidator codeValidator, FileManager fileManager, TrainSessionService trainSessionService)
 	{
 		_logger = logger;
 		_codeValidator = codeValidator;
 		_fileManager = fileManager;
+		_trainSessionService = trainSessionService;
 		// TODO: Sync notification. Check for next sync date, and then notify tablet users, or admins.
 	}
 
@@ -30,7 +32,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			return Content(Statics.ServiceState.ToString());
+			return Content(_trainSessionService.LocalServiceState.ToString());
 		}
 		catch (Exception e)
 		{
@@ -153,7 +155,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			return Content(Statics.EvuName);
+			return Content(_trainSessionService.EvuName);
 		}
 		catch (Exception e)
 		{

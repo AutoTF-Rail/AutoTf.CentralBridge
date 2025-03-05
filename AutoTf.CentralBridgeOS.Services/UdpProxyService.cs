@@ -9,6 +9,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class UdpProxyService
 {
+	private readonly TrainSessionService _trainSessionService;
 	private readonly UdpClient _ffmpegInput;
 	private readonly UdpClient _secondaryCamInput;
 	private readonly List<IPEndPoint> _clients = new List<IPEndPoint>();
@@ -23,8 +24,9 @@ public class UdpProxyService
 	private IPEndPoint _masterBridgeIp;
 	private IPEndPoint _slaveBridgeIp;
 	
-	public UdpProxyService()
+	public UdpProxyService(TrainSessionService trainSessionService)
 	{
+		_trainSessionService = trainSessionService;
 		Statics.ShutdownEvent += _cancelToken.Cancel;
 		
 		_ffmpegInput = new UdpClient(5000);
@@ -82,7 +84,7 @@ public class UdpProxyService
 					}
 
 					// if master, we want to send our feed to the slave.
-					if (Statics.ServiceState == BridgeServiceState.Master)
+					if (_trainSessionService.LocalServiceState == BridgeServiceState.Master)
 						await udpClient.SendAsync(frameBytes, frameBytes.Length, _slaveBridgeIp);
 
 					_buffer.RemoveRange(0, endIndex + 2); 
@@ -121,7 +123,7 @@ public class UdpProxyService
 					}
 					
 					// if slave, we want to send our feed to the msater.
-					if (Statics.ServiceState == BridgeServiceState.Slave)
+					if (_trainSessionService.LocalServiceState == BridgeServiceState.Slave)
 						await udpClient.SendAsync(frameBytes, frameBytes.Length, _masterBridgeIp);
 
 					_secondaryBuffer.RemoveRange(0, endIndex + 2); 

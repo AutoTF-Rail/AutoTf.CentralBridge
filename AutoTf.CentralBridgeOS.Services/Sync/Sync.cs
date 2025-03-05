@@ -13,13 +13,15 @@ public abstract class Sync
 	protected readonly Logger Logger;
 	protected readonly string RootDomain;
 	protected readonly FileManager FileManager;
+	private readonly TrainSessionService _trainSessionService;
 
-	public Sync(Logger logger, FileManager fileManager)
+	public Sync(Logger logger, FileManager fileManager, TrainSessionService trainSessionService)
 	{
 		Logger = logger;
 		FileManager = fileManager;
-		
-		RootDomain = $"https://{Statics.EvuName}.server.autotf.de";
+		_trainSessionService = trainSessionService;
+
+		RootDomain = $"https://{_trainSessionService.EvuName}.server.autotf.de";
 	}
 
 	protected async Task<string> SendGet(string endpoint)
@@ -30,7 +32,7 @@ public abstract class Sync
 			
 			using HttpClient client = new HttpClient();
 			
-			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_trainSessionService.Username}:{_trainSessionService.Password}"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 			
 			HttpResponseMessage response = await client.GetAsync(url);
@@ -54,7 +56,7 @@ public abstract class Sync
 			
 			using HttpClient client = new HttpClient();
 			
-			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_trainSessionService.Username}:{_trainSessionService.Password}"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 			
 			HttpResponseMessage response = await client.GetAsync(url);
@@ -78,7 +80,7 @@ public abstract class Sync
 			
 			using HttpClient client = new HttpClient();
 			
-			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_trainSessionService.Username}:{_trainSessionService.Password}"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 			
 			HttpResponseMessage response = await client.GetAsync(url);
@@ -108,7 +110,7 @@ public abstract class Sync
 
 			using HttpClient client = new HttpClient();
 			
-			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Statics.Username}:{Statics.Password}"));
+			string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_trainSessionService.Username}:{_trainSessionService.Password}"));
 			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 			
 			HttpResponseMessage response = await client.PostAsync(url, content);

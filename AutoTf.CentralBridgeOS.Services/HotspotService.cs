@@ -8,11 +8,13 @@ public class HotspotService : IDisposable
     private const string DhcpConfigPath = "/etc/dnsmasq.conf";
     
     private readonly FileManager _fileManager;
+    private readonly TrainSessionService _trainSessionService;
     private readonly Logger _logger = Statics.Logger;
 
-    public HotspotService(FileManager fileManager)
+    public HotspotService(FileManager fileManager, TrainSessionService trainSessionService)
     {
         _fileManager = fileManager;
+        _trainSessionService = trainSessionService;
         Statics.ShutdownEvent += Dispose;
     }
     
@@ -31,7 +33,7 @@ public class HotspotService : IDisposable
         try
         {
             string ipEnding = "1";
-            if (Statics.ServiceState != BridgeServiceState.Master)
+            if (_trainSessionService.LocalServiceState != BridgeServiceState.Master)
                 ipEnding = "2";
             
             string ownIp = "192.168.0." + ipEnding;

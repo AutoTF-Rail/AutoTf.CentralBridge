@@ -23,7 +23,7 @@ public class SyncManager
 	public static DateTime LastSynced;
 	public static DateTime LastSyncTry;
 
-	public SyncManager(FileManager fileManager, CameraService cameraService)
+	public SyncManager(FileManager fileManager, CameraService cameraService, TrainSessionService trainSessionService)
 	{
 		_fileManager = fileManager;
 		
@@ -31,9 +31,10 @@ public class SyncManager
 		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSyncTry", DateTime.Now.Subtract(TimeSpan.FromDays(1999)).ToString("o")));
 
 		Statics.ShutdownEvent += Dispose;
-		_keySync = new KeySync(_logger, fileManager);
-		_macSync = new MacSync(_logger, fileManager);
-		_dataSync = new DataSync(_logger, fileManager, cameraService);
+		// TODO: Log url here?
+		_keySync = new KeySync(_logger, fileManager, trainSessionService);
+		_macSync = new MacSync(_logger, fileManager, trainSessionService);
+		_dataSync = new DataSync(_logger, fileManager, cameraService, trainSessionService);
 		
 		if (NetworkConfigurator.IsInternetAvailable())
 		{

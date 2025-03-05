@@ -6,19 +6,6 @@ public class FileManager
 {
 	private readonly string _dataDir = Path.Combine("/", "etc", "AutoTf");
 	
-	public FileManager()
-	{
-		Initialize();
-	}
-
-	// It is required that the evuName file exists, as well as the /etc/AutoTf dir
-	private void Initialize()
-	{
-		Statics.EvuName = File.ReadAllText(Path.Combine(_dataDir, "evuName"));
-		Statics.Username = ReadFile("username");
-		Statics.Password = ReadFile("password");
-	}
-	
 	public bool ReadFile(string fileName, out string content)
 	{
 		content = "";

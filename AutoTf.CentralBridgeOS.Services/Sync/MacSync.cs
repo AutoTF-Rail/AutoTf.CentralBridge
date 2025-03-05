@@ -10,7 +10,7 @@ public class MacSync : Sync
 {
 	private string[] _latestList;
 	
-	public MacSync(Logger logger, FileManager fileManager) : base(logger, fileManager)
+	public MacSync(Logger logger, FileManager fileManager, TrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
 	{
 		Statics.SyncEvent += Sync;
 		_latestList = File.ReadAllLines("/etc/hostapd/accepted_macs.txt");
