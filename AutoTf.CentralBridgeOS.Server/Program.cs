@@ -54,12 +54,18 @@ public static class Program
 		builder.Services.AddSingleton<CodeValidator>();
 		builder.Services.AddSingleton<MotorManager>();
 		builder.Services.AddSingleton<SyncManager>();
+		builder.Services.AddSingleton<UdpProxyService>();
 		
 		builder.Services.AddHostedService<NetworkManager>();
 		builder.Services.AddHostedService<CameraService>();
 		builder.Services.AddHostedService<HotspotService>();
-		builder.Services.AddHostedService<UdpProxyService>();
 		builder.Services.AddHostedService<BluetoothService>();
+		
+		builder.Services.AddHostedService(provider =>
+		{
+			UdpProxyService service = provider.GetRequiredService<UdpProxyService>();
+			return service;
+		});
 		
 		builder.Services.AddHostedService(provider =>
 		{
