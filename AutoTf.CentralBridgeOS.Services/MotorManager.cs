@@ -39,8 +39,6 @@ public class MotorManager : IHostedService
 		return Task.CompletedTask;
 	}
 
-	}
-
 	private void InitializeI2CConnection()
 	{
 		_i2CSettings = new I2cConnectionSettings(1, Pca9685.I2cAddressBase);
