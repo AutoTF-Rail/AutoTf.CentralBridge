@@ -49,9 +49,11 @@ public static class Program
 		builder.Services.AddControllers();
 			
 		builder.Services.AddSingleton(Logger);
+		builder.Services.AddSingleton<TrainSessionService>();
+		builder.Services.AddSingleton<FileManager>();
+		builder.Services.AddSingleton<CodeValidator>();
 		
 		builder.Services.AddHostedService<NetworkManager>();
-		builder.Services.AddHostedService<TrainSessionService>();
 		builder.Services.AddHostedService<CameraService>();
 		builder.Services.AddHostedService<HotspotService>();
 		builder.Services.AddHostedService<UdpProxyService>();
@@ -59,8 +61,6 @@ public static class Program
 		builder.Services.AddHostedService<SyncManager>();
 		builder.Services.AddHostedService<BluetoothService>();
 		
-		builder.Services.AddSingleton<FileManager>();
-		builder.Services.AddSingleton<CodeValidator>();
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
 		{
