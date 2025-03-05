@@ -24,7 +24,7 @@ public class SyncManager : IHostedService
 	public static DateTime LastSynced;
 	public static DateTime LastSyncTry;
 
-	public SyncManager(FileManager fileManager, CameraService cameraService, TrainSessionService trainSessionService)
+	public SyncManager(FileManager fileManager, TrainSessionService trainSessionService)
 	{
 		_fileManager = fileManager;
 		
@@ -34,7 +34,7 @@ public class SyncManager : IHostedService
 		// TODO: Log url here?
 		_keySync = new KeySync(_logger, fileManager, trainSessionService);
 		_macSync = new MacSync(_logger, fileManager, trainSessionService);
-		_dataSync = new DataSync(_logger, fileManager, cameraService, trainSessionService);
+		_dataSync = new DataSync(_logger, fileManager, trainSessionService);
 	}
 
 	public Task StartAsync(CancellationToken cancellationToken)

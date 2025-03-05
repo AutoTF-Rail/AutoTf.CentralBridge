@@ -10,12 +10,10 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 
 public class DataSync : Sync
 {
-	private readonly CameraService _cameraService;
 	private readonly List<string> _collectedLogs = new List<string>();
 	
-	public DataSync(Logger logger, FileManager fileManager, CameraService cameraService, TrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
+	public DataSync(Logger logger, FileManager fileManager, TrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
 	{
-		_cameraService = cameraService;
 		Logger.NewLog += log => _collectedLogs.Add(log);
 		Statics.SyncEvent += Sync;
 	}
