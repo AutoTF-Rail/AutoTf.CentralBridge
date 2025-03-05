@@ -50,16 +50,17 @@ public static class Program
 			
 		builder.Services.AddSingleton(Logger);
 		
-		builder.Services.AddSingleton<NetworkManager>();
+		builder.Services.AddHostedService<NetworkManager>();
+		builder.Services.AddHostedService<TrainSessionService>();
+		builder.Services.AddHostedService<CameraService>();
+		builder.Services.AddHostedService<HotspotService>();
+		builder.Services.AddHostedService<UdpProxyService>();
+		builder.Services.AddHostedService<MotorManager>();
+		builder.Services.AddHostedService<SyncManager>();
+		builder.Services.AddHostedService<BluetoothService>();
+		
 		builder.Services.AddSingleton<FileManager>();
-		builder.Services.AddSingleton<TrainSessionService>();
-		builder.Services.AddSingleton<CameraService>();
-		builder.Services.AddSingleton<HotspotService>();
 		builder.Services.AddSingleton<CodeValidator>();
-		builder.Services.AddSingleton<UdpProxyService>();
-		builder.Services.AddSingleton<MotorManager>();
-		builder.Services.AddSingleton<SyncManager>();
-		builder.Services.AddSingleton<BluetoothService>();
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
 		{

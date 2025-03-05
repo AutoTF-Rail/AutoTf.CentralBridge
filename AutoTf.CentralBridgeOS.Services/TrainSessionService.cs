@@ -1,11 +1,13 @@
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class TrainSessionService
+public class TrainSessionService : IHostedService
 {
 	private readonly FileManager _fileManager;
+	private readonly Logger _logger;
 
 	private static string? _username;
 	private static string? _password;
@@ -15,9 +17,16 @@ public class TrainSessionService
 	public TrainSessionService(FileManager fileManager, Logger logger)
 	{
 		_fileManager = fileManager;
+		_logger = logger;
+	}
+
+	public Task StartAsync(CancellationToken cancellationToken)
+	{
 		LocalServiceState = LoadServiceState();
 		
-		logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} for EVU {EvuName} with service state {LocalServiceState}.");
+		_logger.Log($"Starting up at {DateTime.Now:hh:mm:ss} for EVU {EvuName} with service state {LocalServiceState}.");
+		
+		return Task.CompletedTask;
 	}
 	
 	// Yes these two things are stored in plain text. If you get access to the file system/RAM, you have access to the train. Or have broken into it...
@@ -26,7 +35,7 @@ public class TrainSessionService
 	public string EvuName => _evuName ??= _fileManager.ReadFile("evuName");
 	public string Ssid => _ssid ??= "CentralBridge-" + _fileManager.ReadFile("trainId", Statics.GenerateRandomString());
 	
-	public BridgeServiceState LocalServiceState { get; }
+	public BridgeServiceState LocalServiceState { get; private set; }
 	
 	private BridgeServiceState LoadServiceState()
 	{
@@ -44,5 +53,10 @@ public class TrainSessionService
 		}
 
 		return BridgeServiceState.Unknown;
+	}
+
+	public Task StopAsync(CancellationToken cancellationToken)
+	{
+		throw new NotImplementedException();
 	}
 }
