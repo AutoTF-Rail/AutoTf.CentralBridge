@@ -12,10 +12,12 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 public class SystemController : ControllerBase
 {
 	private readonly Logger _logger;
+	private readonly IHostApplicationLifetime _lifetime;
 
-	public SystemController(Logger logger)
+	public SystemController(Logger logger, IHostApplicationLifetime lifetime)
 	{
 		_logger = logger;
+		_lifetime = lifetime;
 	}
 	
 	[HttpPatch("setdate")]
@@ -32,8 +34,8 @@ public class SystemController : ControllerBase
 
 			_logger.Log("ROOT-C: Restarting after date set.");
 			
-			Statics.ShutdownEvent.Invoke();
-			CommandExecuter.ExecuteSilent("shutdown now", true);
+			_lifetime.StopApplication();
+			CommandExecuter.ExecuteSilent("bash -c \"sleep 30; shutdown -h now\"&", true);
 			
 			return Ok();
 		}
@@ -82,9 +84,9 @@ public class SystemController : ControllerBase
 		_logger.Log("SC: Shutdown was requested.");
 		
 		// While the application calls this on shutdown, we need to do so as well. We cannot just exit the app here instead because then shutdown now wouldn't be called. That's why we also can't use IHostedService.
-		Statics.ShutdownEvent.Invoke();
 		
-		CommandExecuter.ExecuteSilent("shutdown now", true);
+		_lifetime.StopApplication();
+		CommandExecuter.ExecuteSilent("bash -c \"sleep 30; shutdown -h now\"&", true);
 		return Ok();
 	}
 
@@ -95,9 +97,8 @@ public class SystemController : ControllerBase
 		if (!Request.Headers.IsAllowedDevice())
 			return Unauthorized();
 		
-		Statics.ShutdownEvent.Invoke();
-		
-		CommandExecuter.ExecuteSilent("reboot now", true);
+		_lifetime.StopApplication();
+		CommandExecuter.ExecuteSilent("bash -c \"sleep 30; reboot now\"&", true);
 		return Ok();
 	}
 }

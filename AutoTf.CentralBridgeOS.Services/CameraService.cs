@@ -7,10 +7,11 @@ using System.Threading;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class CameraService : IDisposable
+public class CameraService : IHostedService
 {
     private readonly Logger _logger;
 
@@ -28,15 +29,19 @@ public class CameraService : IDisposable
     {
         _logger = logger;
         
-        Statics.ShutdownEvent += Dispose;
         Directory.CreateDirectory("recordings");
 
         _frameWidth = 1280;
         _frameHeight = 720;
+    }
 
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
         _logger.Log($"CS: Starting video capture with { _frameWidth}x{_frameHeight}, 15 FPS.");
 
         StartFFmpegProcess();
+        
+        return Task.CompletedTask;
     }
 
     private void StartFFmpegProcess()
@@ -57,12 +62,19 @@ public class CameraService : IDisposable
                 RedirectStandardError = true
             }
         };
+        
         _ffmpegProcess.ErrorDataReceived += (sender, e) =>
         {
             if (e.Data != null)
                 _logger.Log($"FFmpeg Error: {e.Data}");
         };
         _ffmpegProcess.Start();
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        Dispose();
+        return Task.CompletedTask;
     }
 
     public void Dispose()

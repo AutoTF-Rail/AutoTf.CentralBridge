@@ -1,9 +1,10 @@
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class HotspotService : IDisposable
+public class HotspotService : IHostedService
 {
     private const string DhcpConfigPath = "/etc/dnsmasq.conf";
     
@@ -15,18 +16,21 @@ public class HotspotService : IDisposable
     {
         _fileManager = fileManager;
         _trainSessionService = trainSessionService;
-        Statics.ShutdownEvent += Dispose;
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        Configure();
+        return Task.CompletedTask;
     }
     
-    public bool Configure()
+    private void Configure()
     {
         _logger.Log("HOTSPOT: Configuring network");
 		
         string interfaceName = "wlan1";
-        string ssid = "CentralBridge-" + _fileManager.ReadFile("trainId", Statics.GenerateRandomString());
-		
-        Statics.CurrentSsid = "CentralBridge-" + _fileManager.ReadFile("trainId");
-        _logger.Log($"Starting with SSID: {Statics.CurrentSsid}");
+        
+        _logger.Log($"Starting with SSID: {_trainSessionService.Ssid}");
 		
         string password = "CentralBridgePW";
         
@@ -40,27 +44,26 @@ public class HotspotService : IDisposable
             
             NetworkConfigurator.SetStaticIpAddress(ownIp, "24");
             NetworkConfigurator.SetStaticIpAddress("192.168.1.1", "24", "wlan1");
+            
             _logger.Log("HOTSPOT: Successfully set local IP.");
 			
             // TODO: Check if this creates conflicts/transfers are seamless when moving between Bridges
-            StartWifi(interfaceName, ssid, password);
+            StartWifi(interfaceName, password);
+            
             if(ipEnding == "1")
                 SetupDhcpConfig(interfaceName);
 			
-            _logger.Log($"HOTSPOT: Started WIFI as: {ssid} with LAN IP {ownIp}.");
+            _logger.Log($"HOTSPOT: Started WIFI as: {_trainSessionService.Ssid} with LAN IP {ownIp}.");
         }
         catch (Exception ex)
         {
             _logger.Log("HOTSPOT: ERROR: Could not configure network");
             _logger.Log(ex.ToString());
-            return false;
         }
-
-        return true;
     }
 
     // Only call this once the NetworkManager has tried to sync. Due to MAC Addresses maybe still being synced.
-    private void StartWifi(string interfaceName, string ssid, string password)
+    private void StartWifi(string interfaceName, string password)
     {
         string configPath = "/etc/hostapd/hostapd.conf";
 
@@ -71,7 +74,7 @@ public class HotspotService : IDisposable
 
         string hostapdConfig = $"interface={interfaceName}\n" +
                                "driver=nl80211\n" +
-                               $"ssid={ssid}\n" +
+                               $"ssid={_trainSessionService.Ssid}\n" +
                                "hw_mode=g\n" +
                                "channel=6\n" +
                                "wpa=2\n" +
@@ -115,7 +118,6 @@ public class HotspotService : IDisposable
         string[] requiredTools = { "hostapd", "iw", "dnsmasq" };
         foreach (string tool in requiredTools)
         {
-            _logger.Log($"Checking for {tool}...");
             try
             {
                 if (CommandExecuter.ExecuteCommand($"which {tool}") == "")
@@ -128,6 +130,12 @@ public class HotspotService : IDisposable
         }
         
         _logger.Log("HOTSPOT: All dependencies are installed.");
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        Dispose();
+        return Task.CompletedTask;
     }
 
     public void Dispose()

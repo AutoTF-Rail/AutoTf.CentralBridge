@@ -1,6 +1,7 @@
 using System.Device.I2c;
 using AutoTf.Logging;
 using Iot.Device.Pwm;
+using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
@@ -8,7 +9,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 // 1: EMPTY 2: VCC
 // 3: SDA 4: V+
 // 5: SCL 6: GND
-public class MotorManager : IDisposable
+public class MotorManager : IHostedService
 {
 	private readonly Logger _logger;
 	private const int PwmFrequency = 50;
@@ -29,13 +30,15 @@ public class MotorManager : IDisposable
 	public MotorManager(Logger logger)
 	{
 		_logger = logger;
-		Initialize();
 	}
 
-	private void Initialize()
+	public Task StartAsync(CancellationToken cancellationToken)
 	{
-		Statics.ShutdownEvent += Dispose;
 		InitializeI2CConnection();
+
+		return Task.CompletedTask;
+	}
+
 	}
 
 	private void InitializeI2CConnection()
@@ -157,9 +160,11 @@ public class MotorManager : IDisposable
 		}
 	}
 
-	public void Dispose()
+	public Task StopAsync(CancellationToken cancellationToken)
 	{
 		_i2CDevice.Dispose();
 		_pca?.Dispose();
+
+		return Task.CompletedTask;
 	}
 }

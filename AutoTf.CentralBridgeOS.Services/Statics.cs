@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Services;
@@ -11,9 +7,6 @@ public static class Statics
 {
 	public static readonly Logger Logger = new Logger(true);
 	
-	public static string CurrentSsid { get; set; }
-	
-	public static Action ShutdownEvent = null!;
 	public static Action? SyncEvent;
 	
 	// A list of all devices (tablets) MAC addresses that have logged in and are allowed to use the API.

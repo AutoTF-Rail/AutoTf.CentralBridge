@@ -1,24 +1,30 @@
-using System;
 using AutoTf.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class BluetoothService : IDisposable
+public class BluetoothService : IHostedService
 {
+	private readonly TrainSessionService _trainSessionService;
 	private readonly Logger _logger = Statics.Logger;
 	private int _instanceId = 2;
 
-	public BluetoothService()
+	public BluetoothService(TrainSessionService trainSessionService)
 	{
-		Statics.ShutdownEvent += Dispose;
+		_trainSessionService = trainSessionService;
+	}
+
+	public Task StartAsync(CancellationToken cancellationToken)
+	{
 		StartBeacon();
+		return Task.CompletedTask;
 	}
 
 	private void StartBeacon()
 	{
 		try
 		{
-			string hexMessage = StringToHex(Statics.CurrentSsid);
+			string hexMessage = StringToHex(_trainSessionService.Ssid);
 			int length = hexMessage.Length / 2 + 1;
 			string lengthByte = length.ToString("X2");
 			string adData = $"{lengthByte}09{hexMessage}";
@@ -49,11 +55,12 @@ public class BluetoothService : IDisposable
 		return hexOutput;
 	}
 
-	public void Dispose()
+	public Task StopAsync(CancellationToken cancellationToken)
 	{
 		string command = $"btmgmt remove-adv {_instanceId}";
 		CommandExecuter.ExecuteSilent(command, true);
 		
 		_logger.Log("BLUETOOTH: Beacon removed.");
+		return Task.CompletedTask;
 	}
 }

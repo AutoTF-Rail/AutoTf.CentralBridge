@@ -1,49 +1,50 @@
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoTf.CentralBridgeOS.Models;
+using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class UdpProxyService
+public class UdpProxyService : IHostedService
 {
 	private readonly TrainSessionService _trainSessionService;
+	
 	private readonly UdpClient _ffmpegInput;
 	private readonly UdpClient _secondaryCamInput;
+	
 	private readonly List<IPEndPoint> _clients = new List<IPEndPoint>();
 	private readonly CancellationTokenSource _cancelToken = new CancellationTokenSource();
-	private List<byte> _buffer = new List<byte>();
-	private List<byte> _secondaryBuffer = new List<byte>();
+	
+	private readonly List<byte> _buffer = new List<byte>();
+	private readonly List<byte> _secondaryBuffer = new List<byte>();
 
-	private readonly byte[] jpegFrameStart = new byte[] { 0xFF, 0xD8 };
-	private readonly byte[] jpegFrameEnd = new byte[] { 0xFF, 0xD9 };
+	private readonly byte[] _jpegFrameStart = [0xFF, 0xD8];
+	private readonly byte[] _jpegFrameEnd = [0xFF, 0xD9];
+
+	private readonly IPEndPoint _masterBridgeIp;
+	private readonly IPEndPoint _slaveBridgeIp;
+	
 	private bool _canStream = true;
-
-	private IPEndPoint _masterBridgeIp;
-	private IPEndPoint _slaveBridgeIp;
 	
 	public UdpProxyService(TrainSessionService trainSessionService)
 	{
 		_trainSessionService = trainSessionService;
-		Statics.ShutdownEvent += _cancelToken.Cancel;
 		
 		_ffmpegInput = new UdpClient(5000);
 		_secondaryCamInput = new UdpClient(5001);
 		
-		Statics.ShutdownEvent += () =>
-		{
-			_canStream = false;
-		};
-
-		// Important if slave. If we are the slave, we want to forward our own camera as the secondary to the master.
+		// If we are the slave, we want to forward our own camera as the secondary to the master.
 		_masterBridgeIp = new IPEndPoint(IPAddress.Parse("192.168.0.1"), 5001);
-		// Important if master. If we are master, we want to forward our own camera as the main cam to the slave.
+		// If we are master, we want to forward our own camera as the main cam to the slave.
 		_slaveBridgeIp = new IPEndPoint(IPAddress.Parse("192.168.0.2"), 5000);
-		
+	}
+
+	public Task StartAsync(CancellationToken cancellationToken)
+	{
 		Task.Run(ForwardPacketsMain, _cancelToken.Token);
 		Task.Run(ForwardPacketsSecondary, _cancelToken.Token);
+		
+		return Task.CompletedTask;
 	}
 
 	public void AddClient(IPEndPoint clientEndpoint)
@@ -71,8 +72,8 @@ public class UdpProxyService
 			using UdpClient udpClient = new UdpClient();
 			while (_buffer.Count > 0)
 			{
-				int startIndex = IndexOfSequence(_buffer, jpegFrameStart);
-				int endIndex = IndexOfSequence(_buffer, jpegFrameEnd);
+				int startIndex = IndexOfSequence(_buffer, _jpegFrameStart);
+				int endIndex = IndexOfSequence(_buffer, _jpegFrameEnd);
 
 				if (startIndex >= 0 && endIndex > startIndex)
 				{
@@ -109,8 +110,8 @@ public class UdpProxyService
 			using UdpClient udpClient = new UdpClient();
 			while (_secondaryBuffer.Count > 0)
 			{
-				int startIndex = IndexOfSequence(_secondaryBuffer, jpegFrameStart);
-				int endIndex = IndexOfSequence(_secondaryBuffer, jpegFrameEnd);
+				int startIndex = IndexOfSequence(_secondaryBuffer, _jpegFrameStart);
+				int endIndex = IndexOfSequence(_secondaryBuffer, _jpegFrameEnd);
 
 				if (startIndex >= 0 && endIndex > startIndex)
 				{
@@ -153,5 +154,13 @@ public class UdpProxyService
 			if (isMatch) return i;
 		}
 		return -1;
+	}
+
+	public Task StopAsync(CancellationToken cancellationToken)
+	{
+		_canStream = false;
+		_cancelToken.Cancel();
+		
+		return Task.CompletedTask;
 	}
 }

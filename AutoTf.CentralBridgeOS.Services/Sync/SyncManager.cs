@@ -1,11 +1,12 @@
 using System;
 using System.Timers;
 using AutoTf.Logging;
+using Microsoft.Extensions.Hosting;
 using Timer = System.Timers.Timer;
 
 namespace AutoTf.CentralBridgeOS.Services.Sync;
 
-public class SyncManager
+public class SyncManager : IHostedService
 {
 	private readonly FileManager _fileManager;
 
@@ -30,17 +31,21 @@ public class SyncManager
 		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSync", DateTime.Now.Subtract(TimeSpan.FromDays(1999)).ToString("o")));
 		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSyncTry", DateTime.Now.Subtract(TimeSpan.FromDays(1999)).ToString("o")));
 
-		Statics.ShutdownEvent += Dispose;
 		// TODO: Log url here?
 		_keySync = new KeySync(_logger, fileManager, trainSessionService);
 		_macSync = new MacSync(_logger, fileManager, trainSessionService);
 		_dataSync = new DataSync(_logger, fileManager, cameraService, trainSessionService);
-		
+	}
+
+	public Task StartAsync(CancellationToken cancellationToken)
+	{
 		if (NetworkConfigurator.IsInternetAvailable())
 		{
 			TrySync();
 		}
 		StartInternetListener();
+		
+		return Task.CompletedTask;
 	}
 
 	public DateTime NextInterval()
@@ -81,6 +86,12 @@ public class SyncManager
 		Statics.SyncEvent?.Invoke();
 		
 		// TODO: send recorded data (Only if on wifi, not cellular), and maybe logs only on wifi too?
+	}
+
+	public Task StopAsync(CancellationToken cancellationToken)
+	{
+		Dispose();
+		return Task.CompletedTask;
 	}
 	
 	public void Dispose()

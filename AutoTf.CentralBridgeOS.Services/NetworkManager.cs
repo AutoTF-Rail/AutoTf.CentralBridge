@@ -1,18 +1,19 @@
 using AutoTf.Logging;
+using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class NetworkManager : IDisposable
+public class NetworkManager : IHostedService
 {
 	private readonly Logger _logger = Statics.Logger;
 	private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
 
 	private HashSet<string> _knownDevices = new HashSet<string>();
 
-	public NetworkManager()
+	public Task StartAsync(CancellationToken cancellationToken)
 	{
-		Statics.ShutdownEvent += Dispose;
 		StartConnectionListener();
+		return Task.CompletedTask;
 	}
 	
 	private void StartConnectionListener()
@@ -33,6 +34,7 @@ public class NetworkManager : IDisposable
 			_logger.Log("Leases file missing. Skipping device update.");
 			return;
 		}
+		
 		_logger.Log("Leases file changed. Checking connected devices...");
 		HashSet<string> currentDevices = new HashSet<string>();
 		string[] lines = File.ReadAllLines(e.FullPath);
@@ -69,8 +71,9 @@ public class NetworkManager : IDisposable
 		_knownDevices = currentDevices;
 	}
 
-	public void Dispose()
+	public Task StopAsync(CancellationToken cancellationToken)
 	{
 		_watcher.Dispose();
+		return Task.CompletedTask;
 	}
 }
