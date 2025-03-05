@@ -57,7 +57,7 @@ public class NetworkManager : IHostedService
 			}
 		}
 
-		_logger.Log($"Previous devices: {_knownDevices} | New devices: {currentDevices}");
+		_logger.Log($"Previous devices: {_knownDevices.Count} | New devices: {currentDevices.Count}");
 		foreach (string mac in _knownDevices)
 		{
 			if (!currentDevices.Contains(mac))

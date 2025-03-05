@@ -58,13 +58,20 @@ public static class Program
 		builder.Services.AddHostedService<CameraService>();
 		builder.Services.AddHostedService<HotspotService>();
 		builder.Services.AddHostedService<UdpProxyService>();
-		builder.Services.AddHostedService<SyncManager>();
 		builder.Services.AddHostedService<BluetoothService>();
+		
+		builder.Services.AddHostedService<SyncManager>();
 		
 		builder.Services.AddHostedService(provider =>
 		{
 			MotorManager motorManager = provider.GetRequiredService<MotorManager>();
 			return motorManager;
+		});
+		
+		builder.Services.AddHostedService(provider =>
+		{
+			SyncManager service = provider.GetRequiredService<SyncManager>();
+			return service;
 		});
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
