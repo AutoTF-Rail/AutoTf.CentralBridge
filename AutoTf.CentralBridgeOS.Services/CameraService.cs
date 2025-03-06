@@ -54,6 +54,7 @@ public class CameraService : IHostedService
         if (_trainSessionService.LocalServiceState == BridgeServiceState.Slave)
             port = 5001;
         
+        _logger.Log($"CS: Using port {port} for ffmpeg.");
         string ffmpegArgs =
             $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 " +
             $"-i /dev/video0 -map 0:v -loglevel error -c:v mjpeg -pix_fmt yuvj420p -rtbufsize 1500k -preset ultrafast -tune zero_latency -max_delay 0  -flush_packets 1 -g 1 -analyzeduration 1000000 -probesize 32 " +
