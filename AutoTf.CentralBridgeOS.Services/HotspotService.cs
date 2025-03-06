@@ -43,7 +43,15 @@ public class HotspotService : IHostedService
             string ownIp = "192.168.0." + ipEnding;
             
             NetworkConfigurator.SetStaticIpAddress(ownIp, "24");
-            NetworkConfigurator.SetStaticIpAddress("192.168.1.1", "24", "wlan1");
+            try
+            {
+                NetworkConfigurator.SetStaticIpAddress("192.168.1.1", "24", "wlan1");
+            }
+            catch (Exception e)
+            {
+                // This is already logged in the method
+                // TODO: rework this so it's not this ugly
+            }
             
             _logger.Log("HOTSPOT: Successfully set local IP.");
 			
