@@ -24,6 +24,11 @@ public sealed class DesiroHC : DefaultModel
 
 	public override void Initialize()
 	{
+		Levers.Clear();
+		
+		if (!MotorManager.AreMotorsAvailable)
+			return;
+		
 		// This is only for the UI pretty much so the tablet knows what it can control.
 		Levers.Add(0, new LeverModel()
 		{
