@@ -13,12 +13,9 @@ public sealed class DesiroHC : DefaultModel
 
 	public override void EasyControl(int power)
 	{
-		// Power can be +100 or -100; 100 = MinimumAngle; -100 = MaximumAngle
-		Logger.Log($"EC: Easy control requested for power: {power}");
-
 		double angle = CalculateAngle(Levers[0], power);
 		
-		Logger.Log($"EC: Setting motor angle to: {angle}");
+		Logger.Log($"EC: Setting motor angle to {angle} for channel 0");
 		MotorManager.SetMotorAngle(0, angle);
 	}
 
