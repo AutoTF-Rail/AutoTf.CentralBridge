@@ -58,6 +58,7 @@ public class MotorManager : IHostedService
 		if (_areMotorsReleased)
 			return;
 		
+		_logger.Log($"MM: Setting channel {channel} to {angle}deg.");
 		int pulse = MinPulse + (int)(PulseRange * (angle / 270.0));
 
 		double dutyCycle = (double)pulse / 20000.0;
@@ -118,6 +119,7 @@ public class MotorManager : IHostedService
 				}
 				catch
 				{
+					_logger.Log("MM: Motors are not available.");
 					_areMotorsAvailable = false;
 				}
 			}
