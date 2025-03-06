@@ -6,20 +6,25 @@ namespace AutoTf.CentralBridgeOS.TrainModels;
 
 public class DefaultModel : ITrainModel
 {
-	private readonly MotorManager _motorManager;
-	private readonly Logger _logger;
+	internal readonly MotorManager MotorManager;
+	internal readonly Logger Logger;
 
 	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
 
 	public DefaultModel(MotorManager motorManager, Logger logger)
 	{
-		_motorManager = motorManager;
-		_logger = logger;
+		MotorManager = motorManager;
+		Logger = logger;
+	}
+
+	public virtual void EasyControl(int power)
+	{
+		// TODO: Report to user that this is not available, if it's the default train model.
 	}
 
 	public virtual void Initialize()
 	{
-		if (!_motorManager.AreMotorsAvailable)
+		if (!MotorManager.AreMotorsAvailable)
 			return;
 		
 		Levers.Add(0, new LeverModel()
@@ -51,7 +56,7 @@ public class DefaultModel : ITrainModel
 
 	public double? GetLeverPercentage(int index)
 	{
-		double motorAngle = _motorManager.GetMotorAngle(index);
+		double motorAngle = MotorManager.GetMotorAngle(index);
 		LeverModel lever = Levers[index];
 
 		if (lever.Type == LeverType.CombinedThrottle)
@@ -68,27 +73,27 @@ public class DefaultModel : ITrainModel
 
 	public bool AreMotorsReleased()
 	{
-		return _motorManager.AreMotorsReleased;
+		return MotorManager.AreMotorsReleased;
 	}
 
 	public void EngageMotors()
 	{
-		_motorManager.AreMotorsReleased = false;
+		MotorManager.AreMotorsReleased = false;
 	}
 
 	public void ReleaseMotor(int index)
 	{
-		_motorManager.TurnOffMotor(index);
+		MotorManager.TurnOffMotor(index);
 	}
 
 	public void EngageMotor(int index)
 	{
-		_motorManager.TurnOnMotor(index);
+		MotorManager.TurnOnMotor(index);
 	}
 
 	public void ReleaseMotors()
 	{
-		_motorManager.AreMotorsReleased = true;
+		MotorManager.AreMotorsReleased = true;
 	}
 
 	public void SetLever(int index, double percentage)
@@ -103,14 +108,14 @@ public class DefaultModel : ITrainModel
 			else
 				angle = lever.MiddleAngle + (percentage / 100) * (lever.MinimumAngle - lever.MiddleAngle);
 			
-			_logger.Log($"Default Train: Setting Combined Lever to: {angle}");
-			_motorManager.SetMotorAngle(index, angle);
+			Logger.Log($"Default Train: Setting Combined Lever to: {angle}");
+			MotorManager.SetMotorAngle(index, angle);
 		}
 		else if (lever.Type == LeverType.MainBrake)
 		{
 			double angle = lever.MinimumAngle + (percentage / 100) * (lever.MaximumAngle - lever.MinimumAngle);
-			_logger.Log($"Default Train: Setting MainBrake to: {angle}");
-			_motorManager.SetMotorAngle(index, angle);
+			Logger.Log($"Default Train: Setting MainBrake to: {angle}");
+			MotorManager.SetMotorAngle(index, angle);
 		}
 	}
 }

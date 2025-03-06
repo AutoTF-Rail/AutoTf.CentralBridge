@@ -20,6 +20,25 @@ public class TrainController : ControllerBase
 		_trainModel = trainModel;
 	}
 
+	[HttpGet("easyControl")]
+	public IActionResult EasyControl([FromBody, Required] int power)
+	{
+		try
+		{
+			if (!Request.Headers.IsAllowedDevice())
+				return Unauthorized();
+
+			_trainModel.EasyControl(power);
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while setting easy control:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
 	[HttpGet("areMotorsReleased")]
 	public IActionResult AreMotorsReleased()
 	{

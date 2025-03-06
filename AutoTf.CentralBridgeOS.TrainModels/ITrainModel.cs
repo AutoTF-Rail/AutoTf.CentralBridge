@@ -13,5 +13,6 @@ public interface ITrainModel
 	public void ReleaseMotor(int index);
 	public void EngageMotor(int index);
 	public bool AreMotorsReleased();
+	public abstract void EasyControl(int power);
 	void Initialize();
 }

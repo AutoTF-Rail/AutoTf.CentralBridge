@@ -12,15 +12,14 @@ namespace AutoTf.CentralBridgeOS.Services;
 public class MotorManager : IHostedService
 {
 	private readonly Logger _logger;
-	private const int PwmFrequency = 50;
-	private const double MinPulseWidth = 500.0;
-	private const double MaxPulseWidth = 2500.0;
-	private const double PwmPeriodMicroseconds = 1_000_000.0 / PwmFrequency;
-	private const int MaxServoAngle = 270;
 	
 	private I2cDevice _i2CDevice = null!;
 	private I2cConnectionSettings _i2CSettings = null!;
 	private Pca9685? _pca;
+	
+	private const int MinPulse = 500;
+	private const int MaxPulse = 2500;
+	private const int PulseRange = MaxPulse - MinPulse;
 	
 	private bool? _areMotorsAvailable;
 
@@ -48,6 +47,7 @@ public class MotorManager : IHostedService
 			return;
 		
 		_pca = new Pca9685(_i2CDevice);
+		_pca.PwmFrequency = 50;
 		MoveToMiddle();
 	}
 
@@ -57,10 +57,10 @@ public class MotorManager : IHostedService
 			return;
 		if (_areMotorsReleased)
 			return;
+		
+		int pulse = MinPulse + (int)(PulseRange * (angle / 270.0));
 
-		double pulseWidth = MinPulseWidth + (angle / MaxServoAngle) * (MaxPulseWidth - MinPulseWidth);
-
-		double dutyCycle = pulseWidth / PwmPeriodMicroseconds;
+		double dutyCycle = (double)pulse / 20000.0;
 
 		_pca!.SetDutyCycle(channel, dutyCycle);
 	}
@@ -79,11 +79,9 @@ public class MotorManager : IHostedService
 		
 		double dutyCycle = _pca!.GetDutyCycle(channel);
 
-		double pulseWidth = dutyCycle * PwmPeriodMicroseconds;
+		int pulse = (int)(dutyCycle * 20000);
 
-		double angle = (pulseWidth - MinPulseWidth) / (MaxPulseWidth - MinPulseWidth) * MaxServoAngle;
-
-		return Math.Clamp(angle, 0, MaxServoAngle);
+		return (int)((pulse - MinPulse) / (double)PulseRange * 270);
 	}
 
 	public void TurnOffMotor(int channel)
@@ -92,6 +90,7 @@ public class MotorManager : IHostedService
 			return;
 		
 		_pca!.SetDutyCycle(channel, 0);
+		// TODO: Change this to use a mosfet
 	}
 
 	public void TurnOnMotor(int channel)
@@ -100,6 +99,7 @@ public class MotorManager : IHostedService
 			return;
 		
 		_pca!.SetDutyCycle(channel, 1.0);
+		// TODO: Change this to use a mosfet
 	}
 	
 	/// <summary>
