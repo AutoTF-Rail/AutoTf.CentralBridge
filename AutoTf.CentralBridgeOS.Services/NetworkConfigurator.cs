@@ -37,8 +37,8 @@ public class NetworkConfigurator
 			if (CheckIpAddress(newInterface))
 				return;
 			_logger.Log("Setting Static IP.");
-			string setIpCommand = $"sudo ip addr add {ipAddress}/{subnetMask} dev {newInterface}";
-			string bringUpInterfaceCommand = $"sudo ip link set {newInterface} up";
+			string setIpCommand = $"ip addr add {ipAddress}/{subnetMask} dev {newInterface}";
+			string bringUpInterfaceCommand = $"ip link set {newInterface} up";
 
 			CommandExecuter.ExecuteSilent(setIpCommand, false);
 			CommandExecuter.ExecuteSilent(bringUpInterfaceCommand, false);

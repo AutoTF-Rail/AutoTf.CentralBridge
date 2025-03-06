@@ -40,15 +40,23 @@ public class MotorManager : IHostedService
 
 	private void InitializeI2CConnection()
 	{
-		_i2CSettings = new I2cConnectionSettings(1, Pca9685.I2cAddressBase);
-		_i2CDevice = I2cDevice.Create(_i2CSettings);
+		try
+		{
+			_i2CSettings = new I2cConnectionSettings(1, Pca9685.I2cAddressBase);
+			_i2CDevice = I2cDevice.Create(_i2CSettings);
 
-		if (!AreMotorsAvailable)
-			return;
+			if (!AreMotorsAvailable)
+				return;
 		
-		_pca = new Pca9685(_i2CDevice);
-		_pca.PwmFrequency = 50;
-		MoveToMiddle();
+			_pca = new Pca9685(_i2CDevice);
+			_pca.PwmFrequency = 50;
+			MoveToMiddle();
+		}
+		catch (Exception e)
+		{
+			_logger.Log("MM: Initialization of Motor manager failed.");
+			_logger.Log(e.ToString());
+		}
 	}
 
 	public void SetMotorAngle(int channel, double angle)
