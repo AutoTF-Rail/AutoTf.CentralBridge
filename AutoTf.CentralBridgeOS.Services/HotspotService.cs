@@ -105,7 +105,8 @@ public class HotspotService : IHostedService
         File.WriteAllText(configPath, hostapdConfig);
         
         _logger.Log("HOTSPOT: Hostapd config updated successfully!");
-        CommandExecuter.ExecuteSilent("sudo systemctl restart hostapd", false);
+        // TODO: Try catch this when wlan1 is not available
+        CommandExecuter.ExecuteSilent("sudo systemctl restart hostapd", true);
     }
 
     public void SetupDhcpConfig(string interfaceName)
