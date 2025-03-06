@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -14,6 +15,7 @@ namespace AutoTf.CentralBridgeOS.Services;
 public class CameraService : IHostedService
 {
     private readonly Logger _logger;
+    private readonly TrainSessionService _trainSessionService;
 
     private readonly int _frameWidth;
     private readonly int _frameHeight;
@@ -25,10 +27,11 @@ public class CameraService : IHostedService
 
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    public CameraService(Logger logger)
+    public CameraService(Logger logger, TrainSessionService trainSessionService)
     {
         _logger = logger;
-        
+        _trainSessionService = trainSessionService;
+
         Directory.CreateDirectory("recordings");
 
         _frameWidth = 1280;
@@ -46,10 +49,15 @@ public class CameraService : IHostedService
 
     private void StartFFmpegProcess()
     {
+        int port = 5000;
+        
+        if (_trainSessionService.LocalServiceState == BridgeServiceState.Slave)
+            port = 5001;
+        
         string ffmpegArgs =
             $"-f v4l2 -framerate 15 -video_size {_frameWidth}x{_frameHeight} -input_format yuyv422 " +
             $"-i /dev/video0 -map 0:v -loglevel error -c:v mjpeg -pix_fmt yuvj420p -rtbufsize 1500k -preset ultrafast -tune zero_latency -max_delay 0  -flush_packets 1 -g 1 -analyzeduration 1000000 -probesize 32 " +
-            $"-f tee \"[f=segment:segment_time=150:reset_timestamps=1:strftime=1]recordings/output-%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:5000\"";
+            $"-f tee \"[f=segment:segment_time=150:reset_timestamps=1:strftime=1]recordings/output-%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:{port}\"";
         
         _ffmpegProcess = new Process
         {
