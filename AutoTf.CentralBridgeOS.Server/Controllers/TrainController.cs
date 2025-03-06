@@ -20,7 +20,7 @@ public class TrainController : ControllerBase
 		_trainModel = trainModel;
 	}
 
-	[HttpGet("easyControl")]
+	[HttpPost("easyControl")]
 	public IActionResult EasyControl([FromBody, Required] int power)
 	{
 		try

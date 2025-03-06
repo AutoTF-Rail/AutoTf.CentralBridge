@@ -24,6 +24,7 @@ public sealed class DesiroHC : DefaultModel
 
 	public override void Initialize()
 	{
+		// TODO: This clear should not be needed
 		Levers.Clear();
 		
 		if (!MotorManager.AreMotorsAvailable)
