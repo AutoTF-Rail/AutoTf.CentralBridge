@@ -48,20 +48,16 @@ public sealed class DesiroHC : DefaultModel
 	
 	double CalculateAngle(LeverModel lever, int power)
 	{
-		int totalPowerRange = 0;
-		
-		if (lever.Type == LeverType.CombinedThrottle)
-			totalPowerRange = 200;
-		else if (lever.Type == LeverType.Throttle || lever.Type == LeverType.Throttle)
-			totalPowerRange = 100;
-		else if (lever.Type == LeverType.TwoStageBrake)
-			totalPowerRange = 100; // Idk
-		
-		Logger.Log($"EC: Using range of {totalPowerRange} for power of {power} with values: MaxA: {lever.MaximumAngle} MidA: {lever.MiddleAngle} MinA: {lever.MinimumAngle}.");
-		double m = (lever.MaximumAngle - lever.MinimumAngle) / totalPowerRange;
-		double b = lever.MiddleAngle;
+		int totalPowerRange = 200; // Default for CombinedThrottle
 
-		double angle = m * power + b;
+		if (lever.Type == LeverType.Throttle || lever.Type == LeverType.TwoStageBrake)
+			totalPowerRange = 100;
+
+		Logger.Log($"EC: Using range of {totalPowerRange} for power {power} with values: MaxA: {lever.MaximumAngle}, MidA: {lever.MiddleAngle}, MinA: {lever.MinimumAngle}.");
+
+		double angle = lever.MiddleAngle + (lever.MinimumAngle - lever.MiddleAngle) * (power / 100.0);
+    
+		Logger.Log($"EC: Calculated angle: {angle}");
 		return angle;
 	}
 }
