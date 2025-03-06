@@ -119,8 +119,8 @@ public class UdpProxyService : IHostedService
 
 					foreach (IPEndPoint client in _clients)
 					{
-						client.Port += 1;
-						await udpClient.SendAsync(frameBytes, frameBytes.Length, client);
+						IPEndPoint modifiedClient = new IPEndPoint(client.Address, client.Port + 1);
+						await udpClient.SendAsync(frameBytes, frameBytes.Length, modifiedClient);
 					}
 					
 					// if slave, we want to send our feed to the msater.
