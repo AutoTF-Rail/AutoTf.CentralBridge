@@ -57,6 +57,7 @@ public sealed class DesiroHC : DefaultModel
 		else if (lever.Type == LeverType.TwoStageBrake)
 			totalPowerRange = 100; // Idk
 		
+		Logger.Log($"EC: Using range of {totalPowerRange} for power of {power}.");
 		double m = (lever.MaximumAngle - lever.MinimumAngle) / totalPowerRange;
 		double b = lever.MiddleAngle;
 
