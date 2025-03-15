@@ -54,7 +54,7 @@ public sealed class DesiroHC : DefaultModel
 			MaximumAngle = 90, // -45 from middle
 			MiddleAngle = 135,
 			MinimumAngle = 180, // +45 from middle
-			ReleaseLocation = ReleaseLocation.Maximum
+			IsInverted = true // Yes, it is inverted, because the motor sits at the top of the lever.
 		});
 		Levers.Add(1, new LeverModel()
 		{
@@ -62,7 +62,7 @@ public sealed class DesiroHC : DefaultModel
 			MaximumAngle = 90, // -45 from middle
 			MiddleAngle = 135,
 			MinimumAngle = 180, // +45 from middle
-			ReleaseLocation = ReleaseLocation.Minimum
+			IsInverted = true // This is inverted, because the release position is the top of the lever
 		});
 		
 		// TODO: Reset lever position to release location, or tell user what the current state is?

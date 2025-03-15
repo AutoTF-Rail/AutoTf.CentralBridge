@@ -50,7 +50,6 @@ public class MotorManager : IHostedService
 		
 			_pca = new Pca9685(_i2CDevice);
 			_pca.PwmFrequency = 50;
-			MoveToMiddle();
 		}
 		catch (Exception e)
 		{

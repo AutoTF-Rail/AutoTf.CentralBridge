@@ -122,10 +122,10 @@ public class DefaultModel : ITrainModel
 		else if (lever.Type == LeverType.MainBrake || lever.Type == LeverType.Throttle)
 		{
 			// The default release location is minimum, but if its maximum, then min and max need to be switched.
-			if(lever.ReleaseLocation == ReleaseLocation.Maximum)
-				(leverMinimumAngle, leverMaximumAngle) = (leverMaximumAngle, leverMinimumAngle);
+			double angle = lever.IsInverted 
+				? leverMaximumAngle - (percentage / 100) * (leverMaximumAngle - leverMinimumAngle)
+				: leverMinimumAngle + (percentage / 100) * (leverMaximumAngle - leverMinimumAngle);
 
-			double angle = leverMinimumAngle + (percentage / 100) * (leverMaximumAngle - leverMinimumAngle);
 			Logger.Log($"Default Train: Setting {lever.Type.ToString()} to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
