@@ -62,7 +62,7 @@ public sealed class DesiroHC : DefaultModel
 			MaximumAngle = 90, // -45 from middle
 			MiddleAngle = 135,
 			MinimumAngle = 180, // +45 from middle
-			IsInverted = true // This is inverted, because the release position is the top of the lever
+			IsInverted = false, // Usually on a brake this should be true, but since the motor is on the bottom of the lever, this has to be false
 		});
 		
 		// TODO: Reset lever position to release location, or tell user what the current state is?
