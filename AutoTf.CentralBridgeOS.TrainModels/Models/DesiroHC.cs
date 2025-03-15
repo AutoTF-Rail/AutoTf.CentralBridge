@@ -29,7 +29,7 @@ public sealed class DesiroHC : DefaultModel
 		else if (power < 0)
 		{
 			SetLever(0, 0);
-			SetLever(1, power);
+			SetLever(1, power * -1);
 		}
 
 		// If power is > 0, this is the angle for the throttle, if its < 0, then for breaks. If power == 0, just release everything.
@@ -54,7 +54,7 @@ public sealed class DesiroHC : DefaultModel
 			MaximumAngle = 90, // -45 from middle
 			MiddleAngle = 135,
 			MinimumAngle = 180, // +45 from middle
-			IsInverted = true // Yes, it is inverted, because the motor sits at the top of the lever.
+			IsInverted = false
 		});
 		Levers.Add(1, new LeverModel()
 		{
