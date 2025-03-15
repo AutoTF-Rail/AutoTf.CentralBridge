@@ -11,4 +11,5 @@ public class LeverModel
 	public int MiddleAngle { get; set; }
 	
 	public bool IsPrimary { get; set; }
+	public ReleaseLocation ReleaseLocation { get; set; }
 }

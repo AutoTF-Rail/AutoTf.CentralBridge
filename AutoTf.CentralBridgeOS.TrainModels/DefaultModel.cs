@@ -10,6 +10,8 @@ public class DefaultModel : ITrainModel
 	internal readonly Logger Logger;
 
 	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
+	
+	internal int _currentPower = 0;
 
 	public DefaultModel(MotorManager motorManager, Logger logger)
 	{
@@ -100,21 +102,31 @@ public class DefaultModel : ITrainModel
 	{
 		LeverModel lever = Levers[index];
 
+		int leverMaximumAngle = lever.MaximumAngle;
+		int leverMiddleAngle = lever.MiddleAngle;
+		int leverMinimumAngle = lever.MinimumAngle;
+		
+		// The release location for such lever doesn't matter, as a combined lever should always have the release location at the middle.
 		if (lever.Type == LeverType.CombinedThrottle)
 		{
 			double angle;
+			
 			if (percentage >= 0)
-				angle = lever.MiddleAngle + (percentage / 100) * (lever.MiddleAngle - lever.MaximumAngle);
+				angle = leverMiddleAngle + (percentage / 100) * (leverMiddleAngle - leverMaximumAngle);
 			else
-				angle = lever.MiddleAngle + (percentage / 100) * (lever.MinimumAngle - lever.MiddleAngle);
+				angle = leverMiddleAngle + (percentage / 100) * (leverMinimumAngle - leverMiddleAngle);
 			
 			Logger.Log($"Default Train: Setting Combined Lever to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
-		else if (lever.Type == LeverType.MainBrake)
+		else if (lever.Type == LeverType.MainBrake || lever.Type == LeverType.Throttle)
 		{
-			double angle = lever.MinimumAngle + (percentage / 100) * (lever.MaximumAngle - lever.MinimumAngle);
-			Logger.Log($"Default Train: Setting MainBrake to: {angle}");
+			// The default release location is minimum, but if its maximum, then min and max need to be switched.
+			if(lever.ReleaseLocation == ReleaseLocation.Maximum)
+				(leverMinimumAngle, leverMaximumAngle) = (leverMaximumAngle, leverMinimumAngle);
+
+			double angle = leverMinimumAngle + (percentage / 100) * (leverMaximumAngle - leverMinimumAngle);
+			Logger.Log($"Default Train: Setting {lever.Type.ToString()} to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
 	}
