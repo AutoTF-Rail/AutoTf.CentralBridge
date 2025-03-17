@@ -96,6 +96,6 @@ public static class Program
 	{
 		builderServices.AddSingleton<DesiroHC>();
 		builderServices.AddSingleton<DesiroML>();
-		builderServices.AddSingleton<DefaultModel>();
+		builderServices.AddSingleton<FallBackTrain>();
 	}
 }
