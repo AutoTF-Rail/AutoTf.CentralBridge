@@ -165,22 +165,18 @@ public class InformationController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpGet("issimavailable")]
 	public IActionResult IsSimAvailable()
 	{
-		if (!Request.Headers.IsAllowedDevice())
-			return Unauthorized();
-		
 		// To be implemented and tested.
 		return Content("False");
 	}
 
+	[MacAuthorize]
 	[HttpGet("isinternetavailable")]
 	public IActionResult IsInternetAvailable()
 	{
-		if (!Request.Headers.IsAllowedDevice())
-			return Unauthorized();
-		
 		return Content(NetworkConfigurator.IsInternetAvailable().ToString());
 	}
 	

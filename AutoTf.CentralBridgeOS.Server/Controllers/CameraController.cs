@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
@@ -23,6 +24,7 @@ public class CameraController : ControllerBase
 		_udpProxy = udpProxy;
 	}
 	
+	[MacAuthorize]
 	[HttpPost("startStream")]
 	public IActionResult StartStream([FromQuery, Required] int port)
 	{
@@ -76,6 +78,7 @@ public class CameraController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpGet("nextSave")]
 	public IActionResult NextSave()
 	{

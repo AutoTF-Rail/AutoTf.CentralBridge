@@ -20,14 +20,12 @@ public class TrainController : ControllerBase
 		_trainModel = trainModel;
 	}
 
+	[MacAuthorize]
 	[HttpPost("easyControl")]
 	public IActionResult EasyControl([FromBody, Required] int power)
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			_trainModel.EasyControl(power);
 			return Ok();
 		}
@@ -39,14 +37,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpGet("areMotorsReleased")]
 	public IActionResult AreMotorsReleased()
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-			
 			return Content(_trainModel.AreMotorsReleased().ToString());
 		}
 		catch (Exception e)
@@ -57,14 +53,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpPost("releaseMotor")]
 	public IActionResult ReleaseMotor([FromBody, Required] int motorIndex)
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			_trainModel.ReleaseMotor(motorIndex);
 			return Ok();
 		}
@@ -76,14 +70,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpPost("releaseMotors")]
 	public IActionResult ReleaseMotors()
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			_trainModel.ReleaseMotors();
 			return Ok();
 		}
@@ -95,14 +87,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpPost("engageMotor")]
 	public IActionResult EngageMotor([FromBody, Required] int motorIndex)
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			_trainModel.EngageMotor(motorIndex);
 			return Ok();
 		}
@@ -114,14 +104,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpPost("engageMotors")]
 	public IActionResult EngageMotors()
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			_trainModel.EngageMotors();
 			return Ok();
 		}
@@ -133,14 +121,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpGet("leverCount")]
 	public IActionResult LeverCount()
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			return Content(_trainModel.LeverCount().ToString());
 		}
 		catch (Exception e)
@@ -151,14 +137,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpGet("leverPosition")]
 	public IActionResult LeverPosition([FromQuery, Required] int leverIndex)
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			return Content(_trainModel.GetLeverPercentage(leverIndex).ToString() ?? string.Empty);
 		}
 		catch (Exception e)
@@ -169,14 +153,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpGet("leverType")]
 	public IActionResult LeverType([FromQuery, Required] int leverIndex)
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
-
 			return Content(_trainModel.GetLeverType(leverIndex).ToString());
 		}
 		catch (Exception e)
@@ -187,13 +169,12 @@ public class TrainController : ControllerBase
 		}
 	}
 
+	[MacAuthorize]
 	[HttpPost("setLever")]
 	public IActionResult SetLever([FromBody, Required] LeverSetModel data)
 	{
 		try
 		{
-			if (!Request.Headers.IsAllowedDevice())
-				return Unauthorized();
 			_logger.Log($"TC-C: Setting lever: {data.LeverIndex} to {data.Percentage}%");
 			
 			_trainModel.SetLever(data.LeverIndex, data.Percentage);
