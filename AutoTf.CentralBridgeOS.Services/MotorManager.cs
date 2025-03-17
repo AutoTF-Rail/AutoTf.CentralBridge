@@ -31,31 +31,42 @@ public class MotorManager : IHostedService
 		_logger = logger;
 	}
 
-	public Task StartAsync(CancellationToken cancellationToken)
-	{
-		InitializeI2CConnection();
-
-		return Task.CompletedTask;
-	}
-
 	private void InitializeI2CConnection()
 	{
 		try
 		{
 			_i2CSettings = new I2cConnectionSettings(1, Pca9685.I2cAddressBase);
 			_i2CDevice = I2cDevice.Create(_i2CSettings);
+			
+			ResetPcaBoard(_i2CDevice);
 
 			if (!AreMotorsAvailable)
 				return;
 		
 			_pca = new Pca9685(_i2CDevice);
-			_pca.PwmFrequency = 50;
 		}
 		catch (Exception e)
 		{
 			_logger.Log("MM: Initialization of Motor manager failed.");
 			_logger.Log(e.ToString());
 		}
+	}
+	
+	private void ResetPcaBoard(I2cDevice i2CDevice)
+	{
+		byte mode1RegisterAddress = 0x00;
+		byte resetValue = 0x80; 
+        
+		i2CDevice.Write(new ReadOnlySpan<byte>([mode1RegisterAddress, resetValue]));
+
+		Thread.Sleep(10);
+	}
+
+	public Task StartAsync(CancellationToken cancellationToken)
+	{
+		InitializeI2CConnection();
+
+		return Task.CompletedTask;
 	}
 
 	public void SetMotorAngle(int channel, double angle)
@@ -68,7 +79,7 @@ public class MotorManager : IHostedService
 		_logger.Log($"MM: Setting channel {channel} to {angle}deg.");
 		int pulse = MinPulse + (int)(PulseRange * (angle / 270.0));
 
-		double dutyCycle = (double)pulse / 20000.0;
+		double dutyCycle = pulse / 20000.0;
 
 		_pca!.SetDutyCycle(channel, dutyCycle);
 	}
