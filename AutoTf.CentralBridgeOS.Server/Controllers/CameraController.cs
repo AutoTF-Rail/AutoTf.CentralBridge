@@ -24,7 +24,6 @@ public class CameraController : ControllerBase
 		_udpProxy = udpProxy;
 	}
 	
-	[MacAuthorize]
 	[HttpPost("startStream")]
 	public IActionResult StartStream([FromQuery, Required] int port)
 	{
@@ -78,7 +77,6 @@ public class CameraController : ControllerBase
 		}
 	}
 
-	[MacAuthorize]
 	[HttpGet("nextSave")]
 	public IActionResult NextSave()
 	{
