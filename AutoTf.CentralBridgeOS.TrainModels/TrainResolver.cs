@@ -22,13 +22,11 @@ public static class TrainResolver
 		{
 			Statics.Logger.Log($"Starting with train model {trainType}.");
 			ITrainModel? trainModel = serviceProvider.GetService(type) as ITrainModel;
-			trainModel!.Initialize();
-			return trainModel;
+			return trainModel!;
 		}
 
 		Statics.Logger.Log("Starting with fall back train model.");
 		ITrainModel? train = serviceProvider.GetService(typeof(FallBackTrain)) as ITrainModel;
-		train!.Initialize();
 		return train;
 	}
 }
