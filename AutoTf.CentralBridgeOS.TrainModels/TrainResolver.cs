@@ -26,8 +26,8 @@ public static class TrainResolver
 			return trainModel;
 		}
 
-		Statics.Logger.Log($"Starting with default train model.");
-		ITrainModel? train = serviceProvider.GetService(typeof(DefaultModel)) as ITrainModel;
+		Statics.Logger.Log("Starting with fall back train model.");
+		ITrainModel? train = serviceProvider.GetService(typeof(FallBackTrain)) as ITrainModel;
 		train!.Initialize();
 		return train;
 	}
