@@ -45,9 +45,10 @@ public class DataSync : Sync
 		List<Task> uploadTasks = new List<Task>();
 		List<string> list = recordings.ToList();
 		list.Sort();
-		Logger.Log($"SYNC-D: Removing recording \"{list[0]}\" from list.");
-		list.RemoveAt(0);
-
+		
+		if (list.Count > 0)
+			list.RemoveAt(list.Count - 1);
+		
 		foreach (string recording in list)
 		{
 			// TODO: Remove newest because it could still be in the active recording process
