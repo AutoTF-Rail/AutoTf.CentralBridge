@@ -47,8 +47,7 @@ public class DataSync : Sync
 		foreach (string recording in recordings)
 		{
 			Logger.Log($"SYNC-D: Uploading video \"{recording}\"");
-			string filePath = "recordings/" + recording;
-			uploadTasks.Add(SendPostVideo("/sync/device/uploadvideo", filePath));
+			uploadTasks.Add(SendPostVideo("/sync/device/uploadvideo", recording));
 		}
 		
 		await Task.WhenAll(uploadTasks);
