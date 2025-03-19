@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Sync;
 using AutoTf.Logging;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridgeOS.Server.Controllers;
 
-// TODO: Secondary endpoint for second camera /other side
 [ApiController]
 [Route("/camera")]
 public class CameraController : ControllerBase
@@ -29,8 +27,6 @@ public class CameraController : ControllerBase
 	{
 		try
 		{
-			// TODO: Implement camera index for multiple cameras
-			// If another is already running, turn that one off and turn the new one on.
 			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
 			
 			if (ipAddress != null)

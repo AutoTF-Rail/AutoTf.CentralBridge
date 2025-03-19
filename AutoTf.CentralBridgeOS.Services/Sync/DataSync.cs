@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -26,8 +27,7 @@ public class DataSync : Sync
 			{
 				await UpdateStatus();
 				await UploadLogs();
-				// TODO: Enable when implemented
-				// await UploadVideo();
+				await UploadVideos();
 			}
 		}
 		catch (Exception e)
@@ -37,18 +37,26 @@ public class DataSync : Sync
 		}
 	}
 
-	private async Task UploadVideo()
+	private async Task UploadVideos()
 	{
 		Logger.Log("SYNC-D: Uploading videos.");
-		// string[] recordings = Directory.GetFiles("recordings/");
-		// TODO: Upload
-		// Upload all previous collected recordings
+		string[] recordings = Directory.GetFiles("recordings/");
 		
-		// Delete files
-		// foreach (string recording in recordings)
-		// {
-		// 	File.Delete(recording);
-		// }
+		List<Task> uploadTasks = new List<Task>();
+		
+		foreach (string recording in recordings)
+		{
+			Logger.Log($"SYNC-D: Uploading video \"{recording}\"");
+			string filePath = "recordings/" + recording;
+			uploadTasks.Add(SendPostVideo("/sync/device/uploadvideo", filePath));
+		}
+		
+		await Task.WhenAll(uploadTasks);
+		
+		foreach (string recording in recordings)
+		{
+			File.Delete(recording);
+		}
 	}
 
 	private async Task UpdateStatus()

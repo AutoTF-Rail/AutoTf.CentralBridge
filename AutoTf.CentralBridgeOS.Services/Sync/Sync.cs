@@ -124,4 +124,33 @@ public abstract class Sync
 			throw;
 		}	
 	}
+	
+	protected async Task<bool> SendPostVideo(string endpoint, string path)
+	{
+		try
+		{
+			using (HttpClient httpClient = new HttpClient())
+			{
+				string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_trainSessionService.Username}:{_trainSessionService.Password}"));
+				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
+
+				using (MultipartFormDataContent form = new MultipartFormDataContent())
+				{
+					ByteArrayContent fileContent = new ByteArrayContent(File.ReadAllBytes(path));
+					fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("video/mp4");
+					form.Add(fileContent, "file", Path.GetFileName(path));
+
+					HttpResponseMessage response = await httpClient.PostAsync(RootDomain + endpoint, form);
+
+					return response.IsSuccessStatusCode;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log(e.Message);
+			throw;
+		}	
+	}
 }
