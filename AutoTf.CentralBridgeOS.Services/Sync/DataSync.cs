@@ -39,7 +39,6 @@ public class DataSync : Sync
 
 	private async Task UploadVideos()
 	{
-		Logger.Log("SYNC-D: Uploading videos.");
 		string[] recordings = Directory.GetFiles("recordings/");
 		
 		List<Task> uploadTasks = new List<Task>();
@@ -48,11 +47,14 @@ public class DataSync : Sync
 		
 		if (list.Count > 0)
 			list.RemoveAt(list.Count - 1);
+
+		if (list.Count == 0)
+			return;
+		
+		Logger.Log($"SYNC-D: Uploading {list.Count} videos.");
 		
 		foreach (string recording in list)
 		{
-			// TODO: Remove newest because it could still be in the active recording process
-			Logger.Log($"SYNC-D: Uploading video \"{recording}\"");
 			uploadTasks.Add(SendPostVideo("/sync/device/uploadvideo", recording));
 		}
 		
