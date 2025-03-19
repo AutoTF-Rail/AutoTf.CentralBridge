@@ -152,6 +152,5 @@ public class HotspotService : IHostedService
         _logger.Log("HOTSPOT: Shutting down.");
         CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
         CommandExecuter.ExecuteSilent("sudo systemctl stop dnsmasq", true);
-        CommandExecuter.ExecuteSilent("sudo killall hostapd", true);
     }
 }

@@ -29,7 +29,7 @@ public class BluetoothService : IHostedService
 			string lengthByte = length.ToString("X2");
 			string adData = $"{lengthByte}09{hexMessage}";
 
-			_logger.Log($"BLUETOOTH: Trying to start BLE as: {adData}");
+			_logger.Log($"BLUETOOTH: Trying to start BLE with data: {adData}");
 			
 			string command = $"btmgmt add-adv -d {adData} {_instanceId}";
 
@@ -57,7 +57,7 @@ public class BluetoothService : IHostedService
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
-		string command = $"btmgmt remove-adv {_instanceId}";
+		string command = $"btmgmt rm-adv {_instanceId}";
 		CommandExecuter.ExecuteSilent(command, true);
 		
 		_logger.Log("BLUETOOTH: Beacon removed.");
