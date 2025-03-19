@@ -21,6 +21,24 @@ public class TrainController : ControllerBase
 	}
 
 	[MacAuthorize]
+	[HttpPost("emergencybrake")]
+	public IActionResult EmergencyBrake()
+	{
+		try
+		{
+			_trainModel.EmergencyBrake();
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			// TODO: Try emergency brake again?
+			_logger.Log("TC-C: Error while emergency braking:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[MacAuthorize]
 	[HttpPost("easyControl")]
 	public IActionResult EasyControl([FromBody, Required] int power)
 	{

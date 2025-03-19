@@ -23,14 +23,19 @@ public class DesiroHC : DefaultModel
 		// TODO: See if the train is just starting the move, if the train doesn't already do it: only slowly release the breaks to avoid rolling?
 		else if (power > 0)
 		{
-			SetLever(0, power);
 			SetLever(1, 0);
+			// Wait a moment for the brakes to release, before applying power. (This is only a delay for the lever to be moved TODO: Maybe do a proper wait for the release?)
+			if (_currentPower < 0)
+				Thread.Sleep(700);
+			SetLever(0, power);
 		}
 		else if (power < 0)
 		{
 			SetLever(0, 0);
 			SetLever(1, power * -1);
 		}
+		
+		_currentPower = power;
 	}
 
 	public override void EmergencyBrake()
