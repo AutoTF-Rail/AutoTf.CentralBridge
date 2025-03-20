@@ -11,7 +11,7 @@ namespace AutoTf.CentralBridgeOS.Services.Sync;
 public abstract class Sync
 {
 	protected readonly Logger Logger;
-	protected readonly string RootDomain;
+	protected internal readonly string RootDomain;
 	protected readonly FileManager FileManager;
 	private readonly TrainSessionService _trainSessionService;
 

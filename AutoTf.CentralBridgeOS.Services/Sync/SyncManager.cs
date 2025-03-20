@@ -35,6 +35,8 @@ public class SyncManager : IHostedService
 		_keySync = new KeySync(_logger, fileManager, trainSessionService);
 		_macSync = new MacSync(_logger, fileManager, trainSessionService);
 		_dataSync = new DataSync(_logger, fileManager, trainSessionService);
+		
+		_logger.Log($"EVU Domain: {_keySync.RootDomain}");
 	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
