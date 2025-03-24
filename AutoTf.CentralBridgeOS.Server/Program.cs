@@ -1,5 +1,6 @@
+using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Sync;
+using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
 using Logger = AutoTf.Logging.Logger;
@@ -52,32 +53,16 @@ public static class Program
 		builder.Services.AddSingleton<TrainSessionService>();
 		builder.Services.AddSingleton<FileManager>();
 		builder.Services.AddSingleton<CodeValidator>();
-		builder.Services.AddSingleton<MotorManager>();
-		builder.Services.AddSingleton<SyncManager>();
-		builder.Services.AddSingleton<UdpProxyService>();
 		
 		builder.Services.AddHostedService<NetworkManager>();
 		builder.Services.AddHostedService<CameraService>();
 		builder.Services.AddHostedService<HotspotService>();
 		builder.Services.AddHostedService<BluetoothService>();
 		
-		builder.Services.AddHostedService(provider =>
-		{
-			UdpProxyService service = provider.GetRequiredService<UdpProxyService>();
-			return service;
-		});
-		
-		builder.Services.AddHostedService(provider =>
-		{
-			MotorManager motorManager = provider.GetRequiredService<MotorManager>();
-			return motorManager;
-		});
-		
-		builder.Services.AddHostedService(provider =>
-		{
-			SyncManager service = provider.GetRequiredService<SyncManager>();
-			return service;
-		});
+		builder.Services.AddHostedSingleton<MotionService>();
+		builder.Services.AddHostedSingleton<UdpProxyService>();
+		builder.Services.AddHostedSingleton<MotorManager>();
+		builder.Services.AddHostedSingleton<SyncManager>();
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
 		{
