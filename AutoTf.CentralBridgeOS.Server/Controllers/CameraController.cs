@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Sync;
+using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 

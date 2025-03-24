@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Sync;
+using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 

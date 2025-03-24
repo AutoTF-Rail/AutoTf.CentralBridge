@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Exte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.TrainModels", "AutoTf.CentralBridgeOS.TrainModels\AutoTf.CentralBridgeOS.TrainModels.csproj", "{490A202C-CFE3-46E8-9116-24CFFE6ED7F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Sync", "AutoTf.CentralBridgeOS.Sync\AutoTf.CentralBridgeOS.Sync.csproj", "{77A01AFF-F861-4193-AB81-79455E2080A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

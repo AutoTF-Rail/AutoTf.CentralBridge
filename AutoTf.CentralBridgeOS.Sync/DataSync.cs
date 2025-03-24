@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 
-namespace AutoTf.CentralBridgeOS.Services.Sync;
+namespace AutoTf.CentralBridgeOS.Sync;
 
 public class DataSync : Sync
 {

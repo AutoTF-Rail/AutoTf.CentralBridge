@@ -1,10 +1,10 @@
-using System;
 using System.Timers;
+using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 using Timer = System.Timers.Timer;
 
-namespace AutoTf.CentralBridgeOS.Services.Sync;
+namespace AutoTf.CentralBridgeOS.Sync;
 
 public class SyncManager : IHostedService
 {

@@ -1,10 +1,7 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 
-namespace AutoTf.CentralBridgeOS.Services.Sync;
+namespace AutoTf.CentralBridgeOS.Sync;
 
 public class MacSync : Sync
 {
