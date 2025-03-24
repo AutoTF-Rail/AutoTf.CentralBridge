@@ -1,6 +1,4 @@
-using System;
-
-namespace AutoTf.CentralBridgeOS.Services;
+namespace AutoTf.CentralBridgeOS.Models;
 
 public class KeyData
 {

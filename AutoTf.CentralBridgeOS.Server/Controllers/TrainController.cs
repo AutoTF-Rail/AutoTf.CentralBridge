@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +15,45 @@ public class TrainController : ControllerBase
 {
 	private readonly Logger _logger;
 	private readonly ITrainModel _trainModel;
+	private readonly MotionService _motionService;
 
-	public TrainController(Logger logger, ITrainModel trainModel)
+	public TrainController(Logger logger, ITrainModel trainModel, MotionService motionService)
 	{
 		_logger = logger;
 		_trainModel = trainModel;
+		_motionService = motionService;
+	}
+
+	[MacAuthorize]
+	[HttpGet("speed")]
+	public IActionResult GetSpeed()
+	{
+		try
+		{
+			return Content(_motionService.CurrentSpeed.ToString()!);
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while supplying speed:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[MacAuthorize]
+	[HttpGet("lastspeedtime")]
+	public IActionResult GetLastSpeedTime()
+	{
+		try
+		{
+			return Content(_motionService.LastSpeedTime.ToString("o"));
+		}
+		catch (Exception e)
+		{
+			_logger.Log("TC-C: Error while supplying last speed time:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
 	}
 
 	[MacAuthorize]
