@@ -17,10 +17,6 @@ public class MotorManager : IHostedService
 	private I2cConnectionSettings _i2CSettings = null!;
 	private Pca9685? _pca;
 	
-	private const int MinPulse = 500;
-	private const int MaxPulse = 2500;
-	private const int PulseRange = MaxPulse - MinPulse;
-	
 	private bool? _areMotorsAvailable;
 
 	private bool _areMotorsReleased;
@@ -77,9 +73,12 @@ public class MotorManager : IHostedService
 			return;
 		
 		_logger.Log($"MM: Setting channel {channel} to {angle}deg.");
-		int pulse = MinPulse + (int)(PulseRange * (angle / 270.0));
-
-		double dutyCycle = pulse / 20000.0;
+		
+		angle = Math.Max(0, Math.Min(270, angle));
+		double minDutyCycle = 0.065;
+		double maxDutyCycle = 0.53;
+		
+		double dutyCycle = minDutyCycle + (angle / 270.0) * (maxDutyCycle - minDutyCycle);
 
 		_pca!.SetDutyCycle(channel, dutyCycle);
 	}
@@ -98,9 +97,12 @@ public class MotorManager : IHostedService
 		
 		double dutyCycle = _pca!.GetDutyCycle(channel);
 
-		int pulse = (int)(dutyCycle * 20000);
+		double minDutyCycle = 0.064;
+		double maxDutyCycle = 0.54;
 
-		return (int)((pulse - MinPulse) / (double)PulseRange * 270);
+		double angle = (dutyCycle - minDutyCycle) / (maxDutyCycle - minDutyCycle) * 270;
+		
+		return angle;
 	}
 
 	public void TurnOffMotor(int channel)
