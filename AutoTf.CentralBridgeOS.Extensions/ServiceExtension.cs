@@ -11,7 +11,7 @@ public static class ServiceExtension
 	public static void AddHostedSingleton<THostedService>(this IServiceCollection collection) 
 		where THostedService : class, IHostedService
 	{
-		collection.AddSingleton<IHostedService>();
+		collection.AddSingleton<THostedService>();
 		collection.AddHostedService(provider => provider.GetRequiredService<THostedService>());
 	}
 }
