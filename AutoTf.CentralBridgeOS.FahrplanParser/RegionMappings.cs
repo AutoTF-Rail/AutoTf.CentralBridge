@@ -49,7 +49,7 @@ internal static class RegionMappings
 	public static readonly Rectangle TrainNumber = new Rectangle(17, 11, 134, 44);
 	public static readonly Rectangle Delay = new Rectangle(696, 812, 134, 30);
 	public static readonly Rectangle Time = new Rectangle(1066, 11, 160, 44);
-	public static readonly Rectangle Date = new Rectangle(678, 18, 158, 36);
+	public static readonly Rectangle Date = new Rectangle(678, 18, 165, 36);
 	// public static readonly Rectangle Date = new Rectangle(805, 11, 190, 44);
 
 	public static Rectangle Hektometer(Rectangle row)
