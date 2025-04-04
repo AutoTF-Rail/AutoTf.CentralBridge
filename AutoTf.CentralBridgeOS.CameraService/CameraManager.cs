@@ -9,18 +9,18 @@ namespace AutoTf.CentralBridgeOS.CameraService;
 public class CameraManager : IHostedService
 {
 	private readonly Logger _logger;
-	
+	private readonly ProxyManager _proxy;
+
 	// Used for the port of the displays, the first display is 4001, the second 4002, etc.
 	private int _nextDisplayIndex = 1;
 	
-	private ProxyManager _proxyManager = new ProxyManager();
-	
 	private List<KeyValuePair<VideoDevice, Process>> _ffmpegProcesses = new List<KeyValuePair<VideoDevice, Process>>();
 
-	public CameraManager(Logger logger)
+	public CameraManager(Logger logger, ProxyManager proxy)
 	{
 		_logger = logger;
-		
+		_proxy = proxy;
+
 		Directory.CreateDirectory("recordings");
 	}
 	
@@ -63,7 +63,7 @@ public class CameraManager : IHostedService
 		}
 
 		_logger.Log($"CM: Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
-		_proxyManager.CreateProxy(port, videoDevice.Type == DeviceType.Display, _logger);
+		_proxy.CreateProxy(port, videoDevice.Type == DeviceType.Display, _logger);
 		_ffmpegProcesses.Add(new KeyValuePair<VideoDevice, Process>(videoDevice, StartFfmpegProcess(videoDevice.Path, framerate, frameWidth, frameHeight, port, record)));
 	}
 
@@ -109,7 +109,7 @@ public class CameraManager : IHostedService
 			x.Value.Kill();
 			x.Value.Dispose();
 		});
-		_proxyManager.Dispose();
+		_proxy.Dispose();
 
 		return Task.CompletedTask;
 	}

@@ -41,7 +41,7 @@ internal class CameraProxy : IDisposable
 		else
 			_frameSize = new Size(1920, 1080);
 		
-		StartListening();
+		Task.Run(StartListening);
 	}
 
 	internal void AddClient(IPEndPoint clientEndpoint)
@@ -57,7 +57,7 @@ internal class CameraProxy : IDisposable
 		_clients.RemoveAll(x => Equals(x.Address, clientIp));
 	}
 
-	private async void StartListening()
+	private async Task StartListening()
 	{
 		try
 		{
@@ -82,6 +82,7 @@ internal class CameraProxy : IDisposable
 						if (_isDisplay)
 						{
 							// Convert to mat, crop offset, turn back into bytes
+							Console.WriteLine("Test");
 							Mat mat = ConvertYuvToMat(frameBytes);
 							// TODO: Enter the actual ROI here:
 							Mat cropped = new Mat(mat,

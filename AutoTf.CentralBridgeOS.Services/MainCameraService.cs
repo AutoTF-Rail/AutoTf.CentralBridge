@@ -47,13 +47,13 @@ public class MainCameraService : IHostedService
             isCamAvailable = _proxy.IsCameraAvailable();
         }
 
-        if (retryCount == 0)
+        if (retryCount == 10)
         {
             _logger.Log("Failed to start up the main camera after 10 tries.");
             return;
         }
         
-        _logger.Log("CS: Main camera is now available.");
+        _logger.Log($"CS: Main camera is now available after {retryCount} retries.");
         _proxy.StartListeningForCamera(new IPEndPoint(IPAddress.Parse("127.0.0.1"), port));
     }
 
