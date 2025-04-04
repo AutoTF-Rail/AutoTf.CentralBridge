@@ -1,3 +1,4 @@
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 

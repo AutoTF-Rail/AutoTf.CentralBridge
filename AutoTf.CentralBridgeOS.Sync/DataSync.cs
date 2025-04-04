@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 

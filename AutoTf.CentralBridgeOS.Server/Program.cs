@@ -1,4 +1,6 @@
+using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.Extensions;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.CentralBridgeOS.TrainModels;
@@ -53,11 +55,13 @@ public static class Program
 		builder.Services.AddSingleton<TrainSessionService>();
 		builder.Services.AddSingleton<FileManager>();
 		builder.Services.AddSingleton<CodeValidator>();
+		builder.Services.AddSingleton<ProxyManager>();
 		
 		builder.Services.AddHostedService<NetworkManager>();
-		builder.Services.AddHostedService<CameraService>();
+		builder.Services.AddHostedService<MainCameraService>();
 		builder.Services.AddHostedService<HotspotService>();
 		builder.Services.AddHostedService<BluetoothService>();
+		builder.Services.AddHostedService<CameraManager>();
 		
 		builder.Services.AddHostedSingleton<MotionService>();
 		builder.Services.AddHostedSingleton<UdpProxyService>();
