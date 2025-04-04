@@ -39,7 +39,7 @@ internal class CameraProxy : IDisposable
 		if (_isDisplay)
 			_frameSize = new Size(1280, 960);
 		else
-			_frameSize = new Size(1920, 1080);
+			_frameSize = new Size(1280, 720);
 		
 		Task.Run(StartListening);
 	}
@@ -61,6 +61,7 @@ internal class CameraProxy : IDisposable
 	{
 		try
 		{
+			Console.WriteLine(_frameSize.Height);
 			while (_canStream)
 			{
 				UdpReceiveResult received = await _input.ReceiveAsync();
@@ -79,6 +80,7 @@ internal class CameraProxy : IDisposable
 						byte[] frameBytes = _buffer.GetRange(startIndex, endIndex - startIndex + 2).ToArray();
 
 						// It's not worth it to convert it here if it's not a display (TODO: Maybe we can offload display reading too to the other pc?), because we give the tablet the raw output too, and the PC that runs the segmentation can handle the converssion itself.
+						
 						if (_isDisplay)
 						{
 							// Convert to mat, crop offset, turn back into bytes
@@ -120,12 +122,10 @@ internal class CameraProxy : IDisposable
         
 	private Mat ConvertYuvToMat(byte[] yuvData)
 	{
-		Mat yuvMat = new Mat(_frameSize.Height, _frameSize.Width, DepthType.Cv8U, 1);
-		yuvMat.SetTo(yuvData);
+		Mat frame = new Mat();
+		CvInvoke.Imdecode(yuvData, ImreadModes.Color, frame);
 
-		CvInvoke.CvtColor(yuvMat, yuvMat, ColorConversion.Yuv2BgrI420);
-
-		return yuvMat;
+		return frame;
 	}
 
 	private void ReadDisplayType(Mat frame)
