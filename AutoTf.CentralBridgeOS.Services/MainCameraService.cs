@@ -36,12 +36,19 @@ public class MainCameraService : IHostedService
         _logger.Log($"CS: Using port {port} for main camera proxy.");
 
         bool isCamAvailable = _proxy.IsCameraAvailable();
+        int retryCount = 0;
 
-        while (!isCamAvailable)
+        while (!isCamAvailable && retryCount < 10)
         {
-            _logger.Log("Main camera is not available yet, retrying in 1.5 seconds...");
+            _logger.Log($"Main camera is not available yet after try {retryCount}, retrying in 1.5 seconds...");
             await Task.Delay(1500);
+            retryCount++;
             isCamAvailable = _proxy.IsCameraAvailable();
+        }
+
+        if (retryCount == 0)
+        {
+            _logger.Log("Failed to start up the main camera after 10 tries.");
         }
         
         _proxy.StartListeningForCamera(new IPEndPoint(IPAddress.Parse("127.0.0.1"), port));
