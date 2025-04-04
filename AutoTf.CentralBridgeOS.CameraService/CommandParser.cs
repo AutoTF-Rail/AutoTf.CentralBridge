@@ -30,7 +30,7 @@ internal static class CommandParser
 				string devicePath = line.Trim();
 			
 				// In theory we could just add the devicePath to a list of paths in the class VideoDevice, then we would have all paths, but I don't think we need that.
-				devices.Add(new VideoDevice(currentDevice, devicePath, currentDevice == "HD Camera" ? DeviceType.Camera : DeviceType.Display));
+				devices.Add(new VideoDevice(currentDevice, devicePath, currentDevice.Contains("Camera") ? DeviceType.Display : DeviceType.Camera));
 				currentDevice = string.Empty;
 			}
 		}

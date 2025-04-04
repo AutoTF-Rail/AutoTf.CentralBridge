@@ -52,7 +52,7 @@ public class CameraManager : IHostedService
 		int frameWidth = 1280;
 		int frameHeight = 720;
 
-		if (videoDevice.Name == "USB Video")
+		if (videoDevice.Type == DeviceType.Display)
 		{
 			port = 4000 + _nextDisplayIndex;
 			_nextDisplayIndex++;
@@ -62,6 +62,7 @@ public class CameraManager : IHostedService
 			frameHeight = 960;
 		}
 
+		_logger.Log($"CM: Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
 		_proxyManager.CreateProxy(port, videoDevice.Type == DeviceType.Display, _logger);
 		_ffmpegProcesses.Add(new KeyValuePair<VideoDevice, Process>(videoDevice, StartFfmpegProcess(videoDevice.Path, framerate, frameWidth, frameHeight, port, record)));
 	}
@@ -103,7 +104,11 @@ public class CameraManager : IHostedService
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
-		_ffmpegProcesses.ForEach(x => x.Value.Dispose());
+		_ffmpegProcesses.ForEach(x =>
+		{
+			x.Value.Kill();
+			x.Value.Dispose();
+		});
 		_proxyManager.Dispose();
 
 		return Task.CompletedTask;

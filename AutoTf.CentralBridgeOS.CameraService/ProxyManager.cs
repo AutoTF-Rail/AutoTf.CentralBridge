@@ -56,7 +56,7 @@ public class ProxyManager
 
 	public void Dispose()
 	{
-		_mainCamera.Dispose();
+		_mainCamera?.Dispose();
 		_displays.ForEach(proxy => proxy.Dispose());
 	}
 }

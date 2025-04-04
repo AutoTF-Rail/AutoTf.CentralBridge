@@ -21,9 +21,11 @@ public class MainCameraService : IHostedService
         _proxy = proxy;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        await StartDispatching();
+        Task.Run(StartDispatching, cancellationToken);
+        
+        return Task.CompletedTask;
     }
 
     private async Task StartDispatching()
@@ -40,7 +42,6 @@ public class MainCameraService : IHostedService
 
         while (!isCamAvailable && retryCount < 10)
         {
-            _logger.Log($"Main camera is not available yet after try {retryCount}, retrying in 1.5 seconds...");
             await Task.Delay(1500);
             retryCount++;
             isCamAvailable = _proxy.IsCameraAvailable();
@@ -49,8 +50,10 @@ public class MainCameraService : IHostedService
         if (retryCount == 0)
         {
             _logger.Log("Failed to start up the main camera after 10 tries.");
+            return;
         }
         
+        _logger.Log("CS: Main camera is now available.");
         _proxy.StartListeningForCamera(new IPEndPoint(IPAddress.Parse("127.0.0.1"), port));
     }
 
