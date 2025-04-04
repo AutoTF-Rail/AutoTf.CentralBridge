@@ -64,7 +64,6 @@ internal class CameraProxy : IDisposable
 	{
 		try
 		{
-			Console.WriteLine(_frameSize.Height);
 			while (_canStream)
 			{
 				UdpReceiveResult received = await _input.ReceiveAsync();
