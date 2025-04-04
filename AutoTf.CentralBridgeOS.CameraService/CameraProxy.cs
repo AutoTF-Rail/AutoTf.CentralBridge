@@ -135,7 +135,9 @@ internal class CameraProxy : IDisposable
 		using Tesseract engine = new Tesseract(Path.Combine(AppContext.BaseDirectory, "tessdata"), "deu", OcrEngineMode.LstmOnly);
 		string date = new Parser(engine).Date(frame);
 
-		DisplayType = date.Contains(DateTime.Now.Year.ToString()) ? DisplayType.EbuLa : DisplayType.CCD;
+		// This doesn't work if we use a example Fahrplan picture, but IRL this would work
+		// DisplayType = date.Trim().Contains(DateTime.Now.Year.ToString()) ? DisplayType.EbuLa : DisplayType.CCD;
+		DisplayType = Regex.IsMatch(date.Trim(), @"^[0-9.]+$") ? DisplayType.EbuLa : DisplayType.CCD;
 		_logger.Log($"Registered display camera as {DisplayType.ToString()}.");
 	}
 
