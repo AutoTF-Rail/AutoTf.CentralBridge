@@ -33,6 +33,7 @@ public class CameraManager : IHostedService
 		
 		foreach (VideoDevice videoDevice in videoDevices)
 		{
+			_logger.Log($"Found camera {videoDevice.Name} at {videoDevice.Path}.");
 			StartStream(videoDevice);
 		}
 
