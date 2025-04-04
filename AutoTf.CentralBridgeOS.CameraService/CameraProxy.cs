@@ -30,14 +30,17 @@ internal class CameraProxy : IDisposable
 
 	private Size _frameSize;
 
+	private bool isFirstLoop = true;
+
 	public CameraProxy(int port, bool isDisplay, Logger logger)
 	{
 		_isDisplay = isDisplay;
 		_logger = logger;
 		_input = new UdpClient(port);
 
+		// TODO: Get this from the proxy manager
 		if (_isDisplay)
-			_frameSize = new Size(1280, 960);
+			_frameSize = new Size(1280, 800);
 		else
 			_frameSize = new Size(1280, 720);
 		
@@ -89,9 +92,9 @@ internal class CameraProxy : IDisposable
 							// TODO: Enter the actual ROI here:
 							Mat cropped = new Mat(mat,
 								new Rectangle(new Point(100, 0), new Size(mat.Width - 200, mat.Height)));
-
-							if (DisplayType == DisplayType.Unknown)
+							if (isFirstLoop && DisplayType == DisplayType.Unknown)
 							{
+								isFirstLoop = false;
 								ReadDisplayType(cropped);
 							}
 							

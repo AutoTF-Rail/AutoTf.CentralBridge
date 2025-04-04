@@ -59,7 +59,7 @@ public class CameraManager : IHostedService
 			// TODO: Record the displays too? e.g. for Logging
 			record = false;
 			framerate = 10;
-			frameHeight = 960;
+			frameHeight = 800;
 		}
 
 		_logger.Log($"CM: Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
@@ -91,6 +91,7 @@ public class CameraManager : IHostedService
 				RedirectStandardError = true
 			}
 		};
+		process.EnableRaisingEvents = true;
         
 		process.ErrorDataReceived += (sender, e) =>
 		{
@@ -98,6 +99,7 @@ public class CameraManager : IHostedService
 				_logger.Log($"FFmpeg Error: {e.Data}");
 		};
 		process.Start();
+		process.Exited += (sender, args) => _logger.Log("Ffmpeg has exited.");
 
 		return process;
 	}
