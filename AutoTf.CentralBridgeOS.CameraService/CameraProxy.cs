@@ -1,6 +1,7 @@
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using AutoTf.CentralBridgeOS.FahrplanParser;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.Logging;
@@ -72,6 +73,8 @@ internal class CameraProxy : IDisposable
 				_buffer.AddRange(receivedData);
 
 				using UdpClient udpClient = new UdpClient();
+				// For testing with VLC:
+				// udpClient.Client.SendBufferSize = 1316;
 				while (_buffer.Count > 0)
 				{
 					int startIndex = IndexOfSequence(_buffer, _jpegFrameStart);
@@ -91,6 +94,7 @@ internal class CameraProxy : IDisposable
 							// TODO: Enter the actual ROI here:
 							Mat cropped = new Mat(mat,
 								new Rectangle(new Point(100, 0), new Size(mat.Width - 200, mat.Height)));
+							
 							if (isFirstLoop && DisplayType == DisplayType.Unknown)
 							{
 								isFirstLoop = false;
