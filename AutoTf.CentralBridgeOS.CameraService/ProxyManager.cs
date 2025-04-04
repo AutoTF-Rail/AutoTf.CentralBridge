@@ -41,7 +41,7 @@ public class ProxyManager
 
 	public bool IsCameraAvailable()
 	{
-		return _mainCamera == null;
+		return _mainCamera != null;
 	}
 
 	public void StartListeningForCamera(IPEndPoint endPoint)
