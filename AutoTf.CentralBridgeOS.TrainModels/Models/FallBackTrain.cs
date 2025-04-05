@@ -31,22 +31,12 @@ public class FallBackTrain : DefaultModel
 			return;
 		
 		// TODO: remove this?
-		Levers.Add(0, new LeverModel()
-		{
-			Name = "Combined Example",
-			Type = LeverType.CombinedLever,
-			MaximumAngle = 45, // -90 from middle
-			MiddleAngle = 135,
-			MinimumAngle = 225, // +90 from middle
-			IsPrimary = true
-		});
-		Levers.Add(1, new LeverModel()
-		{
-			Name = "Main Brake",
-			Type = LeverType.RangedLever,
-			MaximumAngle = 90, // -45 from middle
-			MinimumAngle = 180, // +45 from middle
-			IsPrimary = true
-		});
+		// 45 = -90 from middle
+		// 225 = +90 from middle
+		Levers.Add(0,
+			new LeverModel("Combined Example", LeverType.CombinedLever, maximumAngle: 45, middleAngle: 135, minimumAngle: 225, false));
+		// 90 = -45 from middle
+		// 180 = +45 from middle
+		Levers.Add(1, new LeverModel("Main Brake", LeverType.RangedLever, maximumAngle: 90, minimumAngle: 180, false));
 	}
 }

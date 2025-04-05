@@ -27,7 +27,8 @@ public static class TrainResolver
 		}
 
 		Statics.Logger.Log("Starting with fall back train model.");
-		ITrainModel? train = serviceProvider.GetService(typeof(FallBackTrain)) as ITrainModel;
+		ITrainModel train = (serviceProvider.GetService(typeof(FallBackTrain)) as ITrainModel)!;
+		
 		return train;
 	}
 }

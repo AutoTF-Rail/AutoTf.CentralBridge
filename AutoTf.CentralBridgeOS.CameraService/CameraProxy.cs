@@ -22,28 +22,22 @@ internal class CameraProxy : IDisposable
 
 	public DisplayType DisplayType = DisplayType.Unknown;
 
+	private readonly int _port;
 	private bool _isDisplay;
 	private readonly Logger _logger;
 
-	internal bool _canStream = true;
+	internal bool CanStream = true;
+	private bool _isFirstLoop = true;
 	
 	private readonly UdpClient _input;
 
-	private Size _frameSize;
-
-	private bool isFirstLoop = true;
 
 	public CameraProxy(int port, bool isDisplay, Logger logger)
 	{
+		_port = port;
 		_isDisplay = isDisplay;
 		_logger = logger;
 		_input = new UdpClient(port);
-
-		// TODO: Get this from the proxy manager
-		if (_isDisplay)
-			_frameSize = new Size(1280, 800);
-		else
-			_frameSize = new Size(1280, 720);
 		
 		Task.Run(StartListening);
 	}
@@ -65,7 +59,7 @@ internal class CameraProxy : IDisposable
 	{
 		try
 		{
-			while (_canStream)
+			while (CanStream)
 			{
 				UdpReceiveResult received = await _input.ReceiveAsync();
 				byte[] receivedData = received.Buffer;
@@ -95,9 +89,9 @@ internal class CameraProxy : IDisposable
 							Mat cropped = new Mat(mat,
 								new Rectangle(new Point(100, 0), new Size(mat.Width - 200, mat.Height)));
 							
-							if (isFirstLoop && DisplayType == DisplayType.Unknown)
+							if (_isFirstLoop && DisplayType == DisplayType.Unknown)
 							{
-								isFirstLoop = false;
+								_isFirstLoop = false;
 								ReadDisplayType(cropped);
 							}
 							
@@ -123,6 +117,8 @@ internal class CameraProxy : IDisposable
 		catch (Exception e)
 		{
 			// TODO: Handle
+			_logger.Log($"CP: Failed while listening for a camera on port {_port}:");
+			_logger.Log(e.ToString());
 		}
 	}
         
@@ -166,7 +162,7 @@ internal class CameraProxy : IDisposable
 
 	public void Dispose()
 	{
-		_canStream = false;
+		CanStream = false;
 		_input.Dispose();
 	}
 }

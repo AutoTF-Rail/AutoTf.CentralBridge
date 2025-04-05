@@ -29,7 +29,7 @@ public class DesiroHC : DefaultModel
 				Thread.Sleep(700);
 			SetLever(0, power);
 		}
-		else if (power < 0)
+		else // if (power < 0)
 		{
 			SetLever(0, 0);
 			SetLever(1, power * -1);
@@ -51,24 +51,10 @@ public class DesiroHC : DefaultModel
 		if (!MotorManager.AreMotorsAvailable)
 			return;
 		
-		Levers.Add(0, new LeverModel
-		{
-			Name = "Throttle",
-			Type = LeverType.RangedLever,
-			MaximumAngle = 90, // -45 from middle
-			MiddleAngle = 135,
-			MinimumAngle = 180, // +45 from middle
-			IsInverted = false
-		});
-		Levers.Add(1, new LeverModel
-		{
-			Name = "Main Brake", 
-			Type = LeverType.RangedLever,
-			MaximumAngle = 90, // -45 from middle
-			MiddleAngle = 135,
-			MinimumAngle = 180, // +45 from middle
-			IsInverted = false, // Usually on a brake this should be true, but since the motor is on the bottom of the lever, this has to be false
-		});
+		// I know a Desiro HC uses a combined lever, but this is for the demo.
+		Levers.Add(0, new LeverModel("Throttle", LeverType.RangedLever, maximumAngle: 90, middleAngle: 135, minimumAngle: 180, false));
+		// Usually on a brake "isInverted" should be true, but since the motor is on the bottom of the lever, this has to be false
+		Levers.Add(1, new LeverModel("Main Brake", LeverType.RangedLever, maximumAngle: 90, middleAngle: 135, minimumAngle: 180, false));
 		
 		// TODO: Reset lever position to release location, or tell user what the current state is?
 		// Only reset levers to "idle" when train is not moving? e.g. move throttle to 0 and apply a bit of brakes

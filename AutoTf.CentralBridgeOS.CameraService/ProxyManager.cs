@@ -1,15 +1,12 @@
 using System.Net;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.Logging;
-using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.CameraService;
 
 // This class doesn't need to be a HostedService, because its dispose is being called by the CameraManager
 public class ProxyManager
 {
-	private readonly CancellationTokenSource _cancelToken = new CancellationTokenSource();
-
 	private readonly List<CameraProxy> _displays = new List<CameraProxy>();
 
 	private CameraProxy? _mainCamera;

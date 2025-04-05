@@ -98,7 +98,7 @@ public abstract class DefaultModel : ITrainModel
 			else
 				angle = leverMiddleAngle + (percentage / 100) * (leverMinimumAngle - leverMiddleAngle);
 			
-			Logger.Log($"Default Train: Setting Combined Lever to: {angle}");
+			Logger.Log($"Default Train: Setting Combined Lever \"{lever.Name}\" to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
 		else if (lever.Type == LeverType.RangedLever)
@@ -108,7 +108,7 @@ public abstract class DefaultModel : ITrainModel
 				? leverMaximumAngle - (percentage / 100) * (leverMaximumAngle - leverMinimumAngle)
 				: leverMinimumAngle + (percentage / 100) * (leverMaximumAngle - leverMinimumAngle);
 
-			Logger.Log($"Default Train: Setting {lever.Type.ToString()} to: {angle}");
+			Logger.Log($"Default Train: Setting {lever.Type.ToString()} \"{lever.Name}\" to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
 	}
