@@ -69,7 +69,7 @@ internal class CameraProxy : IDisposable
 				
 				if (_buffer.Count > 10_000_000) // 10MB
 				{
-					_logger.Log("WP: Warning: Clearing oversized buffer");
+					_logger.Log("CP: Warning: Clearing oversized buffer");
 					_buffer.Clear();
 				}
 				
