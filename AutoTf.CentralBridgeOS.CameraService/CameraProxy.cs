@@ -95,7 +95,7 @@ internal class CameraProxy : IDisposable
 							if(mat == null)
 								continue;
 							
-							using Mat cropped = new Mat(mat, new Rectangle(new Point(100, 0), new Size(mat.Width - 200, mat.Height)));
+							using Mat cropped = new Mat(mat, new Rectangle(new Point(80, 0), new Size(mat.Width - (80 + 118), mat.Height)));
 							
 							if (_isFirstLoop && DisplayType == DisplayType.Unknown)
 							{
@@ -135,7 +135,6 @@ internal class CameraProxy : IDisposable
 			using Mat temp = new Mat();
 			
 			CvInvoke.Imdecode(yuvData, ImreadModes.Color, temp);
-			
 			return temp.Clone();
 		}
 		catch (Exception ex)
