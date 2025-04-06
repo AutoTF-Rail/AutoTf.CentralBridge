@@ -1,4 +1,4 @@
-namespace AutoTf.CentralBridgeOS.Services;
+namespace AutoTf.CentralBridgeOS.Services.Gps;
 
 public static class NmeaParser
 {

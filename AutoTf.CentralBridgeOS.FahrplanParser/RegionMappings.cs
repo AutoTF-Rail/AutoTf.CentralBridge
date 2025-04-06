@@ -2,83 +2,85 @@ using System.Drawing;
 
 namespace AutoTf.CentralBridgeOS.FahrplanParser;
 
-internal static class RegionMappings
+public static class RegionMappings
 {
 	public static readonly List<Rectangle> Rows =
 	[
-		new Rectangle(85, 109, 1165, 44),
-		new Rectangle(85, 155, 1165, 44),
-		new Rectangle(85, 201, 1165, 44),
-		new Rectangle(85, 248, 1165, 44),
-		new Rectangle(85, 294, 1165, 44),
-		new Rectangle(85, 340, 1165, 44),
-		new Rectangle(85, 385, 1165, 44),
-		new Rectangle(85, 432, 1165, 44),
-		new Rectangle(85, 477, 1165, 44),
-		new Rectangle(85, 523, 1165, 44),
-		new Rectangle(85, 568, 1165, 44),
-		new Rectangle(85, 614, 1165, 44),
-		new Rectangle(85, 659, 1165, 44),
-		new Rectangle(85, 705, 1165, 44),
-		new Rectangle(85, 750, 1165, 44)
+		new Rectangle(74, 94, 998, 37),
+		new Rectangle(74, 134, 998, 37),
+		new Rectangle(74, 173, 998, 37),
+		new Rectangle(74, 214, 998, 37),
+		new Rectangle(74, 253, 998, 37),
+		new Rectangle(74, 293, 998, 37),
+		new Rectangle(74, 332, 998, 37),
+		new Rectangle(74, 372, 998, 37),
+		new Rectangle(74, 410, 998, 37),
+		new Rectangle(74, 450, 998, 37),
+		new Rectangle(74, 489, 998, 37),
+		new Rectangle(74, 528, 998, 37),
+		new Rectangle(74, 567, 998, 37),
+		new Rectangle(74, 607, 998, 37),
+		new Rectangle(74, 646, 998, 37)
 	];
 	
+	// Absolut
 	public static readonly List<Rectangle> LocationPoints =
 	[
-		new Rectangle(190, 432, 37, 43),
-		new Rectangle(190, 477, 37, 43),
-		new Rectangle(190, 523, 37, 43),
-		new Rectangle(190, 568, 37, 43),
-		new Rectangle(190, 614, 37, 43),
-		new Rectangle(190, 659, 37, 43),
-		new Rectangle(190, 705, 37, 43)
-	];
-					
-	public static readonly List<Rectangle> LocationPointsHektometer =
-	[
-		new Rectangle(259, 432, 127, 43),
-		new Rectangle(259, 477, 127, 43),
-		new Rectangle(259, 523, 127, 43),
-		new Rectangle(259, 568, 127, 43),
-		new Rectangle(259, 614, 127, 43),
-		new Rectangle(259, 659, 127, 43),
-		new Rectangle(259, 705, 127, 43)
+		new Rectangle(169, 372, 31, 37),
+		new Rectangle(169, 410, 31, 37),
+		new Rectangle(169, 450, 31, 37),
+		new Rectangle(169, 489, 31, 37),
+		new Rectangle(169, 528, 31, 37),
+		new Rectangle(169, 567, 31, 37),
+		new Rectangle(169, 606, 31, 37)
 	];
 	
-	public static readonly Rectangle PlanValidity = new Rectangle(348, 11, 259, 44);
-	public static readonly Rectangle TrainNumber = new Rectangle(17, 11, 134, 44);
-	public static readonly Rectangle Delay = new Rectangle(696, 812, 134, 30);
-	public static readonly Rectangle Time = new Rectangle(1066, 11, 160, 44);
-	public static readonly Rectangle Date = new Rectangle(678, 18, 165, 36);
-	// public static readonly Rectangle Date = new Rectangle(805, 11, 190, 44);
+	// Absolut
+	public static readonly List<Rectangle> LocationPointsHektometer =
+	[
+		new Rectangle(222, 372, 108, 37),
+		new Rectangle(222, 410, 108, 37),
+		new Rectangle(222, 450, 108, 37),
+		new Rectangle(222, 489, 108, 37),
+		new Rectangle(222, 528, 108, 37),
+		new Rectangle(222, 567, 108, 37),
+		new Rectangle(222, 606, 108, 37)
+	];
+	
+	public static readonly Rectangle PlanValidity = new Rectangle(348, 11, 418, 34);
+	public static readonly Rectangle TrainNumber = new Rectangle(16, 11, 129, 34);
+	public static readonly Rectangle Delay = new Rectangle(604, 694, 115, 26);
+	public static readonly Rectangle Time = new Rectangle(991, 9, 153, 34);
+	public static readonly Rectangle Date = new Rectangle(693, 11, 178, 34);
+	public static readonly Rectangle NextStop = new Rectangle(713, 57, 363, 29);
 
 	public static Rectangle Hektometer(Rectangle row)
 	{
-		return new Rectangle(row.X + 173, row.Y, 126, 44);
+		return new Rectangle(row.X + 148, row.Y, 108, 38);
 	}
 	
 	public static Rectangle Arrival(Rectangle row)
 	{
-		return new Rectangle(row.X + 865, row.Y, 155, 44);
+		return new Rectangle(row.X + 756, row.Y, 117, 37);
 	}
 	
 	public static Rectangle Departure(Rectangle row)
 	{
-		return new Rectangle(row.X + 1026, row.Y, 140, 44);
+		return new Rectangle(row.X + 896, row.Y, 106, 37);
 	}
 	
 	public static Rectangle AdditionalText(Rectangle row)
 	{
-		return new Rectangle(row.X + 451, row.Y, 340, 44);
+		return new Rectangle(row.X + 394, row.Y, 283, 37);
 	}
 	
 	public static Rectangle SpeedLimit(Rectangle row)
 	{
-		return new Rectangle(row.X + 50, row.Y, 59, 44);
+		return new Rectangle(row.X + 52, row.Y, 49, 37);
 	}
 	
 	public static Rectangle YellowArea(Rectangle row)
 	{
-		return new Rectangle(row.X + 74, row.Y, 35, 9);
+		return new Rectangle(row.X + 63, row.Y, 30, 5);
 	}
 }

@@ -34,6 +34,8 @@ internal class CameraProxy : IDisposable
 
 	private readonly TaskCompletionSource _started = new();
 
+	private Mat? _latestMat = null;
+
 	public CameraProxy(int port, bool isDisplay, Logger logger)
 	{
 		_port = port;
@@ -42,6 +44,11 @@ internal class CameraProxy : IDisposable
 		_input = new UdpClient(port);
 		
 		Task.Run(StartListening);
+	}
+
+	public Mat? GetFrame()
+	{
+		return _latestMat?.Clone();
 	}
 	
 	public Task WaitUntilStarted() => _started.Task;
@@ -95,15 +102,16 @@ internal class CameraProxy : IDisposable
 							if(mat == null)
 								continue;
 							
-							using Mat cropped = new Mat(mat, new Rectangle(new Point(80, 0), new Size(mat.Width - (80 + 118), mat.Height)));
+							_latestMat?.Dispose();
+							_latestMat = new Mat(mat, new Rectangle(new Point(80, 0), new Size(mat.Width - (80 + 118), mat.Height)));
 							
 							if (_isFirstLoop && DisplayType == DisplayType.Unknown)
 							{
 								_isFirstLoop = false;
-								ReadDisplayType(cropped);
+								ReadDisplayType(_latestMat);
 							}
 							
-							frameBytes = CvInvoke.Imencode(".jpg", cropped);
+							frameBytes = CvInvoke.Imencode(".jpg", _latestMat);
 						}
 
 						foreach (IPEndPoint client in _clients)

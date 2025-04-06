@@ -4,7 +4,7 @@ using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
-namespace AutoTf.CentralBridgeOS.Services;
+namespace AutoTf.CentralBridgeOS.Services.Camera;
 
 public class MainCameraService : IHostedService
 {

@@ -3,7 +3,7 @@ using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
-namespace AutoTf.CentralBridgeOS.Services;
+namespace AutoTf.CentralBridgeOS.Services.Gps;
 
 // Configuration required on chip:
 // Baudrate: 115200

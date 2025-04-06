@@ -1,5 +1,6 @@
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Services.Network;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Sync;

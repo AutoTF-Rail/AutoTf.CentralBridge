@@ -1,10 +1,9 @@
-using System;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 
-namespace AutoTf.CentralBridgeOS.Services;
+namespace AutoTf.CentralBridgeOS.Services.Network;
 
 public class NetworkConfigurator
 {

@@ -1,6 +1,7 @@
 using System.Net;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.Logging;
+using Emgu.CV;
 
 namespace AutoTf.CentralBridgeOS.CameraService;
 
@@ -46,6 +47,12 @@ public class ProxyManager
 	public void StartListeningForCamera(IPEndPoint endPoint)
 	{
 		_mainCamera?.AddClient(endPoint);
+	}
+
+	public Mat GetLatestFrameFromDisplay(DisplayType type)
+	{
+		// When someone gets this frame, they should be sure that the display is actually available.
+		return _displays.FirstOrDefault(x => x.DisplayType == type)?.GetFrame()!;
 	}
 
 	public void StopListeningForCamera(IPAddress address)

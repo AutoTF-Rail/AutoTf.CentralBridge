@@ -34,7 +34,7 @@ public abstract class InfoParser : ParserBase
 		// TODO: Does this maybe make a problem, if we are already on "page two" by location, so the point won't be on the first page?
 		for (int i = 0; i < RegionMappings.LocationPoints.Count; i++)
 		{
-			Rectangle checkRoi = new Rectangle(RegionMappings.LocationPoints[i].X + 25, RegionMappings.LocationPoints[i].Y + 10, 6, 25);
+			Rectangle checkRoi = new Rectangle(RegionMappings.LocationPoints[i].X + 20, RegionMappings.LocationPoints[i].Y + 8, 5, 21);
 			Mat checkMat = new Mat(mat, checkRoi);
 					
 			if(!checkMat.IsMoreBlackThanWhite())

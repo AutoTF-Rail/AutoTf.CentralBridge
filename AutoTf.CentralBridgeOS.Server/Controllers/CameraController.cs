@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Services.Camera;
 using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
@@ -13,13 +14,13 @@ public class CameraController : ControllerBase
 {
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
-	private readonly UdpProxyService _udpProxy;
+	private readonly MainCameraProxyService _mainCameraProxy;
 	
-	public CameraController(Logger logger, SyncManager syncManager, UdpProxyService udpProxy)
+	public CameraController(Logger logger, SyncManager syncManager, MainCameraProxyService mainCameraProxy)
 	{
 		_logger = logger;
 		_syncManager = syncManager;
-		_udpProxy = udpProxy;
+		_mainCameraProxy = mainCameraProxy;
 	}
 	
 	[HttpPost("startStream")]
@@ -32,7 +33,7 @@ public class CameraController : ControllerBase
 			if (ipAddress != null)
 			{
 				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, port);
-				_udpProxy.AddClient(receiverEndpoint);
+				_mainCameraProxy.AddClient(receiverEndpoint);
                 
 				_logger.Log($"Added receiver: {receiverEndpoint}");
 				return Ok("Receiver added successfully.");
@@ -57,7 +58,7 @@ public class CameraController : ControllerBase
 			
 			if (ipAddress != null)
 			{
-				_udpProxy.RemoveClient(ipAddress);
+				_mainCameraProxy.RemoveClient(ipAddress);
 				
 				_logger.Log($"Removed receiver: {ipAddress}");
 				return Ok("Receiver removed successfully.");
