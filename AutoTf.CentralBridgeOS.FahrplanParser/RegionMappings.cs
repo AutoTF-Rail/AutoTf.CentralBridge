@@ -76,7 +76,7 @@ public static class RegionMappings
 	
 	public static Rectangle SpeedLimit(Rectangle row)
 	{
-		return new Rectangle(row.X + 52, row.Y, 49, 37);
+		return new Rectangle(row.X + 56, row.Y, 49, 37);
 	}
 	
 	public static Rectangle YellowArea(Rectangle row)
