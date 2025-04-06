@@ -20,6 +20,7 @@ public class MacSync : Sync
 		{
 			if (!NetworkConfigurator.IsInternetAvailable())
 				return;
+			
 			if (await CheckForNewMacAddresses())
 				await SyncMac();
 		}

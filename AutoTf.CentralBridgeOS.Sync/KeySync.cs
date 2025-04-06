@@ -19,7 +19,7 @@ public class KeySync : Sync
 	{
 		try
 		{
-			if (NetworkConfigurator.IsInternetAvailable())
+			if (!NetworkConfigurator.IsInternetAvailable())
 				return;
 			
 			// If there are any new, it just syncs them all. It's easier this way.
