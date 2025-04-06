@@ -6,21 +6,21 @@ public static class RegionMappings
 {
 	public static readonly List<Rectangle> Rows =
 	[
-		new Rectangle(74, 94, 998, 37),
-		new Rectangle(74, 134, 998, 37),
-		new Rectangle(74, 173, 998, 37),
-		new Rectangle(74, 214, 998, 37),
-		new Rectangle(74, 253, 998, 37),
-		new Rectangle(74, 293, 998, 37),
-		new Rectangle(74, 332, 998, 37),
-		new Rectangle(74, 372, 998, 37),
-		new Rectangle(74, 410, 998, 37),
-		new Rectangle(74, 450, 998, 37),
-		new Rectangle(74, 489, 998, 37),
-		new Rectangle(74, 528, 998, 37),
-		new Rectangle(74, 567, 998, 37),
-		new Rectangle(74, 607, 998, 37),
-		new Rectangle(74, 646, 998, 37)
+		new Rectangle(74, 89, 998, 37),
+		new Rectangle(74, 129, 998, 37),
+		new Rectangle(74, 168, 998, 37),
+		new Rectangle(74, 208, 998, 37),
+		new Rectangle(74, 248, 998, 37),
+		new Rectangle(74, 288, 998, 37),
+		new Rectangle(74, 327, 998, 37),
+		new Rectangle(74, 367, 998, 37),
+		new Rectangle(74, 406, 998, 37),
+		new Rectangle(74, 445, 998, 37),
+		new Rectangle(74, 484, 998, 37),
+		new Rectangle(74, 524, 998, 37),
+		new Rectangle(74, 562, 998, 37),
+		new Rectangle(74, 602, 998, 37),
+		new Rectangle(74, 641, 998, 37)
 	];
 	
 	// Absolut
