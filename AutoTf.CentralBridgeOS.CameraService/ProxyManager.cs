@@ -11,7 +11,7 @@ public class ProxyManager
 
 	private CameraProxy? _mainCamera;
 	
-	internal void CreateProxy(int port, bool isDisplay, Logger logger)
+	internal async Task CreateProxy(int port, bool isDisplay, Logger logger)
 	{
 		CameraProxy proxy = new CameraProxy(port, isDisplay, logger);
 		
@@ -19,6 +19,8 @@ public class ProxyManager
 			_displays.Add(proxy);
 		else
 			_mainCamera = proxy;
+
+		await proxy.WaitUntilStarted();
 	}
 
 	public void StartListeningForDisplay(DisplayType type, IPEndPoint endpoint)

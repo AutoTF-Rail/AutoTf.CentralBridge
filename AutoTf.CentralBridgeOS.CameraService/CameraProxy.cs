@@ -32,6 +32,7 @@ internal class CameraProxy : IDisposable
 	private readonly UdpClient _input;
 	private readonly UdpClient _output = new UdpClient();
 
+	private readonly TaskCompletionSource _started = new();
 
 	public CameraProxy(int port, bool isDisplay, Logger logger)
 	{
@@ -42,7 +43,9 @@ internal class CameraProxy : IDisposable
 		
 		Task.Run(StartListening);
 	}
-
+	
+	public Task WaitUntilStarted() => _started.Task;
+	
 	internal void AddClient(IPEndPoint clientEndpoint)
 	{
 		if (!_clients.Contains(clientEndpoint))
@@ -60,6 +63,7 @@ internal class CameraProxy : IDisposable
 	{
 		try
 		{
+			_started.SetResult();
 			while (CanStream)
 			{
 				UdpReceiveResult received = await _input.ReceiveAsync();
@@ -87,7 +91,9 @@ internal class CameraProxy : IDisposable
 						// It's not worth it to convert it here if it's not a display (TODO: Maybe we can offload display reading too to the other pc?), because we give the tablet the raw output too, and the PC that runs the segmentation can handle the converssion itself.
 						if (_isDisplay)
 						{
-							using Mat mat = ConvertYuvToMat(frameBytes);
+							using Mat? mat = ConvertYuvToMat(frameBytes);
+							if(mat == null)
+								continue;
 							
 							using Mat cropped = new Mat(mat, new Rectangle(new Point(100, 0), new Size(mat.Width - 200, mat.Height)));
 							
@@ -121,13 +127,22 @@ internal class CameraProxy : IDisposable
 			_logger.Log(e.ToString());
 		}
 	}
-        
-	private Mat ConvertYuvToMat(byte[] yuvData)
+	
+	private Mat? ConvertYuvToMat(byte[] yuvData)
 	{
-		Mat frame = new Mat();
-		CvInvoke.Imdecode(yuvData, ImreadModes.Color, frame);
-
-		return frame;
+		try
+		{
+			using Mat temp = new Mat();
+			
+			CvInvoke.Imdecode(yuvData, ImreadModes.Color, temp);
+			
+			return temp.Clone();
+		}
+		catch (Exception ex)
+		{
+			_logger.Log("Failed to decode JPEG frame: " + ex.Message);
+			return null;
+		}
 	}
 
 	private void ReadDisplayType(Mat frame)
