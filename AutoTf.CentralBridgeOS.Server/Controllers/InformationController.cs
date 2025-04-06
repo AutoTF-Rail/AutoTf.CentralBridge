@@ -187,9 +187,10 @@ public class InformationController : ControllerBase
 		try
 		{
 			Console.WriteLine("Processing login...");
-			if (!_codeValidator.ValidateCode(code, serialNumber, timestamp))
+			CodeValidationResult result = _codeValidator.ValidateCode(code, serialNumber, timestamp);
+			if (result != CodeValidationResult.Valid)
 			{
-				_logger.Log($"Device: {macAddr} tried to login with key {code} and timestamp {timestamp} but failed.");
+				_logger.Log($"Device: {macAddr} tried to login with key {code} and timestamp {timestamp} but failed with reason {result.ToString()}.");
 				return NotFound();
 			}
 

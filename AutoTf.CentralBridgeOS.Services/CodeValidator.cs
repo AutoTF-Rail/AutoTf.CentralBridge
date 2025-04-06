@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AutoTf.CentralBridgeOS.Models;
 using OtpNet;
 
 namespace AutoTf.CentralBridgeOS.Services;
@@ -13,14 +14,14 @@ public class CodeValidator
 		_fileManager = fileManager;
 	}
 	
-	public bool ValidateCode(string code, string keySerialNumber, DateTime timeOfCode)
+	public CodeValidationResult ValidateCode(string code, string keySerialNumber, DateTime timeOfCode)
 	{
 		// KeySerialNum:secret
 		string[] allKeys = _fileManager.ReadAllLines("keys", "[]");
 		string? secret = allKeys.FirstOrDefault(x => x.StartsWith($"{keySerialNumber}:"));
 		
 		if (string.IsNullOrEmpty(secret))
-			return false;
+			return CodeValidationResult.NotFound;
 
 		secret = secret.Replace($"{keySerialNumber}:", "");
 		
@@ -28,6 +29,6 @@ public class CodeValidator
 
 		Totp totp = new Totp(secretBytes, 15, OtpHashMode.Sha256);
 		
-		return totp.ComputeTotp(timeOfCode) == code;
+		return totp.ComputeTotp(timeOfCode) == code ? CodeValidationResult.Valid : CodeValidationResult.Invalid;
 	}
 }
