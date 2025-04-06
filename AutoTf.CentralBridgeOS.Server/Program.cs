@@ -1,5 +1,6 @@
 using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.Extensions;
+using AutoTf.CentralBridgeOS.Localise;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Camera;
@@ -70,6 +71,8 @@ public static class Program
 		builder.Services.AddHostedSingleton<MainCameraProxyService>();
 		builder.Services.AddHostedSingleton<MotorManager>();
 		builder.Services.AddHostedSingleton<SyncManager>();
+		builder.Services.AddHostedSingleton<EbuLaService>();
+		builder.Services.AddHostedSingleton<LocaliseService>();
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
 		{

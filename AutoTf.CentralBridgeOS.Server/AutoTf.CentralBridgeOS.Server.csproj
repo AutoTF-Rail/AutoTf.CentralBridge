@@ -30,6 +30,7 @@
     <ItemGroup>
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.CameraService\AutoTf.CentralBridgeOS.CameraService.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Extensions\AutoTf.CentralBridgeOS.Extensions.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Localise\AutoTf.CentralBridgeOS.Localise.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Services\AutoTf.CentralBridgeOS.Services.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Sync\AutoTf.CentralBridgeOS.Sync.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.TrainModels\AutoTf.CentralBridgeOS.TrainModels.csproj" />

@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Fahr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.FahrplanParser.Models", "AutoTf.CentralBridgeOS.FahrplanParser.Models\AutoTf.CentralBridgeOS.FahrplanParser.Models.csproj", "{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Localise", "AutoTf.CentralBridgeOS.Localise\AutoTf.CentralBridgeOS.Localise.csproj", "{327948C0-16CB-426A-A289-AF0F32D90411}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +62,9 @@ Global
 		{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}.Release|Any CPU.Build.0 = Release|Any CPU
+		{327948C0-16CB-426A-A289-AF0F32D90411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{327948C0-16CB-426A-A289-AF0F32D90411}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{327948C0-16CB-426A-A289-AF0F32D90411}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{327948C0-16CB-426A-A289-AF0F32D90411}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
