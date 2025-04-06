@@ -26,13 +26,13 @@ public static class RegionMappings
 	// Absolut
 	public static readonly List<Rectangle> LocationPoints =
 	[
-		new Rectangle(169, 372, 31, 37),
-		new Rectangle(169, 410, 31, 37),
-		new Rectangle(169, 450, 31, 37),
-		new Rectangle(169, 489, 31, 37),
-		new Rectangle(169, 528, 31, 37),
-		new Rectangle(169, 567, 31, 37),
-		new Rectangle(169, 606, 31, 37)
+		new Rectangle(169, 367, 31, 37),
+		new Rectangle(169, 405, 31, 37),
+		new Rectangle(169, 445, 31, 37),
+		new Rectangle(169, 483, 31, 37),
+		new Rectangle(169, 523, 31, 37),
+		new Rectangle(169, 562, 31, 37),
+		new Rectangle(169, 601, 31, 37)
 	];
 	
 	// Absolut
