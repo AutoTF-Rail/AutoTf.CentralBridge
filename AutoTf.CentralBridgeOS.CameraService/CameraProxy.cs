@@ -30,6 +30,7 @@ internal class CameraProxy : IDisposable
 	private bool _isFirstLoop = true;
 	
 	private readonly UdpClient _input;
+	private readonly UdpClient _output = new UdpClient();
 
 
 	public CameraProxy(int port, bool isDisplay, Logger logger)
@@ -65,8 +66,13 @@ internal class CameraProxy : IDisposable
 				byte[] receivedData = received.Buffer;
 
 				_buffer.AddRange(receivedData);
-
-				using UdpClient udpClient = new UdpClient();
+				
+				if (_buffer.Count > 10_000_000) // 10MB
+				{
+					_logger.Log("WP: Warning: Clearing oversized buffer");
+					_buffer.Clear();
+				}
+				
 				// For testing with VLC:
 				// udpClient.Client.SendBufferSize = 1316;
 				while (_buffer.Count > 0)
@@ -79,15 +85,11 @@ internal class CameraProxy : IDisposable
 						byte[] frameBytes = _buffer.GetRange(startIndex, endIndex - startIndex + 2).ToArray();
 
 						// It's not worth it to convert it here if it's not a display (TODO: Maybe we can offload display reading too to the other pc?), because we give the tablet the raw output too, and the PC that runs the segmentation can handle the converssion itself.
-						
 						if (_isDisplay)
 						{
-							// Convert to mat, crop offset, turn back into bytes
-							Console.WriteLine("Test");
-							Mat mat = ConvertYuvToMat(frameBytes);
-							// TODO: Enter the actual ROI here:
-							Mat cropped = new Mat(mat,
-								new Rectangle(new Point(100, 0), new Size(mat.Width - 200, mat.Height)));
+							using Mat mat = ConvertYuvToMat(frameBytes);
+							
+							using Mat cropped = new Mat(mat, new Rectangle(new Point(100, 0), new Size(mat.Width - 200, mat.Height)));
 							
 							if (_isFirstLoop && DisplayType == DisplayType.Unknown)
 							{
@@ -95,14 +97,12 @@ internal class CameraProxy : IDisposable
 								ReadDisplayType(cropped);
 							}
 							
-							mat.Dispose();
 							frameBytes = CvInvoke.Imencode(".jpg", cropped);
-							cropped.Dispose();
 						}
 
 						foreach (IPEndPoint client in _clients)
 						{
-							await udpClient.SendAsync(frameBytes, frameBytes.Length, client);
+							await _output.SendAsync(frameBytes, frameBytes.Length, client);
 						}
 
 						_buffer.RemoveRange(0, endIndex + 2); 
@@ -164,5 +164,6 @@ internal class CameraProxy : IDisposable
 	{
 		CanStream = false;
 		_input.Dispose();
+		_output.Dispose();
 	}
 }
