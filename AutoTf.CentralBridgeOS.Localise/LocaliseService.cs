@@ -27,7 +27,7 @@ public class LocaliseService : IHostedService
     
     public async Task Initialize()
     {
-        _logger.Log("LS: Waiting for EbuLa display to be available.");
+        _logger.Log("Waiting for EbuLa display to be available.");
 
         bool isCamAvailable = _proxy.IsDisplayAvailable(DisplayType.EbuLa);
         int retryCount = 0;
@@ -45,13 +45,13 @@ public class LocaliseService : IHostedService
             return;
         }
         
-        _logger.Log($"LS: EbuLa is now available after {retryCount} retries.");
+        _logger.Log($"EbuLa is now available after {retryCount} retries.");
 
         string? locationMarker = _ebuLaService.LocationMarker();
         if (locationMarker != null)
-            _logger.Log($"LS: Found location marker at {locationMarker}.");
+            _logger.Log($"Found location marker at {locationMarker}.");
         
-        _logger.Log($"LS: Current speed limit: {_ebuLaService.CurrentSpeedLimit()}");
+        _logger.Log($"Current speed limit: {_ebuLaService.CurrentSpeedLimit()}");
     }
     
     public Task StopAsync(CancellationToken cancellationToken)

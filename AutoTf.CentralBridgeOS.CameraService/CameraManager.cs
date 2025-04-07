@@ -40,7 +40,7 @@ public class CameraManager : IHostedService
 		}
 
 		Statics.AreCamerasStarted = true;
-		_logger.Log("CM: Started up all cameras");
+		_logger.Log("Started up all cameras");
 	}
 	
 	private async Task StartStream(VideoDevice videoDevice)
