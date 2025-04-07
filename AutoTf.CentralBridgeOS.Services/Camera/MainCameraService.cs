@@ -76,7 +76,8 @@ public class MainCameraService : IHostedService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.Log("Failed to dispose main camera service:");
+            _logger.Log(e.ToString());
             throw;
         }
     }

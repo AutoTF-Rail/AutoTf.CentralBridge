@@ -10,7 +10,7 @@ public sealed class DesiroML : DefaultModel
 {
 	public DesiroML(MotorManager motorManager, Logger logger) : base(motorManager, logger)
 	{
-		Initialize();
+		Task.Run(Initialize);
 	}
 
 	public override RegionMappings Mappings { get; } = new Mapping();

@@ -20,6 +20,7 @@ public class MotorManager : IHostedService
 	private bool? _areMotorsAvailable;
 
 	private bool _areMotorsReleased;
+	private volatile bool _isInitialized = false;
 	
 	// TODO: Listen on a certain pin for a button press to physically disable the motors.
 	public MotorManager(Logger logger)
@@ -36,6 +37,7 @@ public class MotorManager : IHostedService
 			
 			ResetPcaBoard(_i2CDevice);
 
+			_isInitialized = true;
 			if (!AreMotorsAvailable)
 				return;
 		
@@ -130,11 +132,18 @@ public class MotorManager : IHostedService
 	{
 		get
 		{
+			int waited = 0;
+			while (!_isInitialized && waited < 5000)
+			{
+				Thread.Sleep(50);
+				waited += 50;
+			}
 			if (_areMotorsAvailable == null)
 			{
 				try
 				{
 					 _i2CDevice.ReadByte();
+					 _logger.Log("MM: Motors are available.");
 					 _areMotorsAvailable = true;
 				}
 				catch

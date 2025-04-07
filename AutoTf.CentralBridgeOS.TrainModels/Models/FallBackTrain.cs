@@ -13,7 +13,7 @@ public class FallBackTrain : DefaultModel
 	
 	public FallBackTrain(MotorManager motorManager, Logger logger) : base(motorManager, logger)
 	{
-		Initialize();
+		Task.Run(Initialize);
 	}
 
 	public override void EasyControl(int power)

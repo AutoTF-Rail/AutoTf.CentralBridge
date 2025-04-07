@@ -187,7 +187,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			Console.WriteLine("Processing login...");
+			_logger.Log("IC: Processing Login.");
 			CodeValidationResult result = _codeValidator.ValidateCode(code, serialNumber, timestamp);
 			if (result != CodeValidationResult.Valid)
 			{

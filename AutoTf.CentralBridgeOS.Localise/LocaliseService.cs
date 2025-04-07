@@ -48,7 +48,9 @@ public class LocaliseService : IHostedService
         _logger.Log($"LS: EbuLa is now available after {retryCount} retries.");
 
         string? locationMarker = _ebuLaService.LocationMarker();
-        _logger.Log($"LS: Found location marker at {locationMarker}.");
+        if (locationMarker != null)
+            _logger.Log($"LS: Found location marker at {locationMarker}.");
+        
         _logger.Log($"LS: Current speed limit: {_ebuLaService.CurrentSpeedLimit()}");
     }
     

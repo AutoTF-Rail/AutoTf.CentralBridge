@@ -47,7 +47,8 @@ public class NetworkConfigurator
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine($"An error occurred while setting IP: {ex.Message}");
+			_logger.Log($"An error occurred while setting IP: {ex.Message}");
+			_logger.Log(ex.ToString());
 			throw;
 		}
 	}
