@@ -31,7 +31,7 @@ public class CameraManager : IHostedService
 		string command = "v4l2-ctl --list-devices";
 		string output = CommandExecuter.ExecuteCommand(command);
 
-		List<VideoDevice> videoDevices = CommandParser.ParseVideoDevices(output);
+		List<VideoDevice> videoDevices = DeviceParser.ParseVideoDevices(output);
 		
 		foreach (VideoDevice videoDevice in videoDevices)
 		{
