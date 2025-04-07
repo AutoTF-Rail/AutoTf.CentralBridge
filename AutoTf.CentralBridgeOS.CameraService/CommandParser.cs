@@ -11,12 +11,20 @@ internal static class CommandParser
 		{
 			string[] lines = output.Split(['\n', '\r'], StringSplitOptions.RemoveEmptyEntries);
 
-
+			List<string> currentPaths = new List<string>();
 			string currentDevice = string.Empty;
 			foreach (string line in lines)
 			{
 				if (line.Contains(':'))
+				{
+					if (currentDevice != string.Empty)
+					{
+						currentPaths.Sort();
+						devices.Add(new VideoDevice(currentDevice, currentPaths.First(), currentDevice.Contains("Camera") ? DeviceType.Display : DeviceType.Camera));
+					}
+					
 					currentDevice = line.Split(':')[0].Trim();
+				}
 
 				if (currentDevice == string.Empty)
 					continue;
@@ -29,9 +37,7 @@ internal static class CommandParser
 			
 				string devicePath = line.Trim();
 			
-				// In theory we could just add the devicePath to a list of paths in the class VideoDevice, then we would have all paths, but I don't think we need that.
-				devices.Add(new VideoDevice(currentDevice, devicePath, currentDevice.Contains("Camera") ? DeviceType.Display : DeviceType.Camera));
-				currentDevice = string.Empty;
+				currentPaths.Add(devicePath);
 			}
 		}
 		catch
