@@ -76,7 +76,7 @@ public class CameraManager : IHostedService
 		string ffmpegArgs = $"-f v4l2 -framerate {framerate} -video_size {frameWidth}x{frameHeight} -loglevel error -input_format {format} -i {devicePath} -y -rtbufsize 1500k -map 0:v -c:v mjpeg -pix_fmt yuvj420p ";
 		
 		if (record)
-			ffmpegArgs += $"-f tee \"[f=segment:segment_time=150:reset_timestamps=1:strftime=1]recordings/%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:{port}\"";
+			ffmpegArgs += $"-rtbufsize 3000k -probesize 32 -analyzeduration 0 -flush_packets 1 -f tee \"[f=segment:segment_time=150:reset_timestamps=1:strftime=1]recordings/%Y-%m-%d_%H:%M:%S.mp4|[f=mjpeg]udp://127.0.0.1:{port}\"";
 		else
 			ffmpegArgs += $"-f mjpeg udp://127.0.0.1:{port}";
 		
