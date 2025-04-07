@@ -30,7 +30,7 @@ public class BluetoothService : IHostedService
 			string lengthByte = length.ToString("X2");
 			string adData = $"{lengthByte}09{hexMessage}";
 
-			_logger.Log($"BLUETOOTH: Trying to start BLE with data: {adData}");
+			_logger.Log($"Trying to start BLE with data: {adData}");
 			
 			string command = $"btmgmt add-adv -d {adData} {_instanceId}";
 
@@ -38,7 +38,7 @@ public class BluetoothService : IHostedService
 		}
 		catch (Exception e)
 		{
-			_logger.Log("BLUETOOTH: ERROR: Bluetooth beacon threw an error");
+			_logger.Log("ERROR: Bluetooth beacon threw an error");
 			_logger.Log(e.ToString());
 		}
 	}
@@ -61,7 +61,7 @@ public class BluetoothService : IHostedService
 		string command = $"btmgmt rm-adv {_instanceId}";
 		CommandExecuter.ExecuteSilent(command, true);
 		
-		_logger.Log("BLUETOOTH: Beacon removed.");
+		_logger.Log("Beacon removed.");
 		return Task.CompletedTask;
 	}
 }

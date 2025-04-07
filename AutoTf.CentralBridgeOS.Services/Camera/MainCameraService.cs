@@ -35,7 +35,7 @@ public class MainCameraService : IHostedService
         if (_trainSessionService.LocalServiceState == BridgeServiceState.Slave)
             port = 5001;
         
-        _logger.Log($"CS: Using port {port} for main camera proxy.");
+        _logger.Log($"Using port {port} for main camera proxy.");
 
         bool isCamAvailable = _proxy.IsCameraAvailable();
         int retryCount = 0;
@@ -53,7 +53,7 @@ public class MainCameraService : IHostedService
             return;
         }
         
-        _logger.Log($"CS: Main camera is now available after {retryCount} retries.");
+        _logger.Log($"Main camera is now available after {retryCount} retries.");
         _proxy.StartListeningForCamera(new IPEndPoint(IPAddress.Parse("127.0.0.1"), port));
     }
 
@@ -67,12 +67,12 @@ public class MainCameraService : IHostedService
     {
         try
         {
-            _logger.Log("CS: Disposing camera service.");
+            _logger.Log("Disposing camera service.");
 
             _cancellationTokenSource.Cancel();
             _proxy.StopListeningForCamera(IPAddress.Parse("127.0.0.1"));
 
-            _logger.Log("CS: Disposed camera service.");
+            _logger.Log("Disposed camera service.");
         }
         catch (Exception e)
         {

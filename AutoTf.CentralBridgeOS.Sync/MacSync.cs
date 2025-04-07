@@ -36,7 +36,7 @@ public class MacSync : Sync
 	{
 		try
 		{
-			Logger.Log("SYNC: Syncing MAC Addresses.");
+			Logger.Log("Syncing MAC Addresses.");
 			string[] result = await SendGetArray("/sync/mac/macAddress");
 
 			if (result.SequenceEqual(_latestList))
@@ -51,7 +51,7 @@ public class MacSync : Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log("SYNC: ERROR: An error occured while syncing MAC Addresses.");
+			Logger.Log("ERROR: An error occured while syncing MAC Addresses.");
 			Logger.Log(e.ToString());
 		}
 	}
@@ -60,7 +60,7 @@ public class MacSync : Sync
 	{
 		try
 		{
-			Logger.Log("SYNC: Checking for new MAC addresses.");
+			Logger.Log("Checking for new MAC addresses.");
 			
 			string response = await SendGet("/sync/mac/lastmacaddrsupdate");
 
@@ -74,7 +74,7 @@ public class MacSync : Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log("SYNC: ERROR: An error occured while checking for new MAC addresses.");
+			Logger.Log("ERROR: An error occured while checking for new MAC addresses.");
 			Logger.Log(e.ToString());
 			return false;
 		}

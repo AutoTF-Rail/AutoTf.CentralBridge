@@ -45,7 +45,7 @@ public class MotorManager : IHostedService
 		}
 		catch (Exception e)
 		{
-			_logger.Log("MM: Initialization of Motor manager failed.");
+			_logger.Log("Initialization of Motor manager failed.");
 			_logger.Log(e.ToString());
 		}
 	}
@@ -74,7 +74,7 @@ public class MotorManager : IHostedService
 		if (_areMotorsReleased)
 			return;
 		
-		_logger.Log($"MM: Setting channel {channel} to {angle}deg.");
+		_logger.Log($"Setting channel {channel} to {angle}deg.");
 		
 		angle = Math.Max(0, Math.Min(270, angle));
 		double minDutyCycle = 0.065;
@@ -143,12 +143,12 @@ public class MotorManager : IHostedService
 				try
 				{
 					 _i2CDevice.ReadByte();
-					 _logger.Log("MM: Motors are available.");
+					 _logger.Log("Motors are available.");
 					 _areMotorsAvailable = true;
 				}
 				catch
 				{
-					_logger.Log("MM: Motors are not available.");
+					_logger.Log("Motors are not available.");
 					_areMotorsAvailable = false;
 				}
 			}

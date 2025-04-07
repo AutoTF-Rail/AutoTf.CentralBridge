@@ -26,7 +26,7 @@ public class HotspotService : IHostedService
     
     private void Configure()
     {
-        _logger.Log("HOTSPOT: Configuring network");
+        _logger.Log("Configuring network");
 	
         CommandExecuter.ExecuteSilent("rfkill unblock all", true);
         
@@ -55,7 +55,7 @@ public class HotspotService : IHostedService
                 // TODO: rework this so it's not this ugly
             }
             
-            _logger.Log("HOTSPOT: Successfully set local IP.");
+            _logger.Log("Successfully set local IP.");
 			
             // TODO: Check if this creates conflicts/transfers are seamless when moving between Bridges
             StartWifi(interfaceName, password);
@@ -63,11 +63,11 @@ public class HotspotService : IHostedService
             if(ipEnding == "1")
                 SetupDhcpConfig(interfaceName);
 			
-            _logger.Log($"HOTSPOT: Started WIFI as: {_trainSessionService.Ssid} with LAN IP {ownIp}.");
+            _logger.Log($"Started WIFI as: {_trainSessionService.Ssid} with LAN IP {ownIp}.");
         }
         catch (Exception ex)
         {
-            _logger.Log("HOTSPOT: ERROR: Could not configure network");
+            _logger.Log("ERROR: Could not configure network");
             _logger.Log(ex.ToString());
         }
     }
@@ -106,7 +106,7 @@ public class HotspotService : IHostedService
         
         File.WriteAllText(configPath, hostapdConfig);
         
-        _logger.Log("HOTSPOT: Hostapd config updated successfully!");
+        _logger.Log("Hostapd config updated successfully!");
         // TODO: Try catch this when wlan1 is not available
         CommandExecuter.ExecuteSilent("sudo systemctl restart hostapd", true);
     }
@@ -121,7 +121,7 @@ public class HotspotService : IHostedService
         File.WriteAllText(DhcpConfigPath, dhcpConfig);
         
         CommandExecuter.ExecuteSilent("sudo systemctl restart dnsmasq", false);
-        _logger.Log("HOTSPOT: DHCP server configuration updated successfully!");
+        _logger.Log("DHCP server configuration updated successfully!");
     }
 
     private void CheckDependencies()
@@ -136,11 +136,11 @@ public class HotspotService : IHostedService
             }
             catch
             {
-                throw new Exception($"HOTSPOT: {tool} is not installed. Please install it using 'sudo apt-get install {tool}'.");
+                throw new Exception($"{tool} is not installed. Please install it using 'sudo apt-get install {tool}'.");
             }
         }
         
-        _logger.Log("HOTSPOT: All dependencies are installed.");
+        _logger.Log("All dependencies are installed.");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -151,7 +151,7 @@ public class HotspotService : IHostedService
 
     public void Dispose()
     {
-        _logger.Log("HOTSPOT: Shutting down.");
+        _logger.Log("Shutting down.");
         CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
         CommandExecuter.ExecuteSilent("sudo systemctl stop dnsmasq", true);
     }

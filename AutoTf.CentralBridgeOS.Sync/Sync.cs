@@ -40,7 +40,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
 			Logger.Log(e.ToString());
 			throw;
 		}
@@ -64,7 +64,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
 			Logger.Log(e.ToString());
 			throw;
 		}
@@ -88,7 +88,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
 			Logger.Log(e.ToString());
 			throw;
 		}
@@ -117,7 +117,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
 			Logger.Log(e.Message);
 			throw;
 		}	
@@ -146,7 +146,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"SYNC: ERROR: An error occured while sending a request to: {endpoint}.");
+			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
 			Logger.Log(e.Message);
 			throw;
 		}	

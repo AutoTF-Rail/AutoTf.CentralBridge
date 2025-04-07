@@ -43,7 +43,7 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("CAM-C: Error in startStream.");
+			_logger.Log("Error in startStream.");
 			_logger.Log(ex.ToString());
 			return BadRequest("Failed to add receiver.");
 		}
@@ -68,7 +68,7 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("CAM-C: Error in stopStream.");
+			_logger.Log("Error in stopStream.");
 			_logger.Log(ex.ToString());
 			return BadRequest("Failed to remove receiver.");
 		}
@@ -83,8 +83,8 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("CAM-C: Could not supply next save:");
-			_logger.Log(e.Message);
+			_logger.Log("Could not supply next save:");
+			_logger.Log(e.ToString());
 			return BadRequest("Could not supply next save.");
 		}
 	}

@@ -38,7 +38,7 @@ public class KeySync : Sync
 	{
 		try
 		{
-			Logger.Log("SYNC: Syncing Keys Addresses.");
+			Logger.Log("Syncing Keys Addresses.");
 			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/allkeys"))!;
 
 			string[] keys = result.Select(x => x.SerialNumber + ":" + x.Secret).ToArray();
@@ -52,7 +52,7 @@ public class KeySync : Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log("SYNC: ERROR: An error occured while syncing keys.");
+			Logger.Log("ERROR: An error occured while syncing keys.");
 			Logger.Log(e.ToString());
 		}
 	}
@@ -61,7 +61,7 @@ public class KeySync : Sync
 	{
 		try
 		{
-			Logger.Log("SYNC: Checking for new keys.");
+			Logger.Log("Checking for new keys.");
 
 			string response = await SendGet("/sync/keys/lastkeysupdate");
 
@@ -75,7 +75,7 @@ public class KeySync : Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log("SYNC: ERROR: An error occured while checking for new keys.");
+			Logger.Log("ERROR: An error occured while checking for new keys.");
 			Logger.Log(e.ToString());
 			return false;
 		}

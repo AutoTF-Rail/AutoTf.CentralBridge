@@ -35,7 +35,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while supplying speed:");
+			_logger.Log("Error while supplying speed:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -51,7 +51,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while supplying last speed time:");
+			_logger.Log("Error while supplying last speed time:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -69,7 +69,7 @@ public class TrainController : ControllerBase
 		catch (Exception e)
 		{
 			// TODO: Try emergency brake again?
-			_logger.Log("TC-C: Error while emergency braking:");
+			_logger.Log("Error while emergency braking:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -86,7 +86,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while setting easy control:");
+			_logger.Log("Error while setting easy control:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -102,7 +102,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while supplying AreMotorsReleased:");
+			_logger.Log("Error while supplying AreMotorsReleased:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -119,7 +119,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log($"TC-C: Error while releasing motor {motorIndex}:");
+			_logger.Log($"Error while releasing motor {motorIndex}:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -136,7 +136,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while releasing motors:");
+			_logger.Log("Error while releasing motors:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -153,7 +153,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log($"TC-C: Error while engaging motor {motorIndex}:");
+			_logger.Log($"Error while engaging motor {motorIndex}:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -170,7 +170,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while engaging motors:");
+			_logger.Log("Error while engaging motors:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -186,7 +186,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while supplying lever count:");
+			_logger.Log("Error while supplying lever count:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -202,7 +202,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while supplying lever position:");
+			_logger.Log("Error while supplying lever position:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -218,7 +218,7 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while supplying lever type:");
+			_logger.Log("Error while supplying lever type:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -230,14 +230,14 @@ public class TrainController : ControllerBase
 	{
 		try
 		{
-			_logger.Log($"TC-C: Setting lever: {data.LeverIndex} to {data.Percentage}%");
+			_logger.Log($"Setting lever: {data.LeverIndex} to {data.Percentage}%");
 			
 			_trainModel.SetLever(data.LeverIndex, data.Percentage);
 			return Ok();
 		}
 		catch (Exception e)
 		{
-			_logger.Log("TC-C: Error while supplying lever type:");
+			_logger.Log("Error while supplying lever type:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}

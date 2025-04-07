@@ -38,9 +38,9 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply service state:");
+			_logger.Log("Could not supply service state:");
 			_logger.Log(e.ToString());
-			return BadRequest("INFO-C: Could not supply service state.");
+			return BadRequest("Could not supply service state.");
 		}
 	}
 
@@ -54,9 +54,9 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not get log dates:");
+			_logger.Log("Could not get log dates:");
 			_logger.Log(e.ToString());
-			return BadRequest("INFO-C: Could not get log dates.");
+			return BadRequest("Could not get log dates.");
 		}
 	}
 
@@ -69,9 +69,9 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log($"INFO-C: Could not get logs for date {date}:");
-			_logger.Log(e.Message);
-			return BadRequest($"INFO-C: Could not get logs for date {date}j.");
+			_logger.Log($"Could not get logs for date {date}:");
+			_logger.Log(e.ToString());
+			return BadRequest($"Could not get logs for date {date}j.");
 		}
 	}
 
@@ -80,15 +80,15 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			_logger.Log("INFO-C: Version was requested.");
+			_logger.Log("Version was requested.");
 			
 			return Ok(Statics.GetGitVersion());
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not report version:");
+			_logger.Log("Could not report version:");
 			_logger.Log(e.Message);
-			return BadRequest("INFO-C: Could not report version.");
+			return BadRequest("Could not report version.");
 		}
 	}
 
@@ -101,7 +101,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply train id:");
+			_logger.Log("Could not supply train id:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply train id.");
 		}
@@ -116,7 +116,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply train name:");
+			_logger.Log("Could not supply train name:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply train name.");
 		}
@@ -131,7 +131,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply last sync try:");
+			_logger.Log("Could not supply last sync try:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply last sync try.");
 		}
@@ -146,7 +146,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply last sync:");
+			_logger.Log("Could not supply last sync:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply last sync.");
 		}
@@ -161,7 +161,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply EVU name:");
+			_logger.Log("Could not supply EVU name:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply EVU name.");
 		}
@@ -201,7 +201,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("INFO-C: Error during login:");
+			_logger.Log("Error during login:");
 			_logger.Log(ex.Message);
 			return BadRequest("Internal server error.");
 		}

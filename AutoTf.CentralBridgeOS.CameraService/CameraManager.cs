@@ -62,7 +62,7 @@ public class CameraManager : IHostedService
 			frameHeight = 800;
 		}
 
-		_logger.Log($"CM: Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
+		_logger.Log($"Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
 		await _proxy.CreateProxy(port, videoDevice.Type == DeviceType.Display, _logger, _train);
 		await Task.Delay(25);
 		_ffmpegProcesses.Add(new KeyValuePair<VideoDevice, Process>(videoDevice, StartFfmpegProcess(videoDevice.Path, framerate, frameWidth, frameHeight, port, record)));
@@ -91,16 +91,15 @@ public class CameraManager : IHostedService
 				RedirectStandardError = true
 			}
 		};
-		process.EnableRaisingEvents = true;
-        
+		
 		process.ErrorDataReceived += (_, e) =>
 		{
 			if (e.Data != null)
 				_logger.Log($"[{port}] FFMPEG Error: {e.Data}");
 		};
+
 		process.Start();
 		process.BeginErrorReadLine();
-		process.Exited += (_, _) => _logger.Log($"[{port}] Ffmpeg has exited.");
 
 		return process;
 	}

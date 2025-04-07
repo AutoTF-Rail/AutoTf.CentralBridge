@@ -52,6 +52,7 @@ public static class CommandExecuter
 				throw new Exception($"Error: {error}");
 			}
             
+			// TODO:
 			Statics.Logger.Log(output);
 		}
 		catch (Exception e)
