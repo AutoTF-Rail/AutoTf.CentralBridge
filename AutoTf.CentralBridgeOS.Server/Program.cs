@@ -44,10 +44,6 @@ public static class Program
 		}
 		catch (Exception e)
 		{
-			// This can be viewed when running "journalctl -u startupScript.service | tail -150"
-			// But the logger should work anyways, so we try to log to it.
-			Console.WriteLine("Root error:");
-			Console.WriteLine(e.ToString());
 			Statics.Logger.Log("Root Error:");
 			Statics.Logger.Log(e.ToString());
 		}
