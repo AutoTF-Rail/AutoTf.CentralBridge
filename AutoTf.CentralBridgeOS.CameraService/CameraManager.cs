@@ -15,7 +15,7 @@ public class CameraManager : IHostedService
 	// Used for the port of the displays, the first display is 4001, the second 4002, etc.
 	private int _nextDisplayIndex = 1;
 	
-	private List<KeyValuePair<VideoDevice, Process>> _ffmpegProcesses = new List<KeyValuePair<VideoDevice, Process>>();
+	private readonly List<KeyValuePair<VideoDevice, Process>> _ffmpegProcesses = new List<KeyValuePair<VideoDevice, Process>>();
 
 	public CameraManager(Logger logger, ProxyManager proxy, ITrainModel train)
 	{
@@ -93,26 +93,26 @@ public class CameraManager : IHostedService
 		};
 		process.EnableRaisingEvents = true;
         
-		process.ErrorDataReceived += (sender, e) =>
+		process.ErrorDataReceived += (_, e) =>
 		{
 			if (e.Data != null)
-				_logger.Log($"[{port}] FFmpeg Error: {e.Data}");
+				_logger.Log($"[{port}] FFMPEG Error: {e.Data}");
 		};
 		process.Start();
 		process.BeginErrorReadLine();
-		process.Exited += (sender, args) => _logger.Log($"[{port}] Ffmpeg has exited.");
+		process.Exited += (_, _) => _logger.Log($"[{port}] Ffmpeg has exited.");
 
 		return process;
 	}
 
 	public Task StopAsync(CancellationToken cancellationToken)
 	{
+		_proxy.Dispose();
 		_ffmpegProcesses.ForEach(x =>
 		{
 			x.Value.Kill();
 			x.Value.Dispose();
 		});
-		_proxy.Dispose();
 
 		return Task.CompletedTask;
 	}

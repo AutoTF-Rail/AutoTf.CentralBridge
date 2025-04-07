@@ -133,9 +133,13 @@ internal class CameraProxy : IDisposable
 		}
 		catch (Exception e)
 		{
-			// TODO: Handle
-			_logger.Log($"CP: Failed while listening for a camera on port {_port}:");
-			_logger.Log(e.ToString());
+			// We only want to handle exceptions, if the proxy wasn't disposed.
+			if (CanStream)
+			{
+				// TODO: Handle
+				_logger.Log($"CP: Failed while listening for a camera on port {_port}:");
+				_logger.Log(e.ToString());
+			}
 		}
 	}
 	
@@ -159,6 +163,7 @@ internal class CameraProxy : IDisposable
 	{
 		using Tesseract engine = new Tesseract(Path.Combine(AppContext.BaseDirectory, "tessdata"), "deu", OcrEngineMode.LstmOnly);
 		string date = new Parser(engine, _train).Date(frame);
+		Console.WriteLine("Date: " + date);
 
 		// This doesn't work if we use a example Fahrplan picture, but IRL this would work
 		// DisplayType = date.Trim().Contains(DateTime.Now.Year.ToString()) ? DisplayType.EbuLa : DisplayType.CCD;
