@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 
 namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
@@ -27,10 +28,18 @@ public class Station : RowContent
 		if (string.IsNullOrWhiteSpace(arrival) || string.IsNullOrWhiteSpace(departure)) 
 			return false;
 		
-		if (arrival.Trim() == "X")
+		string timePattern = @"^\d{2}:\d{2}\.\d{1}$";
+		if (!Regex.IsMatch(arrival.Trim(), timePattern))
 		{
-			// TODO: Handle this case?
-			// "Bedarfshalt"?
+			// TODO: Handle?
+			// x = Bedarfshalt (Prob doesn't matter for us)
+			// Halt = Bü
+			// + = Betriebshalt
+			// H = Kein halt, solange Zp 9
+			// U = Kein halt
+			// N = nicht veröffentlichter halt (?)
+			// A = Only exit
+			// Z = Only entry
 		}
 
 		content = new Station(additionalText, arrival, departure);

@@ -4,16 +4,23 @@ namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Markers;
 
 public class Bahnuebergang : RowContent
 {
-	private Bahnuebergang(string kilometer)
+	private Bahnuebergang(string kilometer, string mechanism)
 	{
 		Kilometer = kilometer;
+		Mechanism = mechanism;
 	}
 
-	public string Kilometer { get; set; }
+	public string Kilometer { get; }
+	
+	// TODO: Enum?
+	/// <summary>
+	/// Representing the type of securing mechanism the Bahnübergang has. (I think?)
+	/// </summary>
+	public string Mechanism { get; }
 	
 	public override string GetPrint()
 	{
-		return $"Bü km {Kilometer} ET";
+		return $"Bü km {Kilometer} {Mechanism}";
 	}
 
 	public static bool TryParse(string additionalText, out RowContent? content)
@@ -22,11 +29,13 @@ public class Bahnuebergang : RowContent
 
 		if (!additionalText.Contains("Bü"))
 			return false;
+
+		string[] infos = additionalText.Split("km");
+
+		string kilometer = infos[0].Replace("Bü", "").Trim();
+		string mechanism = infos[1].Trim();
 		
-		// TODO: Is this "ET" of any importance?/Is there a different sign sometimes?
-		string kilometer = additionalText.Replace("Bü", "").Replace("km", "").Replace("ET", "");
-		
-		content = new Bahnuebergang(kilometer);
+		content = new Bahnuebergang(kilometer, mechanism);
 		return true;
 	}
 }

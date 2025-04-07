@@ -136,7 +136,7 @@ internal class CameraProxy : IDisposable
 			// We only want to handle exceptions, if the proxy wasn't disposed.
 			if (CanStream)
 			{
-				// TODO: Handle
+				// TODO: Tell parent that it's unavailable? So other services can't use this anymore?
 				_logger.Log($"CP: Failed while listening for a camera on port {_port}:");
 				_logger.Log(e.ToString());
 			}

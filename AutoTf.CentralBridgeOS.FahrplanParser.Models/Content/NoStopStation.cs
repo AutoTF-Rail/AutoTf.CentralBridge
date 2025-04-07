@@ -2,10 +2,12 @@ using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 
 namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
 
-// Wenn es eine station gibt, ohne halt, aber mit abfahrt zeit (Abzweigungen mit abfahrt zeit werden hier nicht aufgelistet)
+/// <summary>
+/// Station where there is no planned stop. (Not factoring in Abzw or others)
+/// </summary>
 public class NoStopStation : RowContent
 {
-	// TODO: Save the departure time?
+	// TODO: Could save departure time, to calculate delays.
 	private NoStopStation(string name)
 	{
 		Name = name;

@@ -3,7 +3,10 @@ using Emgu.CV;
 
 namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Icons.Tunnels;
 
-// TODO: Remove this? Does it even matter? We know when a tunnel starts and ends, so we can "imagine" where this is? It's sort of hard to detect it cause of the middle line
+// TODO: Hard to detect
+/// <summary>
+/// <remarks>Important when: https://www.dbinfrago.com/resource/blob/12596114/aa3a393dbd75f84f3c96e4af8aaa6acf/Ril-408-21-27-NBN-2025-data.pdf#page=134 (Section 4)</remarks>
+/// </summary>
 public class TunnelPart : TunnelContent
 {
 	private const string FileName = "Icons/TunnelPartIcon.png";

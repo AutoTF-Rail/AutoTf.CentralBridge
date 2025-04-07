@@ -26,8 +26,7 @@ public abstract class ParserBase
 
 	protected RowContent? ResolveContent(string additionalText, string arrivalTime, string departureTime)
 	{
-		// Next row says "*1) Kopf machen" but the *1) here doesn't matter afaik // TODO: Check the *1) things etc.
-		if (arrivalTime.Contains("*1)"))
+		if (arrivalTime.Contains("*1)")) // Are multiple numbers stacked on the arrival time?
 			return null;
 		
 		if (ContentResolver.TryParseSignal(additionalText, out RowContent? signalContent))
@@ -60,8 +59,6 @@ public abstract class ParserBase
 		if (rows.Count == 0) 
 			return content;
 		
-		// TODO: Is this enough of a comparison? 
-		// TODO: Can we just use this for the station check too?
 		// TODO: Limit the check to the last 5? Since the last 5 are always only repeated?
 		return rows.Any(x => x.Key == hektometer && x.Value.GetType() == content.GetType()) ? null : content;
 	}

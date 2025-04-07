@@ -174,7 +174,7 @@ public class MotorManager : IHostedService
 				for (int i = 0; i < 16; i++)
 				{
 					TurnOnMotor(i);
-					// TODO: Add sound feedback?
+					// TODO: Add sound feedback? e.g. if disabled by button or so
 				}
 				_logger.Log("Motors have been engaged.");
 				return;

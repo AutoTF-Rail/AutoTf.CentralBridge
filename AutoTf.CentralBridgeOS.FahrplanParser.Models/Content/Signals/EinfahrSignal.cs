@@ -7,16 +7,21 @@ namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Signals;
 /// </summary>
 public class EinfahrSignal : SignalContent
 {
-	private EinfahrSignal(string stationName, string speed = "40")
+	private EinfahrSignal(string sectionName, string speed = "40")
 	{
 		Speed = speed;
-		StationName = stationName;
+		SectionName = sectionName;
 	}
 	
-	// TODO: Validate that the only additional content can be a station name
-	public string StationName { get; set; }
-
-	// TODO: Nur bei Hp2(langsamfahrt): Ausfahrt mit 40, solange nicht größer definiert im Fahrplan 
+	/// <summary>
+	/// Could be a station, or something else sometimes, no one knows.
+	/// <remarks>https://www.dbinfrago.com/resource/blob/12841380/92952bc0d1ec6bdcff323ae1f9efb746/Handbuch-40820-data.pdf#page=68</remarks>
+	/// </summary>
+	public string SectionName { get; set; }
+ 
+	/// <summary>
+	/// If Hp 2 (Langsamfahrt): Exit with 40 km/h, unless defined otherwise in the Fahrplan
+	/// </summary>
 	public string Speed { get; set; }
 	
 	public override string GetPrint()
@@ -26,7 +31,7 @@ public class EinfahrSignal : SignalContent
 		if (Speed != "40")
 			speed = $" E{Speed}";
 
-		return $"Esig{speed} {StationName}";
+		return $"Esig{speed} {SectionName}";
 	}
 
 	public static bool TryParse(string additionalText, out RowContent? content)

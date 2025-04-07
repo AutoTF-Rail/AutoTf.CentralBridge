@@ -29,8 +29,9 @@ public class SystemController : ControllerBase
 		{
 			_logger.Log($"Date set was requested for date {date.ToString(CultureInfo.InvariantCulture)}.");
 			
-			// TODO:
-			_logger.Log(CommandExecuter.ExecuteCommand($"date -s \"{date:yyyy-MM-dd HH:mm:ss}\""));
+			string output = CommandExecuter.ExecuteCommand($"date -s \"{date:yyyy-MM-dd HH:mm:ss}\"");
+			if(!string.IsNullOrEmpty(output))
+				_logger.Log(output);
 
 			_logger.Log("Restarting after date set.");
 			

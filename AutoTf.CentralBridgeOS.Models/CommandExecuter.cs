@@ -53,12 +53,14 @@ public static class CommandExecuter
 			}
             
 			// TODO:
-			Statics.Logger.Log(output);
+			if(!string.IsNullOrEmpty(output))
+				Statics.Logger.Log(output);
 		}
 		catch (Exception e)
 		{
 			if(ignoreExceptions)
 				Statics.Logger.Log("Ignored exception:");
+			
 			Statics.Logger.Log(e.ToString());
 			if (!ignoreExceptions)
 				throw;

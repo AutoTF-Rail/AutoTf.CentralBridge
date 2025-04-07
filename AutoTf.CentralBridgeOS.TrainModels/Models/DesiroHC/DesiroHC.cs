@@ -18,13 +18,12 @@ public class DesiroHC : DefaultModel
     public override void EasyControl(int power)
     {
         Logger.Log($"EC: Setting power to {power}%.");
-        if (power == 0)
+        if (power == 0) // Release all levers
         {
             SetLever(0, 0);
             SetLever(1, 0);
         }
-        // TODO: See if the train is just starting the move, if the train doesn't already do it: only slowly release the breaks to avoid rolling?
-        else if (power > 0)
+        else if (power > 0) // Release brake, apply force
         {
             SetLever(1, 0);
             // Wait a moment for the brakes to release, before applying power. (This is only a delay for the lever to be moved TODO: Maybe do a proper wait for the release?)
@@ -32,7 +31,7 @@ public class DesiroHC : DefaultModel
                 Thread.Sleep(700);
             SetLever(0, power);
         }
-        else // if (power < 0)
+        else // if (power < 0) // Release throttle, apply brake (same time)
         {
             SetLever(0, 0);
             SetLever(1, power * -1);

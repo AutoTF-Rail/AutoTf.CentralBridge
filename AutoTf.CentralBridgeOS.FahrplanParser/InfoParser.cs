@@ -31,9 +31,13 @@ public abstract class InfoParser : ParserBase
 
 	public string SpeedLimit(Mat mat, Rectangle row) => ExtractTextClean(RegionMappings.SpeedLimit(row), mat, Engine).Replace("\n", "");
 
+	/// <summary>
+	/// Gets the current train location by the small black dot on the side.
+	/// </summary>
+	/// <param name="mat">The current page of the EbuLa display (reached by pressing a certain button)</param>
+	/// <returns></returns>
 	public string? Location(Mat mat)
 	{
-		// TODO: Does this maybe make a problem, if we are already on "page two" by location, so the point won't be on the first page?
 		for (int i = 0; i < Train.Mappings.LocationPoints.Count; i++)
 		{
 			Rectangle checkRoi = new Rectangle(Train.Mappings.LocationPoints[i].X + 20, Train.Mappings.LocationPoints[i].Y + 8, 5, 21);

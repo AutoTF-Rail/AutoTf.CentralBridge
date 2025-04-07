@@ -68,9 +68,10 @@ public class TrainController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			// TODO: Try emergency brake again?
+			// TODO: Do we need a better solution here when it fails?
 			_logger.Log("Error while emergency braking:");
 			_logger.Log(e.ToString());
+			_trainModel.EasyControl(-100);
 			return BadRequest(e.Message);
 		}
 	}

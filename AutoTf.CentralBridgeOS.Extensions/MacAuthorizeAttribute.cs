@@ -23,7 +23,6 @@ public class MacAuthorizeAttribute : Attribute, IAuthorizationFilter
 	{
 		try
 		{
-			// TODO: Idk if we should do this if DEBUG
 			#if DEBUG
 			return true;
 			#endif

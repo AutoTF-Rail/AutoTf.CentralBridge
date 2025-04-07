@@ -4,7 +4,8 @@ using Emgu.CV;
 namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Icons.Tunnels;
 
 /// <summary>
-/// TODO: Always empty addtionaltext?
+/// Icon representing the end of a tunnel
+/// <remarks>TODO: It could be that there is additinal text along side this. e.g. ZF change</remarks>
 /// </summary>
 public class TunnelEnd : TunnelContent
 {

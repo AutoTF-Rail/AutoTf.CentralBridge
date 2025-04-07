@@ -15,7 +15,6 @@ public static class NmeaParser
 				return speedKnots;
 			}
 		}
-		// TODO: Catch?
 		catch 
 		{
 			Statics.Logger.Log("Could not extract speed from nmea data.");

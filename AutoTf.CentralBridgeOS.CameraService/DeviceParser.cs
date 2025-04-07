@@ -1,3 +1,4 @@
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 
 namespace AutoTf.CentralBridgeOS.CameraService;
@@ -52,9 +53,10 @@ internal static class DeviceParser
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine(ex.ToString());
-			// TODO: Log?
-			// TODO: Maybe not return anything when this fails? So we don't have some corrupt state?
+			// When it fails right here, we will just not have any devices, thus the other services just can't start, there is no need to handle this seperatly.
+			Statics.Logger.Log("Could not resolve video devices:");
+			Statics.Logger.Log(ex.ToString());
+			return new List<VideoDevice>();
 		}
 		
 		return devices;

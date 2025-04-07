@@ -56,7 +56,6 @@ public class CameraManager : IHostedService
 		{
 			port = 4000 + _nextDisplayIndex;
 			_nextDisplayIndex++;
-			// TODO: Record the displays too? e.g. for Logging
 			record = false;
 			framerate = 10;
 			frameHeight = 800;
@@ -70,7 +69,6 @@ public class CameraManager : IHostedService
 
 	private Process StartFfmpegProcess(string devicePath, int framerate, int frameWidth, int frameHeight, int port, bool record)
 	{
-		// TODO: Implement logger
 		string format = record ? "yuyv422" : "mjpeg";
 		
 		string ffmpegArgs = $"-f v4l2 -framerate {framerate} -video_size {frameWidth}x{frameHeight} -loglevel error -input_format {format} -i {devicePath} -y -rtbufsize 1500k -map 0:v -c:v mjpeg -pix_fmt yuvj420p ";
