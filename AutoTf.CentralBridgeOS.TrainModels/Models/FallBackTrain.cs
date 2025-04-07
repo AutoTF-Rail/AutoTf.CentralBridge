@@ -1,11 +1,16 @@
+using AutoTf.CentralBridgeOS.FahrplanParser.Models;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.TrainModels.Models;
 
 public class FallBackTrain : DefaultModel
 {
+	// TODO: Handle this case
+	public override RegionMappings Mappings { get; } = new Mapping();
+	
 	public FallBackTrain(MotorManager motorManager, Logger logger) : base(motorManager, logger)
 	{
 		Initialize();

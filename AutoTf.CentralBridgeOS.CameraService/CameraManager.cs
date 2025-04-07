@@ -10,16 +10,18 @@ public class CameraManager : IHostedService
 {
 	private readonly Logger _logger;
 	private readonly ProxyManager _proxy;
+	private readonly ITrainModel _train;
 
 	// Used for the port of the displays, the first display is 4001, the second 4002, etc.
 	private int _nextDisplayIndex = 1;
 	
 	private List<KeyValuePair<VideoDevice, Process>> _ffmpegProcesses = new List<KeyValuePair<VideoDevice, Process>>();
 
-	public CameraManager(Logger logger, ProxyManager proxy)
+	public CameraManager(Logger logger, ProxyManager proxy, ITrainModel train)
 	{
 		_logger = logger;
 		_proxy = proxy;
+		_train = train;
 
 		Directory.CreateDirectory("recordings");
 	}
@@ -61,7 +63,7 @@ public class CameraManager : IHostedService
 		}
 
 		_logger.Log($"CM: Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
-		await _proxy.CreateProxy(port, videoDevice.Type == DeviceType.Display, _logger);
+		await _proxy.CreateProxy(port, videoDevice.Type == DeviceType.Display, _logger, _train);
 		await Task.Delay(25);
 		_ffmpegProcesses.Add(new KeyValuePair<VideoDevice, Process>(videoDevice, StartFfmpegProcess(videoDevice.Path, framerate, frameWidth, frameHeight, port, record)));
 	}

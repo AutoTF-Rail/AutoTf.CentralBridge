@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using AutoTf.CentralBridgeOS.FahrplanParser;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.Logging;
 using Emgu.CV;
@@ -25,6 +26,7 @@ internal class CameraProxy : IDisposable
 	private readonly int _port;
 	private bool _isDisplay;
 	private readonly Logger _logger;
+	private readonly ITrainModel _train;
 
 	internal bool CanStream = true;
 	private bool _isFirstLoop = true;
@@ -36,11 +38,12 @@ internal class CameraProxy : IDisposable
 
 	private Mat? _latestMat = null;
 
-	public CameraProxy(int port, bool isDisplay, Logger logger)
+	public CameraProxy(int port, bool isDisplay, Logger logger, ITrainModel train)
 	{
 		_port = port;
 		_isDisplay = isDisplay;
 		_logger = logger;
+		_train = train;
 		_input = new UdpClient(port);
 		
 		Task.Run(StartListening);
@@ -155,7 +158,7 @@ internal class CameraProxy : IDisposable
 	private void ReadDisplayType(Mat frame)
 	{
 		using Tesseract engine = new Tesseract(Path.Combine(AppContext.BaseDirectory, "tessdata"), "deu", OcrEngineMode.LstmOnly);
-		string date = new Parser(engine).Date(frame);
+		string date = new Parser(engine, _train).Date(frame);
 
 		// This doesn't work if we use a example Fahrplan picture, but IRL this would work
 		// DisplayType = date.Trim().Contains(DateTime.Now.Year.ToString()) ? DisplayType.EbuLa : DisplayType.CCD;

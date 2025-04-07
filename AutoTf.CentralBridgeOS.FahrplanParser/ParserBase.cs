@@ -1,6 +1,7 @@
 using System.Drawing;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
+using AutoTf.CentralBridgeOS.Models;
 using Emgu.CV;
 using Emgu.CV.OCR;
 
@@ -9,10 +10,12 @@ namespace AutoTf.CentralBridgeOS.FahrplanParser;
 public abstract class ParserBase
 {
 	protected readonly Tesseract Engine;
+	protected readonly ITrainModel Train;
 
-	protected ParserBase(Tesseract engine)
+	protected ParserBase(Tesseract engine, ITrainModel train)
 	{
 		Engine = engine;
+		Train = train;
 	}
 
 	protected bool TryParseTunnel(Mat mat, Rectangle row, string additionalText, out RowContent? content) =>

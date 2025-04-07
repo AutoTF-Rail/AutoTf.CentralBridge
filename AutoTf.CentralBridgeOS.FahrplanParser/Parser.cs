@@ -2,6 +2,7 @@ using System.Drawing;
 using AutoTf.CentralBridgeOS.FahrplanParser.Extensions;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
+using AutoTf.CentralBridgeOS.Models;
 using Emgu.CV;
 using Emgu.CV.OCR;
 
@@ -9,11 +10,11 @@ namespace AutoTf.CentralBridgeOS.FahrplanParser;
 
 public class Parser : InfoParser
 {
-	public Parser(Tesseract engine) : base(engine) { }
+	public Parser(Tesseract engine, ITrainModel train) : base(engine, train) { }
 
 	public void ReadPage(Mat mat, ref List<KeyValuePair<string, RowContent>> rows, ref List<KeyValuePair<string, string>> speedChanges)
 	{
-		List<Rectangle> rowsRoi = [..RegionMappings.Rows];
+		List<Rectangle> rowsRoi = [..Train.Mappings.Rows];
 		rowsRoi.Reverse();
 
 		List<RowContent> additionalContent = new List<RowContent>();

@@ -1,4 +1,5 @@
 using System.Net;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.Logging;
 using Emgu.CV;
@@ -12,9 +13,9 @@ public class ProxyManager
 
 	private CameraProxy? _mainCamera;
 	
-	internal async Task CreateProxy(int port, bool isDisplay, Logger logger)
+	internal async Task CreateProxy(int port, bool isDisplay, Logger logger, ITrainModel train)
 	{
-		CameraProxy proxy = new CameraProxy(port, isDisplay, logger);
+		CameraProxy proxy = new CameraProxy(port, isDisplay, logger, train);
 		
 		if (isDisplay)
 			_displays.Add(proxy);

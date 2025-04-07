@@ -1,9 +1,8 @@
-using AutoTf.CentralBridgeOS.Models;
-
-namespace AutoTf.CentralBridgeOS.TrainModels;
+namespace AutoTf.CentralBridgeOS.Models;
 
 public interface ITrainModel
 {
+	public RegionMappings Mappings { get; }
 	public int LeverCount();
 	public void SetLever(int index, double percentage);
 	public LeverType GetLeverType(int index);

@@ -1,7 +1,7 @@
 using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.FahrplanParser;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
-using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.OCR;
@@ -27,7 +27,7 @@ public class EbuLaService : IHostedService
         _proxy = proxy;
 
         _engine = new Tesseract(Path.Combine(AppContext.BaseDirectory, "tessdata"), "deu", OcrEngineMode.LstmOnly);
-        _parser = new Parser(_engine);
+        _parser = new Parser(_engine, train);
     }
     
     public Task StartAsync(CancellationToken cancellationToken)
@@ -59,7 +59,7 @@ public class EbuLaService : IHostedService
 
         using Mat frame = _proxy.GetLatestFrameFromDisplay(DisplayType.EbuLa);
 
-        string limit = _parser.SpeedLimit(frame, RegionMappings.Rows.Last());
+        string limit = _parser.SpeedLimit(frame, _train.Mappings.Rows.Last());
         
         return limit;
     }

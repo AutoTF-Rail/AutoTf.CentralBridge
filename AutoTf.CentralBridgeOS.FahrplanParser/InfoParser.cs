@@ -1,5 +1,7 @@
 using System.Drawing;
 using AutoTf.CentralBridgeOS.FahrplanParser.Extensions;
+using AutoTf.CentralBridgeOS.FahrplanParser.Models;
+using AutoTf.CentralBridgeOS.Models;
 using Emgu.CV;
 using Emgu.CV.OCR;
 
@@ -7,17 +9,17 @@ namespace AutoTf.CentralBridgeOS.FahrplanParser;
 
 public abstract class InfoParser : ParserBase
 {
-	protected InfoParser(Tesseract engine) : base(engine) { }
+	protected InfoParser(Tesseract engine, ITrainModel train) : base(engine, train) { }
 
-	public string Date(Mat mat) => ExtractTextClean(RegionMappings.Date, mat, Engine).Replace("\n", "");
+	public string Date(Mat mat) => ExtractTextClean(Train.Mappings.Date, mat, Engine).Replace("\n", "");
 
-	public string Time(Mat mat) => ExtractTextClean(RegionMappings.Time, mat, Engine).Replace("\n", "");
+	public string Time(Mat mat) => ExtractTextClean(Train.Mappings.Time, mat, Engine).Replace("\n", "");
 
-	public string TrainNumber(Mat mat) => ExtractTextClean(RegionMappings.TrainNumber, mat, Engine).Replace("\n", "");
+	public string TrainNumber(Mat mat) => ExtractTextClean(Train.Mappings.TrainNumber, mat, Engine).Replace("\n", "");
 
-	public string PlanValid(Mat mat) => ExtractTextClean(RegionMappings.PlanValidity, mat, Engine).Replace("\n", "");
+	public string PlanValid(Mat mat) => ExtractTextClean(Train.Mappings.PlanValidity, mat, Engine).Replace("\n", "");
 
-	public string Delay(Mat mat) => ExtractTextClean(RegionMappings.Delay, mat, Engine).Replace("\n", "");
+	public string Delay(Mat mat) => ExtractTextClean(Train.Mappings.Delay, mat, Engine).Replace("\n", "");
 
 	public string Hektometer(Mat mat, Rectangle row) => ExtractTextClean(RegionMappings.Hektometer(row), mat, Engine).Replace("\n", "");
 
@@ -32,15 +34,15 @@ public abstract class InfoParser : ParserBase
 	public string? Location(Mat mat)
 	{
 		// TODO: Does this maybe make a problem, if we are already on "page two" by location, so the point won't be on the first page?
-		for (int i = 0; i < RegionMappings.LocationPoints.Count; i++)
+		for (int i = 0; i < Train.Mappings.LocationPoints.Count; i++)
 		{
-			Rectangle checkRoi = new Rectangle(RegionMappings.LocationPoints[i].X + 20, RegionMappings.LocationPoints[i].Y + 8, 5, 21);
+			Rectangle checkRoi = new Rectangle(Train.Mappings.LocationPoints[i].X + 20, Train.Mappings.LocationPoints[i].Y + 8, 5, 21);
 			Mat checkMat = new Mat(mat, checkRoi);
 					
 			if(!checkMat.IsMoreBlackThanWhite())
 				continue;
 
-			return ExtractText(RegionMappings.LocationPointsHektometer[i], mat, Engine).TrimEnd();
+			return ExtractText(Train.Mappings.LocationPointsHektometer[i], mat, Engine).TrimEnd();
 		}
 
 		return null;

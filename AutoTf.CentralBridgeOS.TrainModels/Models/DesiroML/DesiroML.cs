@@ -1,7 +1,9 @@
+using AutoTf.CentralBridgeOS.FahrplanParser.Models;
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 
-namespace AutoTf.CentralBridgeOS.TrainModels.Models;
+namespace AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
 
 // ReSharper disable once InconsistentNaming
 public sealed class DesiroML : DefaultModel
@@ -10,6 +12,8 @@ public sealed class DesiroML : DefaultModel
 	{
 		Initialize();
 	}
+
+	public override RegionMappings Mappings { get; } = new Mapping();
 
 	public override void EasyControl(int power)
 	{

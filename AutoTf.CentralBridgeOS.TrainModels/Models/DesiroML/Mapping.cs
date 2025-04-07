@@ -1,11 +1,13 @@
 using System.Drawing;
+using AutoTf.CentralBridgeOS.FahrplanParser.Models;
+using AutoTf.CentralBridgeOS.Models;
 
-namespace AutoTf.CentralBridgeOS.FahrplanParser;
+namespace AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
 
-public static class RegionMappings
+public class Mapping : RegionMappings
 {
-	public static readonly List<Rectangle> Rows =
-	[
+	public override List<Rectangle> Rows { get; } = new List<Rectangle>()
+	{
 		new Rectangle(74, 89, 998, 37),
 		new Rectangle(74, 129, 998, 37),
 		new Rectangle(74, 168, 998, 37),
@@ -21,11 +23,11 @@ public static class RegionMappings
 		new Rectangle(74, 562, 998, 37),
 		new Rectangle(74, 602, 998, 37),
 		new Rectangle(74, 641, 998, 37)
-	];
+	};
 	
-	// Absolut
-	public static readonly List<Rectangle> LocationPoints =
-	[
+	// Absolute
+	public override List<Rectangle> LocationPoints { get; } = new List<Rectangle>()
+	{
 		new Rectangle(169, 367, 31, 37),
 		new Rectangle(169, 405, 31, 37),
 		new Rectangle(169, 445, 31, 37),
@@ -33,11 +35,11 @@ public static class RegionMappings
 		new Rectangle(169, 523, 31, 37),
 		new Rectangle(169, 562, 31, 37),
 		new Rectangle(169, 601, 31, 37)
-	];
+	};
 	
 	// Absolut
-	public static readonly List<Rectangle> LocationPointsHektometer =
-	[
+	public override List<Rectangle> LocationPointsHektometer { get; } = new List<Rectangle>()
+	{
 		new Rectangle(222, 372, 108, 37),
 		new Rectangle(222, 410, 108, 37),
 		new Rectangle(222, 450, 108, 37),
@@ -45,14 +47,14 @@ public static class RegionMappings
 		new Rectangle(222, 528, 108, 37),
 		new Rectangle(222, 567, 108, 37),
 		new Rectangle(222, 606, 108, 37)
-	];
+	};
 	
-	public static readonly Rectangle PlanValidity = new Rectangle(348, 11, 418, 34);
-	public static readonly Rectangle TrainNumber = new Rectangle(16, 11, 129, 34);
-	public static readonly Rectangle Delay = new Rectangle(604, 694, 115, 26);
-	public static readonly Rectangle Time = new Rectangle(991, 9, 153, 34);
-	public static readonly Rectangle Date = new Rectangle(693, 11, 178, 34);
-	public static readonly Rectangle NextStop = new Rectangle(713, 57, 363, 29);
+	public override Rectangle PlanValidity { get; } = new Rectangle(348, 11, 418, 34);
+	public override Rectangle TrainNumber { get; } = new Rectangle(16, 11, 129, 34);
+	public override Rectangle Delay { get; } = new Rectangle(604, 694, 115, 26);
+	public override Rectangle Time { get; } = new Rectangle(991, 9, 153, 34);
+	public override Rectangle Date { get; } = new Rectangle(693, 11, 178, 34);
+	public override Rectangle NextStop { get; } = new Rectangle(713, 57, 363, 29);
 
 	public static Rectangle Hektometer(Rectangle row)
 	{

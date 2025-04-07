@@ -1,6 +1,8 @@
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
 
 namespace AutoTf.CentralBridgeOS.TrainModels;
 

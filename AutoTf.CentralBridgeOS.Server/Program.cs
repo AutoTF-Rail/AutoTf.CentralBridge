@@ -9,6 +9,8 @@ using AutoTf.CentralBridgeOS.Services.Network;
 using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
 using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridgeOS.Server;

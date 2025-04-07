@@ -40,5 +40,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.FahrplanParser.Models\AutoTf.CentralBridgeOS.FahrplanParser.Models.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Models\AutoTf.CentralBridgeOS.Models.csproj" />
     </ItemGroup>
 </Project>

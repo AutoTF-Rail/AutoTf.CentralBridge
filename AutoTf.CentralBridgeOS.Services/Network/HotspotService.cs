@@ -27,7 +27,9 @@ public class HotspotService : IHostedService
     private void Configure()
     {
         _logger.Log("HOTSPOT: Configuring network");
-		
+	
+        CommandExecuter.ExecuteSilent("rfkill unblock all", true);
+        
         string interfaceName = "wlan1";
         
         _logger.Log($"Starting with SSID: {_trainSessionService.Ssid}");
