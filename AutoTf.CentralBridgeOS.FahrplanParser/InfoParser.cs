@@ -21,15 +21,15 @@ public abstract class InfoParser : ParserBase
 
 	public string Delay(Mat mat) => ExtractTextClean(Train.Mappings.Delay, mat, Engine).Replace("\n", "");
 
-	public string Hektometer(Mat mat, Rectangle row) => ExtractTextClean(RegionMappings.Hektometer(row), mat, Engine).Replace("\n", "");
+	public string Hektometer(Mat mat, Rectangle row) => ExtractTextClean(Train.Mappings.Hektometer(row), mat, Engine).Replace("\n", "");
 
-	public string AdditionalText(Mat mat, Rectangle row) => ExtractTextClean(RegionMappings.AdditionalText(row), mat, Engine).Replace("\n", "");
+	public string AdditionalText(Mat mat, Rectangle row) => ExtractTextClean(Train.Mappings.AdditionalText(row), mat, Engine).Replace("\n", "");
 
-	public string Arrival(Mat mat, Rectangle row) => ExtractTextClean(RegionMappings.Arrival(row), mat, Engine).Replace("\n", "");
+	public string Arrival(Mat mat, Rectangle row) => ExtractTextClean(Train.Mappings.Arrival(row), mat, Engine).Replace("\n", "");
 
-	public string Departure(Mat mat, Rectangle row) => ExtractTextClean(RegionMappings.Departure(row), mat, Engine).Replace("\n", "");
+	public string Departure(Mat mat, Rectangle row) => ExtractTextClean(Train.Mappings.Departure(row), mat, Engine).Replace("\n", "");
 
-	public string SpeedLimit(Mat mat, Rectangle row) => ExtractTextClean(RegionMappings.SpeedLimit(row), mat, Engine).Replace("\n", "");
+	public string SpeedLimit(Mat mat, Rectangle row) => ExtractTextClean(Train.Mappings.SpeedLimit(row), mat, Engine).Replace("\n", "");
 
 	/// <summary>
 	/// Gets the current train location by the small black dot on the side.

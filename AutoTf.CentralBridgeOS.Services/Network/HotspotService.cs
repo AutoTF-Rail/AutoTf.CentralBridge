@@ -49,7 +49,7 @@ public class HotspotService : IHostedService
             {
                 NetworkConfigurator.SetStaticIpAddress("192.168.1.1", "24", "wlan1");
             }
-            catch (Exception e)
+            catch
             {
                 // This is already logged in the method
                 // TODO: rework this so it's not this ugly

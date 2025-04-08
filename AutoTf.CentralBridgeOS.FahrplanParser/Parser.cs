@@ -48,7 +48,7 @@ public class Parser : InfoParser
 				if (!string.IsNullOrWhiteSpace(speedLimit))
 				{
 					// Skip if yellow (repeating)
-					if (!mat.ContainsYellow(RegionMappings.YellowArea(row)))
+					if (!mat.ContainsYellow(Train.Mappings.YellowArea(row)))
 					{
 						// Skip if already contained
 						if (speedChanges.Any())

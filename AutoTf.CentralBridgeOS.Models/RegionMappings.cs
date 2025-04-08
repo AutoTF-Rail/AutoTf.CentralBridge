@@ -20,33 +20,15 @@ public abstract class RegionMappings
 	public abstract Rectangle Date { get; }
 	public abstract Rectangle NextStop { get; }
 
-	public static Rectangle Hektometer(Rectangle row)
-	{
-		return new Rectangle(row.X + 148, row.Y, 108, 38);
-	}
-	
-	public static Rectangle Arrival(Rectangle row)
-	{
-		return new Rectangle(row.X + 756, row.Y, 117, 37);
-	}
-	
-	public static Rectangle Departure(Rectangle row)
-	{
-		return new Rectangle(row.X + 896, row.Y, 106, 37);
-	}
-	
-	public static Rectangle AdditionalText(Rectangle row)
-	{
-		return new Rectangle(row.X + 394, row.Y, 283, 37);
-	}
-	
-	public static Rectangle SpeedLimit(Rectangle row)
-	{
-		return new Rectangle(row.X + 56, row.Y, 46, 37);
-	}
-	
-	public static Rectangle YellowArea(Rectangle row)
-	{
-		return new Rectangle(row.X + 63, row.Y, 30, 5);
-	}
+	public abstract Rectangle Hektometer(Rectangle row);
+
+	public abstract Rectangle Arrival(Rectangle row);
+
+	public abstract Rectangle Departure(Rectangle row);
+
+	public abstract Rectangle AdditionalText(Rectangle row);
+
+	public abstract Rectangle SpeedLimit(Rectangle row);
+
+	public abstract Rectangle YellowArea(Rectangle row);
 }

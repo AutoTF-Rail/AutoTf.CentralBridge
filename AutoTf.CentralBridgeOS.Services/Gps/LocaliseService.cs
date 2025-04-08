@@ -1,6 +1,4 @@
-using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.Localise.Display;
-using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -9,21 +7,20 @@ namespace AutoTf.CentralBridgeOS.Services.Gps;
 public class LocaliseService : IHostedService
 {
     private readonly Logger _logger;
-    private readonly ProxyManager _proxy;
     private readonly EbuLaService _ebuLaService;
     private readonly CcdService _ccdService;
 
     public bool? StartSuccess;
 
-    public string LocationMarker { get; private set; }
+    public string LocationMarker { get; private set; } = string.Empty;
 
     private bool _canRun = true;
     
-    public LocaliseService(Logger logger, ProxyManager proxy, EbuLaService ebuLaService)
+    public LocaliseService(Logger logger, EbuLaService ebuLaService, CcdService ccdService)
     {
         _logger = logger;
-        _proxy = proxy;
         _ebuLaService = ebuLaService;
+        _ccdService = ccdService;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)

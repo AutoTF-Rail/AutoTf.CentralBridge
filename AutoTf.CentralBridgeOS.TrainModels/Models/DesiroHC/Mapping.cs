@@ -56,32 +56,32 @@ public class Mapping : RegionMappings
 	public override Rectangle Date { get; } = new Rectangle(693, 11, 178, 34);
 	public override Rectangle NextStop { get; } = new Rectangle(713, 57, 363, 29);
 
-	public static Rectangle Hektometer(Rectangle row)
+	public override Rectangle Hektometer(Rectangle row)
 	{
 		return new Rectangle(row.X + 148, row.Y, 108, 38);
 	}
 	
-	public static Rectangle Arrival(Rectangle row)
+	public override Rectangle Arrival(Rectangle row)
 	{
 		return new Rectangle(row.X + 756, row.Y, 117, 37);
 	}
 	
-	public static Rectangle Departure(Rectangle row)
+	public override Rectangle Departure(Rectangle row)
 	{
 		return new Rectangle(row.X + 896, row.Y, 106, 37);
 	}
 	
-	public static Rectangle AdditionalText(Rectangle row)
+	public override Rectangle AdditionalText(Rectangle row)
 	{
 		return new Rectangle(row.X + 394, row.Y, 283, 37);
 	}
 	
-	public static Rectangle SpeedLimit(Rectangle row)
+	public override Rectangle SpeedLimit(Rectangle row)
 	{
 		return new Rectangle(row.X + 56, row.Y, 46, 37);
 	}
 	
-	public static Rectangle YellowArea(Rectangle row)
+	public override Rectangle YellowArea(Rectangle row)
 	{
 		return new Rectangle(row.X + 63, row.Y, 30, 5);
 	}

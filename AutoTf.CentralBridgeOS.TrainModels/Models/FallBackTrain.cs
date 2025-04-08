@@ -10,8 +10,8 @@ namespace AutoTf.CentralBridgeOS.TrainModels.Models;
 public class FallBackTrain : DefaultModel
 {
 	// TODO: Handle this case, or just check if the current model is "FallBack" in the classes that access this?
-	
-	public override CcdDisplayBase CcdDisplay { get; }
+
+	public override CcdDisplayBase CcdDisplay { get; } = new Base();
 	public override RegionMappings Mappings { get; } = new Mapping();
 	
 	public FallBackTrain(MotorManager motorManager, Logger logger) : base(motorManager, logger)

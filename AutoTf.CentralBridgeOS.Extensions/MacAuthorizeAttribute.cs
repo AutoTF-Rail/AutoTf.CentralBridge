@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
+// ReSharper disable HeuristicUnreachableCode
+#pragma warning disable CS0162 // Unreachable code detected
 
 namespace AutoTf.CentralBridgeOS.Extensions;
 
@@ -27,6 +29,7 @@ public class MacAuthorizeAttribute : Attribute, IAuthorizationFilter
 			return true;
 			#endif
 			if (!headers.TryGetValue("macAddr", out StringValues addr))
+				// ReSharper disable once HeuristicUnreachableCode
 				return false;
 			
 			if (addr.Count <= 0)
