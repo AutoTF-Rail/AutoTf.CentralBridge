@@ -71,6 +71,7 @@ public static class Program
 		builder.Services.AddHostedSingleton<MotorManager>();
 		builder.Services.AddHostedSingleton<SyncManager>();
 		builder.Services.AddHostedSingleton<EbuLaService>();
+		builder.Services.AddHostedSingleton<CcdService>();
 		builder.Services.AddHostedSingleton<LocaliseService>();
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
