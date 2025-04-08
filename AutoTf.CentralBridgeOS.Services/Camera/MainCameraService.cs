@@ -52,7 +52,7 @@ public class MainCameraService : IHostedService
             _logger.Log("Failed to start up the main camera after 10 tries.");
             return;
         }
-        
+
         _logger.Log($"Main camera is now available after {retryCount} retries.");
         _proxy.StartListeningForCamera(new IPEndPoint(IPAddress.Parse("127.0.0.1"), port));
     }
@@ -63,7 +63,7 @@ public class MainCameraService : IHostedService
         return Task.CompletedTask;
     }
 
-    public void Dispose()
+    private void Dispose()
     {
         try
         {

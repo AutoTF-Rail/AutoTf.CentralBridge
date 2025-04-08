@@ -35,9 +35,22 @@ public class ProxyManager
 		_displays.FirstOrDefault(x => x.DisplayType == type)?.RemoveClient(address);
 	}
 
-	public bool IsDisplayAvailable(DisplayType type)
+	public bool IsDisplayRegistered(DisplayType type)
 	{
 		return _displays.Any(x => x.DisplayType == type);
+	}
+
+	/// <summary>
+	/// Returns a keyvaluepair representing the type of display, and if it is running or not.
+	/// </summary>
+	public List<KeyValuePair<DisplayType, bool>> DisplaysStatus()
+	{
+		return _displays.Select(x => new KeyValuePair<DisplayType, bool>(x.DisplayType, x.IsRunning)).ToList();
+	}
+
+	public bool? MainCameraStatus()
+	{
+		return _mainCamera?.IsRunning;
 	}
 
 	public bool IsCameraAvailable()

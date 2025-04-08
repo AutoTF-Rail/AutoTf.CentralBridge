@@ -38,6 +38,8 @@ internal class CameraProxy : IDisposable
 
 	private Mat? _latestMat = null;
 
+	public bool IsRunning = false;
+
 	public CameraProxy(int port, bool isDisplay, Logger logger, ITrainModel train)
 	{
 		_port = port;
@@ -137,8 +139,9 @@ internal class CameraProxy : IDisposable
 			if (CanStream)
 			{
 				// TODO: Tell parent that it's unavailable? So other services can't use this anymore?
-				_logger.Log($"CP: Failed while listening for a camera on port {_port}:");
+				_logger.Log($"Failed while listening for a camera on port {_port}:");
 				_logger.Log(e.ToString());
+				IsRunning = false;
 			}
 		}
 	}

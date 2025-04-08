@@ -33,7 +33,7 @@ public class Station : RowContent
 		{
 			// TODO: Handle?
 			// x = Bedarfshalt (Prob doesn't matter for us)
-			// Halt = Bü
+			// Halt = Bü // TODO: This should probably be handled differently/We need to parse the Bü first, so it's not duplicated
 			// + = Betriebshalt
 			// H = Kein halt, solange Zp 9
 			// U = Kein halt

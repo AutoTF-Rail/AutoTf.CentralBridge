@@ -42,6 +42,7 @@ public class MotionService : IHostedService
 		{
 			if (value == _isGpsConnected)
 				return;
+			
 			if(!value)
 				_logger.Log("GPS: Lost GPS connection.");
 			else
