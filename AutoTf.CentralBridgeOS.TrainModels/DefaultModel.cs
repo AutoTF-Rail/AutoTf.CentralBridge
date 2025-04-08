@@ -21,6 +21,7 @@ public abstract class DefaultModel : ITrainModel
 		Logger = logger;
 	}
 
+	public abstract CcdDisplayBase CcdDisplay { get; }
 	public abstract RegionMappings Mappings { get; }
 
 	public abstract void EasyControl(int power);

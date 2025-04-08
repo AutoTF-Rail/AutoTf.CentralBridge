@@ -2,6 +2,7 @@ namespace AutoTf.CentralBridgeOS.Models;
 
 public interface ITrainModel
 {
+	public CcdDisplayBase CcdDisplay { get; }
 	public RegionMappings Mappings { get; }
 	public int LeverCount();
 	public void SetLever(int index, double percentage);

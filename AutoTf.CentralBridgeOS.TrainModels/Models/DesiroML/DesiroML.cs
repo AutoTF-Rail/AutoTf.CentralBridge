@@ -1,4 +1,4 @@
-using AutoTf.CentralBridgeOS.FahrplanParser.Models;
+using AutoTf.CentralBridgeOS.CcdDisplays.DesiroHc;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
@@ -13,6 +13,7 @@ public sealed class DesiroML : DefaultModel
 		Task.Run(Initialize);
 	}
 
+	public override CcdDisplayBase CcdDisplay { get; } = new Base();
 	public override RegionMappings Mappings { get; } = new Mapping();
 
 	public override void EasyControl(int power)

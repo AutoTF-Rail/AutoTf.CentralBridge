@@ -1,15 +1,17 @@
 using AutoTf.CentralBridgeOS.CameraService;
+using AutoTf.CentralBridgeOS.Localise.Display;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
-namespace AutoTf.CentralBridgeOS.Localise;
+namespace AutoTf.CentralBridgeOS.Services.Gps;
 
 public class LocaliseService : IHostedService
 {
     private readonly Logger _logger;
     private readonly ProxyManager _proxy;
     private readonly EbuLaService _ebuLaService;
+    private readonly CcdService _ccdService;
 
     public bool? StartSuccess;
 
@@ -33,36 +35,29 @@ public class LocaliseService : IHostedService
 
     private async Task Initialize()
     {
-        _logger.Log("Waiting for EbuLa display to be available.");
-
-        bool isCamAvailable = _proxy.IsDisplayRegistered(DisplayType.EbuLa);
         int retryCount = 0;
 
-        while (!isCamAvailable && retryCount < 10)
+        while (!_ebuLaService.Initialized && !_ccdService.Initialized && retryCount < 15)
         {
             await Task.Delay(1500);
             retryCount++;
-            isCamAvailable = _proxy.IsDisplayRegistered(DisplayType.EbuLa);
         }
 
-        if (retryCount == 10)
-        {
-            _logger.Log("Failed to wait for EbuLa display after 10 tries.");
-            StartSuccess = false;
-            return;
-        }
+        // Maybe we would want to use this in the future, to ensure system safety, that everything is available, but for development this is just annoying
+        // if (retryCount == 15 || !_ebuLaService.Initialized || !_ccdService.Initialized)
+        // {
+        //     _logger.Log("Exited localise service startup due to EbuLa or CCD display not being available.");
+        //     StartSuccess = false;
+        //     return;
+        // }
         
-        _logger.Log($"EbuLa is now available after {retryCount} retries.");
-
-        string? locationMarker = _ebuLaService.LocationMarker();
+        if(_ebuLaService.Initialized)
+            await Task.Run(LoopLocationMarker);
         
-        if (locationMarker != null)
-            _logger.Log($"Found location marker at {locationMarker}.");
-        
-        _logger.Log($"Current speed limit: {_ebuLaService.CurrentSpeedLimit()}");
-
+        // if(_ccdService.Initialized)
+        //     await Task.Run(LoopLocationMarker);
+        //
         StartSuccess = true;
-        await Task.Run(LoopLocationMarker);
     }
 
     private void LoopLocationMarker()
@@ -77,6 +72,7 @@ public class LocaliseService : IHostedService
                 if (locationMarker != LocationMarker)
                 {
                     LocationMarker = locationMarker;
+                    _logger.Log("Location marker has changed to: " + LocationMarker);
                 }
             }
             

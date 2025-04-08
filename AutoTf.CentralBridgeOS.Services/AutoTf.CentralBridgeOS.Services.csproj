@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.CameraService\AutoTf.CentralBridgeOS.CameraService.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Displays\AutoTf.CentralBridgeOS.Displays.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Models\AutoTf.CentralBridgeOS.Models.csproj" />
     </ItemGroup>
 

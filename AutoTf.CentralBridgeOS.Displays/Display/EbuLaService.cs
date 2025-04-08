@@ -7,7 +7,7 @@ using Emgu.CV;
 using Emgu.CV.OCR;
 using Microsoft.Extensions.Hosting;
 
-namespace AutoTf.CentralBridgeOS.Localise;
+namespace AutoTf.CentralBridgeOS.Localise.Display;
 
 /// <summary>
 /// This class is only a bridge of sorts to make life easier, you should still make sure that the display is available yourself.
@@ -20,6 +20,8 @@ public class EbuLaService : IHostedService
     private Tesseract _engine;
     private Parser _parser;
 
+    public bool Initialized = false;
+    
     public EbuLaService(Logger logger, ITrainModel train, ProxyManager proxy)
     {
         _logger = logger;
@@ -36,7 +38,33 @@ public class EbuLaService : IHostedService
         // Read from screen etc
         
         // For now we just imagine it's already entered in and we see the current screen
+        Task.Run(Initialize, cancellationToken);
         return Task.CompletedTask;
+    }
+    
+    private async Task Initialize()
+    {
+        _logger.Log("Waiting for EbuLa display to be available.");
+
+        bool isCamAvailable = _proxy.IsDisplayRegistered(DisplayType.EbuLa);
+        int retryCount = 0;
+
+        while (!isCamAvailable && retryCount < 10)
+        {
+            await Task.Delay(1500);
+            retryCount++;
+            isCamAvailable = _proxy.IsDisplayRegistered(DisplayType.EbuLa);
+        }
+
+        if (retryCount == 10)
+        {
+            _logger.Log("Failed to wait for EbuLa display after 10 tries.");
+            return;
+        }
+        
+        _logger.Log($"EbuLa is now available after {retryCount} retries.");
+
+        Initialized = true;
     }
 
     public string? LocationMarker()
@@ -46,9 +74,6 @@ public class EbuLaService : IHostedService
         using Mat frame = _proxy.GetLatestFrameFromDisplay(DisplayType.EbuLa);
 
         string? location = _parser.Location(frame);
-        
-        if(string.IsNullOrEmpty(location))
-            _logger.Log("EbuLa: Warning: Could not read location.");
 
         return location;
     }

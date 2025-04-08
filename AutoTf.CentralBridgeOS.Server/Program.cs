@@ -1,6 +1,7 @@
 using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Localise;
+using AutoTf.CentralBridgeOS.Localise.Display;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Camera;
