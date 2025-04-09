@@ -20,7 +20,9 @@ public class EbuLaService : IHostedService
     private Tesseract _engine;
     private Parser _parser;
 
-    public bool Initialized = false;
+    public bool Started = false;
+
+    public bool Disabled = false;
     
     public EbuLaService(Logger logger, ITrainModel train, ProxyManager proxy)
     {
@@ -64,7 +66,7 @@ public class EbuLaService : IHostedService
         
         _logger.Log($"EbuLa is now available after {retryCount} retries.");
 
-        Initialized = true;
+        Started = true;
     }
 
     public string? LocationMarker()

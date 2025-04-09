@@ -22,7 +22,7 @@ public class SystemController : ControllerBase
 	}
 	
 	[MacAuthorize]
-	[HttpPatch("setdate")]
+	[HttpPost("setdate")]
 	public IActionResult SetDate([FromBody, Required] DateTime date)
 	{
 		try

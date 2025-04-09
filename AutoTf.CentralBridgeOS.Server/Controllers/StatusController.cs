@@ -33,7 +33,7 @@ public class StatusController : ControllerBase
         return _proxy.MainCameraStatus();
     }
     
-    [HttpGet("localiser")]
+    [HttpGet("localise")]
     public ActionResult<bool?> Localise()
     {
         return _localiseService.StartSuccess;
@@ -46,7 +46,7 @@ public class StatusController : ControllerBase
     }
     
     [HttpGet("gpsConnected")]
-    public ActionResult<bool?> GpsConnected()
+    public ActionResult<bool> GpsConnected()
     {
         return _motionService.IsGpsConnected;
     }

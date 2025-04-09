@@ -34,7 +34,7 @@ public class LocaliseService : IHostedService
     {
         int retryCount = 0;
 
-        while (!_ebuLaService.Initialized && !_ccdService.Initialized && retryCount < 15)
+        while (!_ebuLaService.Started && !_ccdService.Initialized && retryCount < 15)
         {
             await Task.Delay(1500);
             retryCount++;
@@ -48,7 +48,7 @@ public class LocaliseService : IHostedService
         //     return;
         // }
         
-        if(_ebuLaService.Initialized)
+        if(_ebuLaService.Started)
             await Task.Run(LoopLocationMarker);
         
         // if(_ccdService.Initialized)

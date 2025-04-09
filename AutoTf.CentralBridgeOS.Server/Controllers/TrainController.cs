@@ -25,6 +25,7 @@ public class TrainController : ControllerBase
 		_motionService = motionService;
 	}
 
+	// TODO: This is only gps speed atm
 	[MacAuthorize]
 	[HttpGet("speed")]
 	public IActionResult GetSpeed()
