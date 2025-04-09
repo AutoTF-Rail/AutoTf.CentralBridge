@@ -1,5 +1,6 @@
 using System.Text.Json;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Network;
 using AutoTf.Logging;
@@ -10,7 +11,7 @@ public class KeySync : Sync
 {
 	private string[] _latestList;
 	
-	public KeySync(Logger logger, FileManager fileManager, TrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
+	public KeySync(Logger logger, IFileManager fileManager, TrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
 	{
 		Statics.SyncEvent += Sync;
 		_latestList = FileManager.ReadAllLines("keys");

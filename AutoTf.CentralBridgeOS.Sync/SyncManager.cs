@@ -1,5 +1,6 @@
 using System.Timers;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Network;
 using AutoTf.Logging;
@@ -10,7 +11,7 @@ namespace AutoTf.CentralBridgeOS.Sync;
 
 public class SyncManager : IHostedService
 {
-	private readonly FileManager _fileManager;
+	private readonly IFileManager _fileManager;
 
 	// ReSharper disable once NotAccessedField.Local
 	private readonly KeySync _keySync;
@@ -26,7 +27,7 @@ public class SyncManager : IHostedService
 	public static DateTime LastSynced;
 	public static DateTime LastSyncTry;
 
-	public SyncManager(FileManager fileManager, TrainSessionService trainSessionService)
+	public SyncManager(IFileManager fileManager, TrainSessionService trainSessionService)
 	{
 		_fileManager = fileManager;
 		

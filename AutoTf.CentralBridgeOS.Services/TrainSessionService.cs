@@ -1,12 +1,12 @@
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
-using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
 public class TrainSessionService
 {
-	private readonly FileManager _fileManager;
+	private readonly IFileManager _fileManager;
 	private readonly Logger _logger;
 
 	private static string? _username;
@@ -15,7 +15,7 @@ public class TrainSessionService
 	private static string? _ssid;
 	private static BridgeServiceState? _localServiceState;
 
-	public TrainSessionService(FileManager fileManager, Logger logger)
+	public TrainSessionService(IFileManager fileManager, Logger logger)
 	{
 		_fileManager = fileManager;
 		_logger = logger;

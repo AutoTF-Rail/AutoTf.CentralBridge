@@ -1,15 +1,14 @@
-using System;
-using System.Linq;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using OtpNet;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
 public class CodeValidator
 {
-	private readonly FileManager _fileManager;
+	private readonly IFileManager _fileManager;
 
-	public CodeValidator(FileManager fileManager)
+	public CodeValidator(IFileManager fileManager)
 	{
 		_fileManager = fileManager;
 	}

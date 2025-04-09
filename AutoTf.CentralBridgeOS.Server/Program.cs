@@ -77,7 +77,7 @@ public static class Program
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
 		{
-			FileManager fileManager = provider.GetRequiredService<FileManager>();
+			IFileManager fileManager = provider.GetRequiredService<IFileManager>();
 			string trainName = fileManager.ReadFile("TrainName");
     
 			return TrainResolver.Resolve(provider, trainName);

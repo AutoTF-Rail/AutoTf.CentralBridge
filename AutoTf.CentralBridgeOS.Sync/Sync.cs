@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 
@@ -10,10 +11,10 @@ public abstract class Sync
 {
 	protected readonly Logger Logger;
 	protected internal readonly string RootDomain;
-	protected readonly FileManager FileManager;
+	protected readonly IFileManager FileManager;
 	private readonly TrainSessionService _trainSessionService;
 
-	public Sync(Logger logger, FileManager fileManager, TrainSessionService trainSessionService)
+	public Sync(Logger logger, IFileManager fileManager, TrainSessionService trainSessionService)
 	{
 		Logger = logger;
 		FileManager = fileManager;
