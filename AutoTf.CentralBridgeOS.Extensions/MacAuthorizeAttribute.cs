@@ -27,6 +27,7 @@ public class MacAuthorizeAttribute : Attribute, IAuthorizationFilter
 			#if DEBUG
 			return true;
 			#endif
+			// TODO: Maybe check if it's coming from a local device connected over lan? That way we could enable restarts of e.g. the slave bridge.
 			if (!headers.TryGetValue("macAddr", out StringValues addr))
 				// ReSharper disable once HeuristicUnreachableCode
 				return false;

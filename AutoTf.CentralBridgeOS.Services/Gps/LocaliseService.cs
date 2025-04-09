@@ -62,6 +62,7 @@ public class LocaliseService : IHostedService
         while (_canRun)
         {
             string? locationMarker = _ebuLaService.LocationMarker();
+            
             if (!string.IsNullOrEmpty(locationMarker))
             {
                 locationMarker = locationMarker.Trim();
