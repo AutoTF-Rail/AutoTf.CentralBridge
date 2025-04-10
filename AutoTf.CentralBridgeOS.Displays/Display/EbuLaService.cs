@@ -81,6 +81,7 @@ public class EbuLaService : IHostedService
         }
         set
         {
+            // TODO: Make this setter better/smaller
             if (AutoDetectState == value) 
                 return;
 
@@ -166,6 +167,8 @@ public class EbuLaService : IHostedService
         // TODO: e.g. enter train number via _train (motors)
         // Read from screen etc
         
+        // Initialize this bool on startup
+        _ = IsAutoDetectionTurnedOff;
         // For now we just imagine it's already entered in and we see the current screen
         Task.Run(Initialize, cancellationToken);
         return Task.CompletedTask;
