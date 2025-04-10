@@ -173,6 +173,82 @@ public class TimetableController : ControllerBase
         }
     }
     
+    /// <summary>
+    /// Scans the current page and adds it to the existing table.
+    /// </summary>
+    [MacAuthorize]
+    [HttpPost("scan")]
+    public IActionResult Scan()
+    {
+        try
+        {
+            _ebula.ScanCurrentPage();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.Log("Something went wrong when scanning the current timetable page:");
+            _logger.Log(e.ToString());
+            return BadRequest(e.ToString());
+        }
+    }
+    
+    /// <summary>
+    /// Locks the ebula to not be scanned by any other tasks.
+    /// </summary>
+    [MacAuthorize]
+    [HttpPost("lock")]
+    public IActionResult Lock()
+    {
+        try
+        {
+            _ebula.ScanCurrentPage();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.Log("Something went wrong when locking the ebula:");
+            _logger.Log(e.ToString());
+            return BadRequest(e.ToString());
+        }
+    }
+    
+    /// <summary>
+    /// Unlocks the ebula to be scanned by other tasks again.
+    /// </summary>
+    [MacAuthorize]
+    [HttpPost("unlock")]
+    public IActionResult Unlock()
+    {
+        try
+        {
+            _ebula.ScanCurrentPage();
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _logger.Log("Something went wrong when unlocking the ebula:");
+            _logger.Log(e.ToString());
+            return BadRequest(e.ToString());
+        }
+    }
+    
+    [MacAuthorize]
+    [HttpPost("lockState")]
+    public ActionResult<bool> LockState()
+    {
+        try
+        {
+            return _ebula.LockState();
+        }
+        catch (Exception e)
+        {
+            _logger.Log("Something went wrong when returning the current lock state:");
+            _logger.Log(e.ToString());
+            return BadRequest(e.ToString());
+        }
+    }
+    
     [MacAuthorize]
     [HttpPost("rescan")]
     public IActionResult Rescan()

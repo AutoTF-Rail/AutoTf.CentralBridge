@@ -26,6 +26,8 @@ public class EbuLaService : IHostedService
     private bool? _cachedTurnedOffState;
 
     private ManualResetEvent _ebulaScanBlock = new ManualResetEvent(true);
+    private ManualResetEvent _ebulaManualScanBlock = new ManualResetEvent(true);
+    private bool _isManuallyBlocked = false;
 
     private ManualResetEvent _ebulaReadBlock = new ManualResetEvent(true);
 
@@ -49,7 +51,7 @@ public class EbuLaService : IHostedService
         get
         {
             if (_cachedTurnedOffState == null)
-                _cachedTurnedOffState = bool.Parse(_fileManager.ReadFile("autoDetectionEnabled", "false"));
+                _cachedTurnedOffState = bool.Parse(_fileManager.ReadFile("autoDetectionTurnedOff", "false"));
 
             return (bool)_cachedTurnedOffState;
         }
@@ -59,7 +61,7 @@ public class EbuLaService : IHostedService
                 return;
 
             _cachedTurnedOffState = value;
-            _fileManager.WriteAllText("autoDetectionEnabled", value.ToString());
+            _fileManager.WriteAllText("autoDetectionTurnedOff", value.ToString());
         }
     }
 
@@ -167,8 +169,6 @@ public class EbuLaService : IHostedService
         // TODO: e.g. enter train number via _train (motors)
         // Read from screen etc
         
-        // Initialize this bool on startup
-        _ = IsAutoDetectionTurnedOff;
         // For now we just imagine it's already entered in and we see the current screen
         Task.Run(Initialize, cancellationToken);
         return Task.CompletedTask;
@@ -180,19 +180,23 @@ public class EbuLaService : IHostedService
         CurrentTimetable = newTable;
     }
 
+    /// <summary>
+    /// Scans the entire timetable (and automatically scrolls (TBA)) and resets the CurrentTimetable col to it.
+    /// </summary>
     public void ScanTimetable()
     {
         // TODO: Check if train is moving, if true: return
+        
+        // We are blocking the other methods here, to ensure that they only grab the current page, and not a random one when we switch though them here.
         _ebulaReadBlock.WaitOne();
+        _ebulaManualScanBlock.WaitOne();
         _ebulaScanBlock.Reset();
         
-        // TODO: Reset to page one
-        // TODO: Somehow figure out how many pages the timetable has, and then skip though each and take a picture. (But take all of the pictures first, and then process them, as to not block the other tasks)
-
+        // Here would be the point to scroll to the next page, and take another frame.
         using Mat frame = _proxy.GetLatestFrameFromDisplay(DisplayType.EbuLa);
         _ebulaScanBlock.Set();
 
-        List<KeyValuePair<string, RowContent>> rows = new List<KeyValuePair<string, RowContent>>();
+        List<KeyValuePair<string, RowContent>> rows = CurrentTimetable.ToList();
         List<KeyValuePair<string, string>> speedChanges = new List<KeyValuePair<string, string>>();
         
         lock (_parser)
@@ -206,10 +210,48 @@ public class EbuLaService : IHostedService
         CurrentTimetable = rows;
     }
 
+    /// <summary>
+    /// To scan a entire timetable without a motor, turn off localisation, reset to page one, scan, manually press to get to the next page, scan again etc. using this method
+    /// This method does NOT lock localisation
+    /// </summary>
+    public void ScanCurrentPage()
+    {
+        using Mat frame = _proxy.GetLatestFrameFromDisplay(DisplayType.EbuLa);
+        List<KeyValuePair<string, RowContent>> rows = CurrentTimetable.ToList();
+        List<KeyValuePair<string, string>> speedChanges = new List<KeyValuePair<string, string>>();
+       
+        lock (_parser)
+        {
+            _parser.ReadPage(frame, ref rows, ref speedChanges);
+        }
+
+        // TODO: Include speed changes, or save them separately 
+        // TODO: Notify depending services of a change?
+        CurrentTimetable = rows;
+    }
+
+    public void LockScan()
+    {
+        _ebulaManualScanBlock.Set();
+        _isManuallyBlocked = true;
+    }
+
+    public void UnlockScan()
+    {
+        _ebulaManualScanBlock.Reset();
+        _isManuallyBlocked = false;
+    }
+
+    public bool LockState()
+    {
+        return _isManuallyBlocked;
+    }
+
     public string? LocationMarker()
     {
         // TODO: Press button to go to current location on EbuLa
         _ebulaScanBlock.WaitOne();
+        _ebulaManualScanBlock.WaitOne();
         
         _ebulaReadBlock.Reset();
         using Mat frame = _proxy.GetLatestFrameFromDisplay(DisplayType.EbuLa);
@@ -229,6 +271,7 @@ public class EbuLaService : IHostedService
         // TODO: Press button to go to current location on EbuLa
         
         _ebulaScanBlock.WaitOne();
+        _ebulaManualScanBlock.WaitOne();
         
         _ebulaReadBlock.Reset();
         using Mat frame = _proxy.GetLatestFrameFromDisplay(DisplayType.EbuLa);
