@@ -19,8 +19,8 @@ internal static class DeviceParser
 			{
 				if (line.Contains(':'))
 				{
-					if (!line.Contains("USB Video") && !line.Contains("HD Camera") && !currentDevice.Contains("USB Video") &&
-					    !currentDevice.Contains("HD Camera"))
+					if (!line.Contains("USB Video") && !line.Contains("USB Camera") && !currentDevice.Contains("USB Video") &&
+					    !currentDevice.Contains("USB Camera"))
 					{
 						continue;
 					}
