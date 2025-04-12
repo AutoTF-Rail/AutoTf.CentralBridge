@@ -108,7 +108,7 @@ internal class CameraProxy : IDisposable
 								continue;
 							
 							_latestMat?.Dispose();
-							_latestMat = new Mat(mat, new Rectangle(new Point(80, 0), new Size(mat.Width - (80 + 118), mat.Height)));
+							_latestMat = new Mat(mat, new Rectangle(new Point(137, 21), new Size(1014, 685)));
 							
 							if (_isFirstLoop && DisplayType == DisplayType.Unknown)
 							{

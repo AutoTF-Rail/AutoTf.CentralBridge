@@ -40,7 +40,7 @@ public abstract class InfoParser : ParserBase
 	{
 		for (int i = 0; i < Train.Mappings.LocationPoints.Count; i++)
 		{
-			Rectangle checkRoi = new Rectangle(Train.Mappings.LocationPoints[i].X + 20, Train.Mappings.LocationPoints[i].Y + 8, 5, 21);
+			Rectangle checkRoi = new Rectangle(Train.Mappings.LocationPoints[i].X + 17, Train.Mappings.LocationPoints[i].Y + 12, 5, 5);
 			Mat checkMat = new Mat(mat, checkRoi);
 					
 			if(!checkMat.IsMoreBlackThanWhite())
