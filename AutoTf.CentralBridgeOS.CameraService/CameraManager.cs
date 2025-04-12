@@ -58,7 +58,7 @@ public class CameraManager : IHostedService
 			_nextDisplayIndex++;
 			record = false;
 			framerate = 10;
-			frameHeight = 800;
+			frameHeight = 720;
 		}
 
 		_logger.Log($"Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
