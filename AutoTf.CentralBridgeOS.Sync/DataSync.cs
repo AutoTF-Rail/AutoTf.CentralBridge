@@ -52,12 +52,17 @@ public class DataSync : Sync
 		
 		Logger.Log($"Uploading {list.Count} videos.");
 		
-		foreach (string recording in list)
+		const int maxConcurrency = 5;
+		using (SemaphoreSlim semaphore = new SemaphoreSlim(maxConcurrency))
 		{
-			uploadTasks.Add(SendPostVideo("/sync/device/uploadvideo", recording));
+			foreach (string recording in list)
+			{
+				await semaphore.WaitAsync(); 
+				uploadTasks.Add(SendPostVideo("/sync/device/uploadvideo", recording, semaphore));
+			}
+	    
+			await Task.WhenAll(uploadTasks);
 		}
-		
-		await Task.WhenAll(uploadTasks);
 		
 		Logger.Log("Uploaded all videos.");
 		
@@ -97,7 +102,7 @@ public class DataSync : Sync
 			}
 			Logger.Log("Uploading logs");
 			
-			List<string> tempLogStorage = new List<string>(_collectedLogs);
+			List<string> tempLogStorage = [.._collectedLogs];
 			_collectedLogs.Clear();
 		
 			string jsonBody = JsonSerializer.Serialize(tempLogStorage);

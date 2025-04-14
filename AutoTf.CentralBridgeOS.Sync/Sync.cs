@@ -124,13 +124,14 @@ public abstract class Sync
 		}	
 	}
 	
-	protected async Task<bool> SendPostVideo(string endpoint, string path)
+	protected async Task<bool> SendPostVideo(string endpoint, string path, SemaphoreSlim semaphore)
 	{
 		try
 		{
 			using (HttpClient httpClient = new HttpClient())
 			{
-				string authValue = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_trainSessionService.Username}:{_trainSessionService.Password}"));
+				string authValue =
+					Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_trainSessionService.Username}:{_trainSessionService.Password}"));
 				httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
 
 				using (MultipartFormDataContent form = new MultipartFormDataContent())
@@ -150,6 +151,10 @@ public abstract class Sync
 			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
 			Logger.Log(e.Message);
 			throw;
-		}	
+		}
+		finally
+		{
+			semaphore.Release();
+		}
 	}
 }
