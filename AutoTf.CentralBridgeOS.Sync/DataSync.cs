@@ -58,7 +58,7 @@ public class DataSync : Sync
 			foreach (string recording in list)
 			{
 				await semaphore.WaitAsync(); 
-				uploadTasks.Add(SendPostVideo("/sync/device/uploadvideo", recording, semaphore));
+				uploadTasks.Add(SendPostVideo("/sync/device/video/upload", recording, semaphore));
 			}
 	    
 			await Task.WhenAll(uploadTasks);
@@ -107,7 +107,7 @@ public class DataSync : Sync
 		
 			string jsonBody = JsonSerializer.Serialize(tempLogStorage);
 			
-			if (!await SendPostContent("/sync/device/uploadlogs",
+			if (!await SendPostContent("/sync/device/logs/upload",
 				    new StringContent(jsonBody, Encoding.UTF8, "application/json")))
 				throw new Exception("Failed to upload logs.");
 			
