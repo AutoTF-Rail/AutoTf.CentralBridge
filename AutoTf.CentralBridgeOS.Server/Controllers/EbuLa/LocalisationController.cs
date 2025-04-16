@@ -24,7 +24,7 @@ public class LocalisationController : ControllerBase
     }
     
     [MacAuthorize]
-    [HttpPost("disableLocalisation")]
+    [HttpPost("disable")]
     public IActionResult DisableLocalisation()
     {
         try
@@ -41,7 +41,7 @@ public class LocalisationController : ControllerBase
     }
     
     [MacAuthorize]
-    [HttpPost("enableLocalisation")]
+    [HttpPost("enable")]
     public IActionResult EnableLocalisation()
     {
         try
@@ -60,7 +60,7 @@ public class LocalisationController : ControllerBase
     }
     
     [MacAuthorize]
-    [HttpPost("turnOffLocalisation")]
+    [HttpPost("turnOff")]
     public IActionResult TurnOffLocalisation()
     {
         try
@@ -79,7 +79,7 @@ public class LocalisationController : ControllerBase
     }
     
     [MacAuthorize]
-    [HttpPost("turnOnLocalisation")]
+    [HttpPost("turnOn")]
     public IActionResult TurnOnLocalisation()
     {
         try
@@ -98,7 +98,7 @@ public class LocalisationController : ControllerBase
         }
     }
     
-    [HttpGet("localisationState")]
+    [HttpGet("state")]
     public ActionResult<ServiceState> LocalisationState()
     {
         try

@@ -79,7 +79,7 @@ public class TimetableController : ControllerBase
     /// (TODO: does this even ever happen? But it could disable the "validation" of the EbuLa while driving)
     /// </summary>
     [MacAuthorize]
-    [HttpPost("disableAutoDetection")]
+    [HttpPost("disable")]
     public IActionResult DisableAutoDetection()
     {
         try
@@ -97,7 +97,7 @@ public class TimetableController : ControllerBase
     }
     
     [MacAuthorize]
-    [HttpPost("enableAutoDetection")]
+    [HttpPost("enable")]
     public IActionResult EnableAutoDetection()
     {
         try
@@ -120,7 +120,7 @@ public class TimetableController : ControllerBase
     /// (TODO: Although we will probably still want to enter the train number into the device on startup)
     /// </summary>
     [MacAuthorize]
-    [HttpPost("turnOffAutoDetection")]
+    [HttpPost("turnOff")]
     public IActionResult TurnOffAutoDetection()
     {
         try
@@ -139,7 +139,7 @@ public class TimetableController : ControllerBase
     }
     
     [MacAuthorize]
-    [HttpPost("turnOnAutoDetection")]
+    [HttpPost("turnOn")]
     public IActionResult TurnOnAutoDetection()
     {
         try
