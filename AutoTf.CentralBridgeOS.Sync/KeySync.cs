@@ -40,7 +40,7 @@ public class KeySync : Sync
 		try
 		{
 			Logger.Log("Syncing Keys Addresses.");
-			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/allkeys"))!;
+			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/all"))!;
 
 			string[] keys = result.Select(x => x.SerialNumber + ":" + x.Secret).ToArray();
 			
@@ -64,7 +64,7 @@ public class KeySync : Sync
 		{
 			Logger.Log("Checking for new keys.");
 
-			string response = await SendGet("/sync/keys/lastkeysupdate");
+			string response = await SendGet("/sync/keys/lastupdate");
 
 			string lastNewKeysTimestamp = FileManager.ReadFile("lastKeysTimestamp", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"));
 			

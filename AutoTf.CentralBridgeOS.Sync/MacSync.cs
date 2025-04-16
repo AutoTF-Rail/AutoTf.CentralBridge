@@ -38,7 +38,7 @@ public class MacSync : Sync
 		try
 		{
 			Logger.Log("Syncing MAC Addresses.");
-			string[] result = await SendGetArray("/sync/mac/macAddress");
+			string[] result = await SendGetArray("/sync/mac/all");
 
 			if (result.SequenceEqual(_latestList))
 				return;
@@ -63,7 +63,7 @@ public class MacSync : Sync
 		{
 			Logger.Log("Checking for new MAC addresses.");
 			
-			string response = await SendGet("/sync/mac/lastmacaddrsupdate");
+			string response = await SendGet("/sync/mac/lastUpdate");
 
 			string lastNewKeysTimestamp = FileManager.ReadFile("lastKeysTimestamp", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"));
 			
