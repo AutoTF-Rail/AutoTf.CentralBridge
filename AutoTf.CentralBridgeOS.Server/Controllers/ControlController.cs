@@ -12,13 +12,13 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 
 [ApiController]
 [Route("/control")]
-public class TrainController : ControllerBase
+public class ControlController : ControllerBase
 {
 	private readonly Logger _logger;
 	private readonly ITrainModel _trainModel;
 	private readonly MotionService _motionService;
 
-	public TrainController(Logger logger, ITrainModel trainModel, MotionService motionService)
+	public ControlController(Logger logger, ITrainModel trainModel, MotionService motionService)
 	{
 		_logger = logger;
 		_trainModel = trainModel;
