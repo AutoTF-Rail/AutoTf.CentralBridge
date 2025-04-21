@@ -100,8 +100,7 @@ public abstract class Sync
 	/// </summary>
 	/// <param name="endpoint">the endpoint (not including server url/host)</param>
 	/// <param name="content">The actual content</param>
-	/// <returns>A bool indicating if it was successfull.</returns>
-	protected async Task<bool> SendPostContent(string endpoint, StringContent content)
+	protected async Task SendPostContent(string endpoint, StringContent content)
 	{
 		try
 		{
@@ -114,7 +113,7 @@ public abstract class Sync
 			
 			HttpResponseMessage response = await client.PostAsync(url, content);
 
-			return response.IsSuccessStatusCode;
+			response.EnsureSuccessStatusCode();
 		}
 		catch (Exception e)
 		{

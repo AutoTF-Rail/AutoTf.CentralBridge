@@ -78,9 +78,7 @@ public class DataSync : Sync
 		{
 			Logger.Log("Updating status.");
 
-			if (!await SendPostContent("/sync/device/updatestatus",
-				    new StringContent(JsonSerializer.Serialize("Online"), Encoding.UTF8, "application/json")))
-				throw new Exception("Failed to update status.");
+			await SendPostContent("/sync/device/updatestatus", new StringContent(JsonSerializer.Serialize("Online"), Encoding.UTF8, "application/json"));
 			
 			Logger.Log("Successfully updated status.");
 		}
@@ -91,6 +89,7 @@ public class DataSync : Sync
 		}
 	}
 	
+	// TODO: This is kind of problematic, it only uploads the logs of the current session, but not the logs from the previous day or so on because it doesn't go through old files.
 	private async Task UploadLogs()
 	{
 		try
@@ -106,10 +105,8 @@ public class DataSync : Sync
 			_collectedLogs.Clear();
 		
 			string jsonBody = JsonSerializer.Serialize(tempLogStorage);
-			
-			if (!await SendPostContent("/sync/device/logs/upload",
-				    new StringContent(jsonBody, Encoding.UTF8, "application/json")))
-				throw new Exception("Failed to upload logs.");
+
+			await SendPostContent("/sync/device/logs/upload", new StringContent(jsonBody, Encoding.UTF8, "application/json"));
 			
 			Logger.Log("Successfully uploaded logs.");
 		}
