@@ -7,12 +7,20 @@ namespace AutoTf.CentralBridgeOS.Models.Interfaces;
 /// </summary>
 public interface IAicService : IHostedService
 {
-    public bool? Availability { get; }
+    /// <summary>
+    /// Represents the newest cached online state (Rechecked every 15 seconds).
+    /// </summary>
+    public bool Online { get; }
 
     /// <summary>
-    /// This is just a way to check if the AIC is aware of the CentralBridge being available, and not if the AIC is available. (But it kind of also does both)
+    /// This is just a way to check if the AIC is aware of the CentralBridge being available, and not if the AIC is available.
     /// </summary>
     public Task<bool?> IsAvailable();
+    
+    /// <summary>
+    /// To avoid too much network usage, the Online field serves as a cached alternative to this method. 
+    /// </summary>
+    public Task<bool> IsOnline();
 
     /// <summary>
     /// Returns the GIT version of the AIC. (Empty if unavailable)
