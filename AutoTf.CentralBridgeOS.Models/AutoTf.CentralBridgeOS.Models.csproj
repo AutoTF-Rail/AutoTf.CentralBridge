@@ -10,7 +10,7 @@
       <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
       <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
       <PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.10.0.5680" />
-      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.0-preview.2.25163.2" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
     </ItemGroup>
 
     <ItemGroup>
