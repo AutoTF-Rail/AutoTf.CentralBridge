@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.CcdDisplays\AutoTf.CentralBridgeOS.CcdDisplays.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Models\AutoTf.CentralBridgeOS.Models.csproj" />
       <ProjectReference Include="..\AutoTf.CentralBridgeOS.Services\AutoTf.CentralBridgeOS.Services.csproj" />
     </ItemGroup>

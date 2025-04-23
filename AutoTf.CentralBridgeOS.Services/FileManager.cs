@@ -1,8 +1,9 @@
 using System.IO;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 
 namespace AutoTf.CentralBridgeOS.Services;
 
-public class FileManager
+public class FileManager : IFileManager
 {
 	private readonly string _dataDir = Path.Combine("/", "etc", "AutoTf");
 	

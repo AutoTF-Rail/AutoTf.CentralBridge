@@ -1,7 +1,18 @@
+using AutoTf.CentralBridgeOS.CameraService;
+using AutoTf.CentralBridgeOS.Extensions;
+using AutoTf.CentralBridgeOS.Localise;
+using AutoTf.CentralBridgeOS.Localise.Display;
+using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Sync;
+using AutoTf.CentralBridgeOS.Services.Camera;
+using AutoTf.CentralBridgeOS.Services.Gps;
+using AutoTf.CentralBridgeOS.Services.Network;
+using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
 using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridgeOS.Server;
@@ -35,10 +46,6 @@ public static class Program
 		}
 		catch (Exception e)
 		{
-			// This can be viewed when running "journalctl -u startupScript.service | tail -150"
-			// But the logger should work anyways, so we try to log to it.
-			Console.WriteLine("Root error:");
-			Console.WriteLine(e.ToString());
 			Statics.Logger.Log("Root Error:");
 			Statics.Logger.Log(e.ToString());
 		}
@@ -49,21 +56,28 @@ public static class Program
 		builder.Services.AddControllers();
 			
 		builder.Services.AddSingleton(Logger);
-		
-		builder.Services.AddSingleton<NetworkManager>();
-		builder.Services.AddSingleton<FileManager>();
 		builder.Services.AddSingleton<TrainSessionService>();
-		builder.Services.AddSingleton<CameraService>();
-		builder.Services.AddSingleton<HotspotService>();
+		builder.Services.AddSingleton<IFileManager, FileManager>();
 		builder.Services.AddSingleton<CodeValidator>();
-		builder.Services.AddSingleton<UdpProxyService>();
-		builder.Services.AddSingleton<MotorManager>();
-		builder.Services.AddSingleton<SyncManager>();
-		builder.Services.AddSingleton<BluetoothService>();
+		builder.Services.AddSingleton<ProxyManager>();
+		
+		builder.Services.AddHostedService<NetworkManager>();
+		builder.Services.AddHostedService<MainCameraService>();
+		builder.Services.AddHostedService<HotspotService>();
+		builder.Services.AddHostedService<BluetoothService>();
+		builder.Services.AddHostedService<CameraManager>();
+		
+		builder.Services.AddHostedSingleton<MotionService>();
+		builder.Services.AddHostedSingleton<MainCameraProxyService>();
+		builder.Services.AddHostedSingleton<MotorManager>();
+		builder.Services.AddHostedSingleton<SyncManager>();
+		builder.Services.AddHostedSingleton<EbuLaService>();
+		builder.Services.AddHostedSingleton<CcdService>();
+		builder.Services.AddHostedSingleton<LocaliseService>();
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>
 		{
-			FileManager fileManager = provider.GetRequiredService<FileManager>();
+			IFileManager fileManager = provider.GetRequiredService<IFileManager>();
 			string trainName = fileManager.ReadFile("TrainName");
     
 			return TrainResolver.Resolve(provider, trainName);
@@ -78,6 +92,6 @@ public static class Program
 	{
 		builderServices.AddSingleton<DesiroHC>();
 		builderServices.AddSingleton<DesiroML>();
-		builderServices.AddSingleton<DefaultModel>();
+		builderServices.AddSingleton<FallBackTrain>();
 	}
 }

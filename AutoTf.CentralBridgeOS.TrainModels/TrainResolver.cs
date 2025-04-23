@@ -1,5 +1,8 @@
+using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
+using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
 
 namespace AutoTf.CentralBridgeOS.TrainModels;
 
@@ -22,13 +25,12 @@ public static class TrainResolver
 		{
 			Statics.Logger.Log($"Starting with train model {trainType}.");
 			ITrainModel? trainModel = serviceProvider.GetService(type) as ITrainModel;
-			trainModel!.Initialize();
-			return trainModel;
+			return trainModel!;
 		}
 
-		Statics.Logger.Log($"Starting with default train model.");
-		ITrainModel? train = serviceProvider.GetService(typeof(DefaultModel)) as ITrainModel;
-		train!.Initialize();
+		Statics.Logger.Log("Starting with fall back train model.");
+		ITrainModel train = (serviceProvider.GetService(typeof(FallBackTrain)) as ITrainModel)!;
+		
 		return train;
 	}
 }

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.FahrplanParser\AutoTf.CentralBridgeOS.FahrplanParser.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Models\AutoTf.CentralBridgeOS.Models.csproj" />
+    </ItemGroup>
+
+</Project>

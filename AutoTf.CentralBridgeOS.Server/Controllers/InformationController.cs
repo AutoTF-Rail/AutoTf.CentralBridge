@@ -1,8 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using AutoTf.CentralBridgeOS.Extensions;
+using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Sync;
+using AutoTf.CentralBridgeOS.Services.Network;
+using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +16,12 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 public class InformationController : ControllerBase
 {
 	private readonly CodeValidator _codeValidator;
-	private readonly FileManager _fileManager;
+	private readonly IFileManager _fileManager;
 	private readonly TrainSessionService _trainSessionService;
 	private readonly Logger _logger;
 	private readonly string _logDir = "/var/log/AutoTF/AutoTf.CentralBridgeOS.Server/";
 
-	public InformationController(Logger logger, CodeValidator codeValidator, FileManager fileManager, TrainSessionService trainSessionService)
+	public InformationController(Logger logger, CodeValidator codeValidator, IFileManager fileManager, TrainSessionService trainSessionService)
 	{
 		_logger = logger;
 		_codeValidator = codeValidator;
@@ -36,9 +39,9 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply service state:");
+			_logger.Log("Could not supply service state:");
 			_logger.Log(e.ToString());
-			return BadRequest("INFO-C: Could not supply service state.");
+			return BadRequest("Could not supply service state.");
 		}
 	}
 
@@ -52,9 +55,9 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not get log dates:");
+			_logger.Log("Could not get log dates:");
 			_logger.Log(e.ToString());
-			return BadRequest("INFO-C: Could not get log dates.");
+			return BadRequest("Could not get log dates.");
 		}
 	}
 
@@ -67,9 +70,9 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log($"INFO-C: Could not get logs for date {date}:");
-			_logger.Log(e.Message);
-			return BadRequest($"INFO-C: Could not get logs for date {date}j.");
+			_logger.Log($"Could not get logs for date {date}:");
+			_logger.Log(e.ToString());
+			return BadRequest($"Could not get logs for date {date}j.");
 		}
 	}
 
@@ -78,15 +81,15 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			_logger.Log("INFO-C: Version was requested.");
+			_logger.Log("Version was requested.");
 			
 			return Ok(Statics.GetGitVersion());
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not report version:");
+			_logger.Log("Could not report version:");
 			_logger.Log(e.Message);
-			return BadRequest("INFO-C: Could not report version.");
+			return BadRequest("Could not report version.");
 		}
 	}
 
@@ -99,7 +102,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply train id:");
+			_logger.Log("Could not supply train id:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply train id.");
 		}
@@ -114,7 +117,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply train name:");
+			_logger.Log("Could not supply train name:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply train name.");
 		}
@@ -129,7 +132,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply last sync try:");
+			_logger.Log("Could not supply last sync try:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply last sync try.");
 		}
@@ -144,7 +147,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply last sync:");
+			_logger.Log("Could not supply last sync:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply last sync.");
 		}
@@ -159,28 +162,24 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("INFO-C: Could not supply EVU name:");
+			_logger.Log("Could not supply EVU name:");
 			_logger.Log(e.Message);
 			return BadRequest("Could not supply EVU name.");
 		}
 	}
 
+	[MacAuthorize]
 	[HttpGet("issimavailable")]
 	public IActionResult IsSimAvailable()
 	{
-		if (!Request.Headers.IsAllowedDevice())
-			return Unauthorized();
-		
 		// To be implemented and tested.
 		return Content("False");
 	}
 
+	[MacAuthorize]
 	[HttpGet("isinternetavailable")]
 	public IActionResult IsInternetAvailable()
 	{
-		if (!Request.Headers.IsAllowedDevice())
-			return Unauthorized();
-		
 		return Content(NetworkConfigurator.IsInternetAvailable().ToString());
 	}
 	
@@ -189,10 +188,11 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
-			Console.WriteLine("Processing login...");
-			if (!_codeValidator.ValidateCode(code, serialNumber, timestamp))
+			_logger.Log("Processing Login.");
+			CodeValidationResult result = _codeValidator.ValidateCode(code, serialNumber, timestamp);
+			if (result != CodeValidationResult.Valid)
 			{
-				_logger.Log($"Device: {macAddr} tried to login with key {code} and timestamp {timestamp} but failed.");
+				_logger.Log($"Device: {macAddr} tried to login with key {code} and timestamp {timestamp} but failed with reason {result.ToString()}.");
 				return NotFound();
 			}
 
@@ -202,7 +202,7 @@ public class InformationController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("INFO-C: Error during login:");
+			_logger.Log("Error during login:");
 			_logger.Log(ex.Message);
 			return BadRequest("Internal server error.");
 		}

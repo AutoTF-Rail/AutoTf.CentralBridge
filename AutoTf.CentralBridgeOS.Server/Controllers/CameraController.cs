@@ -1,40 +1,39 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Sync;
+using AutoTf.CentralBridgeOS.Services.Camera;
+using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridgeOS.Server.Controllers;
 
-// TODO: Secondary endpoint for second camera /other side
 [ApiController]
 [Route("/camera")]
 public class CameraController : ControllerBase
 {
 	private readonly Logger _logger;
 	private readonly SyncManager _syncManager;
-	private readonly UdpProxyService _udpProxy;
+	private readonly MainCameraProxyService _mainCameraProxy;
 	
-	public CameraController(Logger logger, SyncManager syncManager, UdpProxyService udpProxy)
+	public CameraController(Logger logger, SyncManager syncManager, MainCameraProxyService mainCameraProxy)
 	{
 		_logger = logger;
 		_syncManager = syncManager;
-		_udpProxy = udpProxy;
+		_mainCameraProxy = mainCameraProxy;
 	}
 	
 	[HttpPost("startStream")]
-	public IActionResult StartStream([FromQuery, Required] int port, [FromQuery, Required] int cameraIndex)
+	public IActionResult StartStream([FromQuery, Required] int port)
 	{
 		try
 		{
-			// TODO: Implement camera index for multiple cameras
 			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
 			
 			if (ipAddress != null)
 			{
 				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, port);
-				_udpProxy.AddClient(receiverEndpoint);
+				_mainCameraProxy.AddClient(receiverEndpoint);
                 
 				_logger.Log($"Added receiver: {receiverEndpoint}");
 				return Ok("Receiver added successfully.");
@@ -44,14 +43,14 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("CAM-C: Error in startStream.");
+			_logger.Log("Error in startStream.");
 			_logger.Log(ex.ToString());
 			return BadRequest("Failed to add receiver.");
 		}
 	}
 	
 	[HttpPost("stopStream")]
-	public IActionResult StopStream([FromQuery, Required] int cameraIndex)
+	public IActionResult StopStream()
 	{
 		try
 		{
@@ -59,7 +58,7 @@ public class CameraController : ControllerBase
 			
 			if (ipAddress != null)
 			{
-				_udpProxy.RemoveClient(ipAddress);
+				_mainCameraProxy.RemoveClient(ipAddress);
 				
 				_logger.Log($"Removed receiver: {ipAddress}");
 				return Ok("Receiver removed successfully.");
@@ -69,7 +68,7 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("CAM-C: Error in stopStream.");
+			_logger.Log("Error in stopStream.");
 			_logger.Log(ex.ToString());
 			return BadRequest("Failed to remove receiver.");
 		}
@@ -84,8 +83,8 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("CAM-C: Could not supply next save:");
-			_logger.Log(e.Message);
+			_logger.Log("Could not supply next save:");
+			_logger.Log(e.ToString());
 			return BadRequest("Could not supply next save.");
 		}
 	}
