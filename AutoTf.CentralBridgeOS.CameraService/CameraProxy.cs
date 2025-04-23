@@ -157,6 +157,7 @@ internal class CameraProxy : IDisposable
 		}
 		catch (Exception ex)
 		{
+			// This error sort of happens quite often, but we can safely ignore it. (Afaik there hasn't been any consequences)
 			_logger.Log("Failed to decode JPEG frame: " + ex.Message);
 			return null;
 		}

@@ -60,30 +60,12 @@ public class NetworkConfigurator
 
 		if (output.Contains("inet"))
 		{
-			_logger.Log($"Current IP settings for {interfaceName}:");
-			_logger.Log(output.Split('\n')[1].Trim());
+			string currIp = output.Split('\n').FirstOrDefault(x => x.Contains("inet"))?.Split("brd")[0].Replace("inet", "").Trim()!;
+			_logger.Log($"Current IP settings for {interfaceName}: {currIp}");
 			return true;
 		}
 
 		_logger.Log($"{interfaceName} does not have an IP address set.");
 		return false;
-	}
-	
-	
-	public static string? FindUsbEthernetAdapter()
-	{
-		_logger.Log("Checking for USB Lan Adapter");
-		string command = "udevadm info -e | grep -B20 -A10 'ID_VENDOR_ID=0bda' | grep 'INTERFACE='";
-		string output = CommandExecuter.ExecuteCommand(command);
-
-		Match match = Regex.Match(output, "INTERFACE=(\\w+)");
-		
-		if (match.Success)
-		{
-			_logger.Log($"Found interface at: {match.Groups[1].Value}");
-			return match.Groups[1].Value;
-		}
-
-		return null;
 	}
 }

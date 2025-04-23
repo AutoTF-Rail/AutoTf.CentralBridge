@@ -126,7 +126,6 @@ public class TimetableController : ControllerBase
         try
         {
             // TODO: Notify the corresponding services, that this has changed.
-            // TODO: Save/update this bool in _ebula.
             _ebula.AutoDetectState = ServiceState.AlwaysOff;
             return Ok();
         }
@@ -144,8 +143,7 @@ public class TimetableController : ControllerBase
     {
         try
         {
-            // TODO: Notify _ebula and needed services that this has changed.
-            // TODO: Invoke a full rescan of the timetable
+            // TODO: Only invoke a rescan if the train isn't moving already
             _ebula.AutoDetectState = ServiceState.AlwaysOn;
             return Ok();
         }

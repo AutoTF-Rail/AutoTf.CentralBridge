@@ -29,6 +29,7 @@ public class HotspotService : IHostedService
     {
         _logger.Log("Configuring network");
 	
+        // Unblocks hostapd
         CommandExecuter.ExecuteSilent("rfkill unblock all", true);
         
         string interfaceName = "wlan1";
