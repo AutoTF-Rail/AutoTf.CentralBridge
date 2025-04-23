@@ -43,7 +43,6 @@ EOF
 
 
 sudo systemctl enable startupScript.service
-sudo systemctl start startupScript.service
 
 # Add disable_splash=1 to /boot/firmware/config.txt if it doesn't exist
 config_file="/boot/firmware/config.txt"
