@@ -67,6 +67,7 @@ public static class Program
 		builder.Services.AddHostedService<BluetoothService>();
 		builder.Services.AddHostedService<CameraManager>();
 		
+		builder.Services.AddHostedSingleton<IAicService, AicService>();
 		builder.Services.AddHostedSingleton<MotionService>();
 		builder.Services.AddHostedSingleton<MainCameraProxyService>();
 		builder.Services.AddHostedSingleton<MotorManager>();
