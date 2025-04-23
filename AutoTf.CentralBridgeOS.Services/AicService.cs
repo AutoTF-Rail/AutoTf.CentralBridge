@@ -45,6 +45,9 @@ public class AicService : IAicService
     private void ConfigureTimer()
     {
         OnlineTimerOnElapsed(null, null!);
+        // Log this once on startup
+        _logger.Log($"Verbose: AIC online state has changed to: Online: {Online}.");
+        
         _onlineTimer.Elapsed += OnlineTimerOnElapsed;
         _onlineTimer.Start();
     }
