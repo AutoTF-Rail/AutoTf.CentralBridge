@@ -63,7 +63,6 @@ public class MotorManager : IHostedService
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
 		InitializeI2CConnection();
-		ListenForEngagePin();
 
 		return Task.CompletedTask;
 	}
