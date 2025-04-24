@@ -7,7 +7,7 @@ using Timer = System.Timers.Timer;
 
 namespace AutoTf.CentralBridgeOS.Sync;
 
-public abstract class SyncManager : IHostedService
+public class SyncManager : IHostedService
 {
 	private readonly IFileManager _fileManager;
 

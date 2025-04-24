@@ -1,12 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using AutoTf.CentralBridgeOS.Extensions;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Network;
 using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
@@ -33,11 +30,11 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("serviceState")]
-	public IActionResult GetServiceState()
+	public ActionResult<BridgeServiceState> GetServiceState()
 	{
 		try
 		{
-			return Content(_trainSessionService.LocalServiceState.ToString());
+			return _trainSessionService.LocalServiceState;
 		}
 		catch (Exception e)
 		{
@@ -48,12 +45,12 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("logdates")]
-	public IActionResult LogDates()
+	public ActionResult<List<string?>> LogDates()
 	{
 		try
 		{
 			string[] files = Directory.GetFiles(_logDir).Order().ToArray();
-			return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
+			return files.Select(Path.GetFileNameWithoutExtension).ToList();
 		}
 		catch (Exception e)
 		{
@@ -64,11 +61,11 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("logs")]
-	public IActionResult Logs([FromQuery, Required] string date)
+	public ActionResult<List<string>> Logs([FromQuery, Required] string date)
 	{
 		try
 		{
-			return Content(JsonSerializer.Serialize(System.IO.File.ReadAllLines(_logDir + date + ".txt")));
+			return System.IO.File.ReadAllLines(_logDir + date + ".txt").ToList();
 		}
 		catch (Exception e)
 		{
@@ -79,13 +76,13 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("version")]
-	public IActionResult Version()
+	public ActionResult<string> Version()
 	{
 		try
 		{
 			_logger.Log("Version was requested.");
 			
-			return Ok(Statics.GetGitVersion());
+			return Statics.GetGitVersion();
 		}
 		catch (Exception e)
 		{
@@ -96,11 +93,11 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("trainId")]
-	public IActionResult TrainId()
+	public ActionResult<string> TrainId()
 	{
 		try
 		{
-			return Content(_fileManager.ReadFile("trainId"));
+			return _fileManager.ReadFile("trainId");
 		}
 		catch (Exception e)
 		{
@@ -111,11 +108,11 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("trainName")]
-	public IActionResult TrainName()
+	public ActionResult<string> TrainName()
 	{
 		try
 		{
-			return Content(_fileManager.ReadFile("TrainName"));
+			return _fileManager.ReadFile("TrainName");
 		}
 		catch (Exception e)
 		{
@@ -126,11 +123,11 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("lastsynctry")]
-	public IActionResult LastSyncTry()
+	public ActionResult<DateTime> LastSyncTry()
 	{
 		try
 		{
-			return Content(SyncManager.LastSyncTry.ToString("o"));
+			return SyncManager.LastSyncTry;
 		}
 		catch (Exception e)
 		{
@@ -141,11 +138,11 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("lastsynced")]
-	public IActionResult LastSynced()
+	public ActionResult<DateTime> LastSynced()
 	{
 		try
 		{
-			return Content(SyncManager.LastSynced.ToString("o"));
+			return SyncManager.LastSynced;
 		}
 		catch (Exception e)
 		{
@@ -156,11 +153,11 @@ public class InformationController : ControllerBase
 	}
 
 	[HttpGet("evuname")]
-	public IActionResult EvuName()
+	public ActionResult<string> EvuName()
 	{
 		try
 		{
-			return Content(_trainSessionService.EvuName);
+			return _trainSessionService.EvuName;
 		}
 		catch (Exception e)
 		{
@@ -172,17 +169,17 @@ public class InformationController : ControllerBase
 
 	[MacAuthorize]
 	[HttpGet("issimavailable")]
-	public IActionResult IsSimAvailable()
+	public ActionResult<bool> IsSimAvailable()
 	{
 		// To be implemented and tested.
-		return Content("False");
+		return false;
 	}
 
 	[MacAuthorize]
 	[HttpGet("isinternetavailable")]
-	public IActionResult IsInternetAvailable()
+	public ActionResult<bool> IsInternetAvailable()
 	{
-		return Content(NetworkConfigurator.IsInternetAvailable().ToString());
+		return NetworkConfigurator.IsInternetAvailable();
 	}
 	
 	[HttpPost("login")]

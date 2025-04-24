@@ -1,6 +1,6 @@
+
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
