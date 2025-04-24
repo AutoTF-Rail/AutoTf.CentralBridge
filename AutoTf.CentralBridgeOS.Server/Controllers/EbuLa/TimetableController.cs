@@ -3,6 +3,7 @@ using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 using AutoTf.CentralBridgeOS.Localise.Display;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ public class TimetableController : ControllerBase
     }
 
     [HttpGet("currentTable")]
-    public ActionResult<List<KeyValuePair<string, RowContent>>> CurrentTable()
+    public ActionResult<List<KeyValuePair<string, IRowContent>>> CurrentTable()
     {
         try
         {
@@ -42,7 +43,7 @@ public class TimetableController : ControllerBase
 
     [MacAuthorize]
     [HttpPost("edit")]
-    public IActionResult Edit([FromBody, Required] List<KeyValuePair<string, RowContent>> newTable)
+    public IActionResult Edit([FromBody, Required] List<KeyValuePair<string, IRowContent>> newTable)
     {
         try
         {
