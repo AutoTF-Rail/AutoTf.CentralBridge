@@ -18,9 +18,11 @@ public class FallBackTrain : DefaultModel
 		Task.Run(Initialize);
 	}
 
+	/// <summary>
+	/// It's easier to just let the endpoint be and log that something has been done, even when EC is unavailable.
+	/// </summary>
 	public override void EasyControl(int power)
 	{
-		// TODO: Report to user that this is not available, if it's the default train model.
 		Logger.Log($"EC: Setting power to {power}%.");
 	}
 

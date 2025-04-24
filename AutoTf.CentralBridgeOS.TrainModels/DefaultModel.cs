@@ -8,10 +8,11 @@ namespace AutoTf.CentralBridgeOS.TrainModels;
 
 public abstract class DefaultModel : ITrainModel
 {
+	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
+	
 	internal readonly MotorManager MotorManager;
 	internal readonly Logger Logger;
 
-	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
 	
 	internal int _currentPower = 0;
 
@@ -21,27 +22,33 @@ public abstract class DefaultModel : ITrainModel
 		Logger = logger;
 	}
 
+	public bool IsEasyControlAvailable
+	{
+		get
+		{
+			// TODO: Implement some proper check in the future, also for errors on the motors etc.
+			if (LeverCount() != 0)
+				return true;
+
+			return false;
+		}
+	}
+	
+	public abstract void Initialize();
+
 	public abstract CcdDisplayBase CcdDisplay { get; }
 	public abstract RegionMappings Mappings { get; }
+
+	public Action? OnEmergencyBrake { get; set; }
 
 	public abstract void EasyControl(int power);
 
 	public abstract void EmergencyBrake();
 	
-	public abstract void Initialize();
+	public int LeverCount() => Levers.Count;
+	
 
-	public Action? OnEmergencyBrake { get; set; }
-
-
-	public int LeverCount()
-	{
-		return Levers.Count;
-	}
-
-	public LeverType GetLeverType(int index)
-	{
-		return Levers[index].Type;
-	}
+	public LeverType GetLeverType(int index) => Levers[index].Type;
 
 	public double? GetLeverPercentage(int index)
 	{
