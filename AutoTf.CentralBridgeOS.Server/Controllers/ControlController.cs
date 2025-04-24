@@ -1,11 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using AutoTf.CentralBridgeOS.Extensions;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.DataModels;
-using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Services.Gps;
-using AutoTf.CentralBridgeOS.TrainModels;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,11 +26,11 @@ public class ControlController : ControllerBase
 	// TODO: This is only gps speed atm
 	[MacAuthorize]
 	[HttpGet("speed")]
-	public IActionResult GetSpeed()
+	public ActionResult<double?> GetSpeed()
 	{
 		try
 		{
-			return Content(_motionService.CurrentSpeed.ToString()!);
+			return _motionService.CurrentSpeed;
 		}
 		catch (Exception e)
 		{
@@ -45,11 +42,11 @@ public class ControlController : ControllerBase
 
 	[MacAuthorize]
 	[HttpGet("lastspeedtime")]
-	public IActionResult GetLastSpeedTime()
+	public ActionResult<DateTime> GetLastSpeedTime()
 	{
 		try
 		{
-			return Content(_motionService.LastSpeedTime.ToString("o"));
+			return _motionService.LastSpeedTime;
 		}
 		catch (Exception e)
 		{
@@ -61,11 +58,11 @@ public class ControlController : ControllerBase
 
 	[MacAuthorize]
 	[HttpGet("areMotorsReleased")]
-	public IActionResult AreMotorsReleased()
+	public ActionResult<bool> AreMotorsReleased()
 	{
 		try
 		{
-			return Content(_trainModel.AreMotorsReleased().ToString());
+			return _trainModel.AreMotorsReleased();
 		}
 		catch (Exception e)
 		{
@@ -92,11 +89,11 @@ public class ControlController : ControllerBase
 
 	[MacAuthorize]
 	[HttpGet("leverCount")]
-	public IActionResult LeverCount()
+	public ActionResult<int> LeverCount()
 	{
 		try
 		{
-			return Content(_trainModel.LeverCount().ToString());
+			return _trainModel.LeverCount();
 		}
 		catch (Exception e)
 		{
@@ -108,11 +105,11 @@ public class ControlController : ControllerBase
 
 	[MacAuthorize]
 	[HttpGet("leverPosition")]
-	public IActionResult LeverPosition([FromQuery, Required] int leverIndex)
+	public ActionResult<double?> LeverPosition([FromQuery, Required] int leverIndex)
 	{
 		try
 		{
-			return Content(_trainModel.GetLeverPercentage(leverIndex).ToString() ?? string.Empty);
+			return _trainModel.GetLeverPercentage(leverIndex);
 		}
 		catch (Exception e)
 		{
@@ -124,11 +121,11 @@ public class ControlController : ControllerBase
 
 	[MacAuthorize]
 	[HttpGet("leverType")]
-	public IActionResult LeverType([FromQuery, Required] int leverIndex)
+	public ActionResult<LeverType> LeverType([FromQuery, Required] int leverIndex)
 	{
 		try
 		{
-			return Content(_trainModel.GetLeverType(leverIndex).ToString());
+			return _trainModel.GetLeverType(leverIndex);
 		}
 		catch (Exception e)
 		{

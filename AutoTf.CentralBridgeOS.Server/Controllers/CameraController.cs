@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Camera;
 using AutoTf.CentralBridgeOS.Sync;
 using AutoTf.Logging;
@@ -75,11 +74,11 @@ public class CameraController : ControllerBase
 	}
 
 	[HttpGet("nextSave")]
-	public IActionResult NextSave()
+	public ActionResult<DateTime> NextSave()
 	{
 		try
 		{
-			return Content(_syncManager.NextInterval().ToString("o"));
+			return _syncManager.NextInterval();
 		}
 		catch (Exception e)
 		{
