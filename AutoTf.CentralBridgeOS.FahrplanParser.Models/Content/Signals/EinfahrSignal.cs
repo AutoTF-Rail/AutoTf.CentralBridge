@@ -1,4 +1,5 @@
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 
 namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Signals;
 
@@ -34,7 +35,7 @@ public class EinfahrSignal : SignalContent
 		return $"Esig{speed} {SectionName}";
 	}
 
-	public static bool TryParse(string additionalText, out RowContent? content)
+	public static bool TryParse(string additionalText, out IRowContent? content)
 	{
 		content = null;
 		

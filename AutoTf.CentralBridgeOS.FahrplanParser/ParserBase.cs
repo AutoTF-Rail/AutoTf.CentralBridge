@@ -1,7 +1,7 @@
 using System.Drawing;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Emgu.CV;
 using Emgu.CV.OCR;
 
@@ -18,25 +18,25 @@ public abstract class ParserBase
 		Train = train;
 	}
 
-	protected bool TryParseTunnel(Mat mat, Rectangle row, string additionalText, out RowContent? content) =>
+	protected bool TryParseTunnel(Mat mat, Rectangle row, string additionalText, out IRowContent? content) =>
 		ContentResolver.TryParseTunnel(mat, row, additionalText, out content);
 
-	protected bool TryParseIcon(Mat mat, Rectangle row, out RowContent? content) =>
+	protected bool TryParseIcon(Mat mat, Rectangle row, out IRowContent? content) =>
 		ContentResolver.TryParseIcon(mat, row, out content);
 
-	protected RowContent? ResolveContent(string additionalText, string arrivalTime, string departureTime)
+	protected IRowContent? ResolveContent(string additionalText, string arrivalTime, string departureTime)
 	{
 		if (arrivalTime.Contains("*1)")) // Are multiple numbers stacked on the arrival time?
 			return null;
 		
-		if (ContentResolver.TryParseSignal(additionalText, out RowContent? signalContent))
+		if (ContentResolver.TryParseSignal(additionalText, out IRowContent? signalContent))
 			return signalContent!;
 		
-		if (ContentResolver.TryParseMarker(additionalText, out RowContent? markerContent))
+		if (ContentResolver.TryParseMarker(additionalText, out IRowContent? markerContent))
 			return markerContent!;
 		
 		// Important to do this AFTER the markers, because Abzw and others could have a departure time too
-		if (ContentResolver.TryParseStation(additionalText, arrivalTime, departureTime, out RowContent? stationContent))
+		if (ContentResolver.TryParseStation(additionalText, arrivalTime, departureTime, out IRowContent? stationContent))
 			return stationContent!;
 		
 		return new UnknownContent(additionalText);
@@ -54,7 +54,7 @@ public abstract class ParserBase
 		return engine.GetUTF8Text().Trim();
 	}
 	
-	public RowContent? CheckForDuplicateContent(RowContent content, string hektometer, List<KeyValuePair<string, RowContent>> rows)
+	public IRowContent? CheckForDuplicateContent(IRowContent content, string hektometer, List<KeyValuePair<string, IRowContent>> rows)
 	{
 		if (rows.Count == 0) 
 			return content;

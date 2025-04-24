@@ -1,11 +1,11 @@
 using System.Drawing;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Icons;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Icons.Tunnels;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Markers;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Signals;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Signals.Vorsignal;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 
@@ -13,7 +13,7 @@ namespace AutoTf.CentralBridgeOS.FahrplanParser;
 
 internal static class ContentResolver
 {
-	public static bool TryParseTunnel(Mat mat, Rectangle row, string additionalText, out RowContent? content)
+	public static bool TryParseTunnel(Mat mat, Rectangle row, string additionalText, out IRowContent? content)
 	{
 		content = null;
 		
@@ -31,7 +31,7 @@ internal static class ContentResolver
 		return content != null;
 	}
 
-	public static bool TryParseIcon(Mat mat, Rectangle row, out RowContent? content)
+	public static bool TryParseIcon(Mat mat, Rectangle row, out IRowContent? content)
 	{
 		content = null;
 		
@@ -51,7 +51,7 @@ internal static class ContentResolver
 		return content != null;
 	}
 	
-	public static bool TryParseStation(string additionalText, string arrival, string departure, out RowContent? content)
+	public static bool TryParseStation(string additionalText, string arrival, string departure, out IRowContent? content)
 	{
 		content = null;
 		
@@ -71,7 +71,7 @@ internal static class ContentResolver
 		}
 	}
 
-	internal static bool TryParseSignal(string additionalText, out RowContent? content)
+	internal static bool TryParseSignal(string additionalText, out IRowContent? content)
 	{
 		if (AusfahrVorsignal.TryParse(additionalText, out content))
 			return true;
@@ -98,7 +98,7 @@ internal static class ContentResolver
 	}
 
 
-	public static bool TryParseMarker(string additionalText, out RowContent? content)
+	public static bool TryParseMarker(string additionalText, out IRowContent? content)
 	{
 		content = null;
 
