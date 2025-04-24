@@ -1,4 +1,5 @@
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;

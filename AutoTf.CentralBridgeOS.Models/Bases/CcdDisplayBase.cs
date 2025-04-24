@@ -1,6 +1,6 @@
 using Emgu.CV.OCR;
 
-namespace AutoTf.CentralBridgeOS.Models;
+namespace AutoTf.CentralBridgeOS.Models.Bases;
 
 public abstract class CcdDisplayBase : IDisposable
 {

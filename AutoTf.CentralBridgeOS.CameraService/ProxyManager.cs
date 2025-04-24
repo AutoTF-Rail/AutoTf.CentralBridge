@@ -1,19 +1,21 @@
 using System.Net;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Emgu.CV;
 
 namespace AutoTf.CentralBridgeOS.CameraService;
 
 // This class doesn't need to be a HostedService, because its dispose is being called by the CameraManager
-public class ProxyManager
+public class ProxyManager : IProxyManager
 {
 	private readonly List<CameraProxy> _displays = new List<CameraProxy>();
 
 	private CameraProxy? _mainCamera;
-	
-	internal async Task CreateProxy(int port, bool isDisplay, Logger logger, ITrainModel train)
+
+	public async Task CreateProxy(int port, bool isDisplay, Logger logger, ITrainModel train)
 	{
 		CameraProxy proxy = new CameraProxy(port, isDisplay, logger, train);
 		
@@ -40,9 +42,6 @@ public class ProxyManager
 		return _displays.Any(x => x.DisplayType == type);
 	}
 
-	/// <summary>
-	/// Returns a keyvaluepair representing the type of display, and if it is running or not.
-	/// </summary>
 	public List<KeyValuePair<DisplayType, bool>> DisplaysStatus()
 	{
 		return _displays.Select(x => new KeyValuePair<DisplayType, bool>(x.DisplayType, x.IsRunning)).ToList();

@@ -3,6 +3,7 @@ using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 using AutoTf.CentralBridgeOS.Localise.Display;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,9 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers.EbuLa;
 public class TimetableController : ControllerBase
 {
     private readonly Logger _logger;
-    private readonly EbuLaService _ebula;
+    private readonly IEbuLaService _ebula;
     
-    public TimetableController(Logger logger, EbuLaService ebula)
+    public TimetableController(Logger logger, IEbuLaService ebula)
     {
         _logger = logger;
         _ebula = ebula;

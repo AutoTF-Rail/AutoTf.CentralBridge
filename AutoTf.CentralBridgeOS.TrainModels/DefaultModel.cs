@@ -1,8 +1,9 @@
-using AutoTf.CentralBridgeOS.FahrplanParser.Models;
 using AutoTf.CentralBridgeOS.Models;
-using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Models.Bases;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
-using Iot.Device.RadioTransmitter;
 
 namespace AutoTf.CentralBridgeOS.TrainModels;
 
@@ -10,13 +11,12 @@ public abstract class DefaultModel : ITrainModel
 {
 	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
 	
-	internal readonly MotorManager MotorManager;
+	internal readonly IMotorManager MotorManager;
 	internal readonly Logger Logger;
-
 	
 	internal int _currentPower = 0;
 
-	public DefaultModel(MotorManager motorManager, Logger logger)
+	public DefaultModel(IMotorManager motorManager, Logger logger)
 	{
 		MotorManager = motorManager;
 		Logger = logger;

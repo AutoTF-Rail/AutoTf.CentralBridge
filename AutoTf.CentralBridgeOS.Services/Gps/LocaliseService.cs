@@ -1,4 +1,4 @@
-using AutoTf.CentralBridgeOS.Localise.Display;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -7,8 +7,8 @@ namespace AutoTf.CentralBridgeOS.Services.Gps;
 public class LocaliseService : IHostedService
 {
     private readonly Logger _logger;
-    private readonly EbuLaService _ebuLaService;
-    private readonly CcdService _ccdService;
+    private readonly IEbuLaService _ebuLaService;
+    private readonly ICcdService _ccdService;
 
     public bool? StartSuccess;
 
@@ -16,7 +16,7 @@ public class LocaliseService : IHostedService
 
     private bool _canRun = true;
     
-    public LocaliseService(Logger logger, EbuLaService ebuLaService, CcdService ccdService)
+    public LocaliseService(Logger logger, IEbuLaService ebuLaService, ICcdService ccdService)
     {
         _logger = logger;
         _ebuLaService = ebuLaService;

@@ -1,3 +1,4 @@
+using AutoTf.CentralBridgeOS.Models.Enums;
 using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Models.Interfaces;

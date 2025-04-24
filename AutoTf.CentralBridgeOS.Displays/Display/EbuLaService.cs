@@ -3,6 +3,8 @@ using AutoTf.CentralBridgeOS.FahrplanParser;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Emgu.CV;
@@ -15,7 +17,7 @@ public class EbuLaService : IEbuLaService
 {
     private readonly Logger _logger;
     private readonly ITrainModel _train;
-    private readonly ProxyManager _proxy;
+    private readonly IProxyManager _proxy;
     private readonly IFileManager _fileManager;
     private Tesseract _engine;
     private Parser _parser;
@@ -27,7 +29,7 @@ public class EbuLaService : IEbuLaService
 
     private ManualResetEvent _ebulaReadBlock = new ManualResetEvent(true);
     
-    public EbuLaService(Logger logger, ITrainModel train, ProxyManager proxy, IFileManager fileManager)
+    public EbuLaService(Logger logger, ITrainModel train, IProxyManager proxy, IFileManager fileManager)
     {
         _logger = logger;
         _train = train;

@@ -1,5 +1,4 @@
 using System.Drawing;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models;
 using AutoTf.CentralBridgeOS.Models;
 
 namespace AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;

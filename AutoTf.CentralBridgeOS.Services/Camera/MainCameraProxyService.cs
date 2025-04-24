@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
 using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services.Camera;

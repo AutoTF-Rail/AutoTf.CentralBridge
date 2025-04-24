@@ -3,6 +3,7 @@ using AutoTf.CentralBridgeOS.FahrplanParser.Extensions;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Emgu.CV;
 using Emgu.CV.OCR;

@@ -1,6 +1,9 @@
-using AutoTf.CentralBridgeOS.CcdDisplays.DesiroHc;
 using AutoTf.CentralBridgeOS.Models;
-using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Models.Bases;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays.DesiroHc;
 using AutoTf.Logging;
 using Mapping = AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC.Mapping;
 
@@ -13,7 +16,7 @@ public class FallBackTrain : DefaultModel
 	public override CcdDisplayBase CcdDisplay { get; } = new Base();
 	public override RegionMappings Mappings { get; } = new Mapping();
 	
-	public FallBackTrain(MotorManager motorManager, Logger logger) : base(motorManager, logger)
+	public FallBackTrain(IMotorManager motorManager, Logger logger) : base(motorManager, logger)
 	{
 		Task.Run(Initialize);
 	}

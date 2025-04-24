@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AutoTf.CentralBridgeOS.Models;
+namespace AutoTf.CentralBridgeOS.Models.DataModels;
 
 public class LeverSetModel
 {

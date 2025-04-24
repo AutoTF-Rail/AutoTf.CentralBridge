@@ -1,4 +1,4 @@
-namespace AutoTf.CentralBridgeOS.Models;
+namespace AutoTf.CentralBridgeOS.Models.Enums;
 
 public enum BridgeServiceState
 {

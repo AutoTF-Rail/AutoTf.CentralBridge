@@ -3,6 +3,7 @@ using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Localise;
 using AutoTf.CentralBridgeOS.Localise.Display;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Camera;
@@ -59,7 +60,7 @@ public static class Program
 		builder.Services.AddSingleton<TrainSessionService>();
 		builder.Services.AddSingleton<IFileManager, FileManager>();
 		builder.Services.AddSingleton<CodeValidator>();
-		builder.Services.AddSingleton<ProxyManager>();
+		builder.Services.AddSingleton<IProxyManager, ProxyManager>();
 		
 		builder.Services.AddHostedService<NetworkManager>();
 		builder.Services.AddHostedService<MainCameraService>();
@@ -70,10 +71,10 @@ public static class Program
 		builder.Services.AddHostedSingleton<IAicService, AicService>();
 		builder.Services.AddHostedSingleton<MotionService>();
 		builder.Services.AddHostedSingleton<MainCameraProxyService>();
-		builder.Services.AddHostedSingleton<MotorManager>();
+		builder.Services.AddHostedSingleton<IMotorManager, MotorManager>();
 		builder.Services.AddHostedSingleton<SyncManager>();
-		builder.Services.AddHostedSingleton<EbuLaService>();
-		builder.Services.AddHostedSingleton<CcdService>();
+		builder.Services.AddHostedSingleton<IEbuLaService, EbuLaService>();
+		builder.Services.AddHostedSingleton<ICcdService, CcdService>();
 		builder.Services.AddHostedSingleton<LocaliseService>();
 			
 		builder.Services.AddSingleton<ITrainModel>(provider =>

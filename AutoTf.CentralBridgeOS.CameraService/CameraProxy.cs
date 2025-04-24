@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using AutoTf.CentralBridgeOS.FahrplanParser;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
+using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;

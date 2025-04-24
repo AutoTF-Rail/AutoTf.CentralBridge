@@ -1,6 +1,7 @@
 using System.Drawing;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Emgu.CV;
 using Emgu.CV.OCR;
