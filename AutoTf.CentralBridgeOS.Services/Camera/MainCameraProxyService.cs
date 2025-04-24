@@ -2,13 +2,14 @@ using System.Net;
 using System.Net.Sockets;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Services.Camera;
 
 public class MainCameraProxyService : IHostedService
 {
-	private readonly TrainSessionService _trainSessionService;
+	private readonly ITrainSessionService _trainSessionService;
 	
 	private readonly UdpClient _ffmpegInput;
 	private readonly UdpClient _secondaryCamInput;
@@ -27,7 +28,7 @@ public class MainCameraProxyService : IHostedService
 	
 	private bool _canStream = true;
 	
-	public MainCameraProxyService(TrainSessionService trainSessionService)
+	public MainCameraProxyService(ITrainSessionService trainSessionService)
 	{
 		_trainSessionService = trainSessionService;
 		

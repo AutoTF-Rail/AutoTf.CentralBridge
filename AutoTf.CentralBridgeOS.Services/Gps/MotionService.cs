@@ -1,5 +1,6 @@
 using System.IO.Ports;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 

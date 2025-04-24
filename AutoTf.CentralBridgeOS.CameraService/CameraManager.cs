@@ -3,6 +3,7 @@ using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 

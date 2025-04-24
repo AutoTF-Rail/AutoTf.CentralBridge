@@ -5,6 +5,7 @@ using AutoTf.CentralBridgeOS.Localise.Display;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Camera;
 using AutoTf.CentralBridgeOS.Services.Gps;
@@ -57,7 +58,7 @@ public static class Program
 		builder.Services.AddControllers();
 			
 		builder.Services.AddSingleton(Logger);
-		builder.Services.AddSingleton<TrainSessionService>();
+		builder.Services.AddSingleton<ITrainSessionService, TrainSessionService>();
 		builder.Services.AddSingleton<IFileManager, FileManager>();
 		builder.Services.AddSingleton<CodeValidator>();
 		builder.Services.AddSingleton<IProxyManager, ProxyManager>();

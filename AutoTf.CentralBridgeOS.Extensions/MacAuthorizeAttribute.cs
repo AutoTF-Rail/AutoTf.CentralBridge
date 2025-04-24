@@ -1,4 +1,5 @@
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Static;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

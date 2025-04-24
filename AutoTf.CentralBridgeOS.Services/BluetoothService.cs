@@ -1,4 +1,6 @@
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -6,11 +8,11 @@ namespace AutoTf.CentralBridgeOS.Services;
 
 public class BluetoothService : IHostedService
 {
-	private readonly TrainSessionService _trainSessionService;
+	private readonly ITrainSessionService _trainSessionService;
 	private readonly Logger _logger = Statics.Logger;
 	private int _instanceId = 2;
 
-	public BluetoothService(TrainSessionService trainSessionService)
+	public BluetoothService(ITrainSessionService trainSessionService)
 	{
 		_trainSessionService = trainSessionService;
 	}

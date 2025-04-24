@@ -1,4 +1,5 @@
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Static;
 
 namespace AutoTf.CentralBridgeOS.Services.Gps;
 

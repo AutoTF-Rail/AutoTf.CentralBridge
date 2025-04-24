@@ -9,12 +9,12 @@ namespace AutoTf.CentralBridgeOS.Services.Camera;
 public class MainCameraService : IHostedService
 {
     private readonly Logger _logger;
-    private readonly TrainSessionService _trainSessionService;
+    private readonly ITrainSessionService _trainSessionService;
     private readonly IProxyManager _proxy;
 
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    public MainCameraService(Logger logger, TrainSessionService trainSessionService, IProxyManager proxy)
+    public MainCameraService(Logger logger, ITrainSessionService trainSessionService, IProxyManager proxy)
     {
         _logger = logger;
         _trainSessionService = trainSessionService;

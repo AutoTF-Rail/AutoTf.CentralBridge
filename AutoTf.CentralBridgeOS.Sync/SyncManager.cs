@@ -1,15 +1,13 @@
 using System.Timers;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
-using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Network;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 using Timer = System.Timers.Timer;
 
 namespace AutoTf.CentralBridgeOS.Sync;
 
-public class SyncManager : IHostedService
+public abstract class SyncManager : IHostedService
 {
 	private readonly IFileManager _fileManager;
 
@@ -27,7 +25,7 @@ public class SyncManager : IHostedService
 	public static DateTime LastSynced;
 	public static DateTime LastSyncTry;
 
-	public SyncManager(IFileManager fileManager, TrainSessionService trainSessionService)
+	public SyncManager(IFileManager fileManager, ITrainSessionService trainSessionService)
 	{
 		_fileManager = fileManager;
 		

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;

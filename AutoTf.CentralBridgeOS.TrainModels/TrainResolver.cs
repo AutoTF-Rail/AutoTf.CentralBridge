@@ -1,5 +1,6 @@
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.CentralBridgeOS.TrainModels.Models;
 using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
 using AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;

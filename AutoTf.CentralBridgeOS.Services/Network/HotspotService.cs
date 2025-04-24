@@ -1,6 +1,7 @@
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -11,10 +12,10 @@ public class HotspotService : IHostedService
     private const string DhcpConfigPath = "/etc/dnsmasq.conf";
     
     private readonly IFileManager _fileManager;
-    private readonly TrainSessionService _trainSessionService;
+    private readonly ITrainSessionService _trainSessionService;
     private readonly Logger _logger = Statics.Logger;
 
-    public HotspotService(IFileManager fileManager, TrainSessionService trainSessionService)
+    public HotspotService(IFileManager fileManager, ITrainSessionService trainSessionService)
     {
         _fileManager = fileManager;
         _trainSessionService = trainSessionService;
