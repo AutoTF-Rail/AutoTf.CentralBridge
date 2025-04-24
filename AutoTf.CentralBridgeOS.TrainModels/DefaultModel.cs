@@ -1,8 +1,8 @@
 using AutoTf.CentralBridgeOS.Models;
-using AutoTf.CentralBridgeOS.Models.Bases;
 using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.TrainModels;
@@ -36,7 +36,7 @@ public abstract class DefaultModel : ITrainModel
 	
 	public abstract void Initialize();
 
-	public abstract CcdDisplayBase CcdDisplay { get; }
+	public abstract ICcdDisplayBase CcdDisplay { get; }
 	public abstract RegionMappings Mappings { get; }
 
 	public Action? OnEmergencyBrake { get; set; }

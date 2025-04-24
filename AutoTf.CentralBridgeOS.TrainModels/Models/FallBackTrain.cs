@@ -1,8 +1,8 @@
 using AutoTf.CentralBridgeOS.Models;
-using AutoTf.CentralBridgeOS.Models.Bases;
 using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays;
 using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays.DesiroHc;
 using AutoTf.Logging;
 using Mapping = AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC.Mapping;

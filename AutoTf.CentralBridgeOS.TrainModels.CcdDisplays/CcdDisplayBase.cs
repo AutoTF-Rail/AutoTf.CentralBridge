@@ -1,8 +1,9 @@
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Emgu.CV.OCR;
 
-namespace AutoTf.CentralBridgeOS.Models.Bases;
+namespace AutoTf.CentralBridgeOS.TrainModels.CcdDisplays;
 
-public abstract class CcdDisplayBase : IDisposable
+public abstract class CcdDisplayBase : ICcdDisplayBase
 {
     private readonly Tesseract _engine;
 

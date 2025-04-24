@@ -1,5 +1,3 @@
-using AutoTf.CentralBridgeOS.CameraService;
-using AutoTf.CentralBridgeOS.Models.Bases;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
@@ -12,7 +10,7 @@ public class CcdService : ICcdService
 {
     private readonly Logger _logger;
     private readonly IProxyManager _proxy;
-    private CcdDisplayBase _displayBase;
+    private ICcdDisplayBase _displayBase;
     
     public CcdService(Logger logger, ITrainModel train, IProxyManager proxy)
     {
