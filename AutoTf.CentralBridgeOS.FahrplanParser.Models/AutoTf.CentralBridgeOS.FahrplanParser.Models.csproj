@@ -11,4 +11,8 @@
         <PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.10.0.5680" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridgeOS.Models\AutoTf.CentralBridgeOS.Models.csproj" />
+    </ItemGroup>
+
 </Project>

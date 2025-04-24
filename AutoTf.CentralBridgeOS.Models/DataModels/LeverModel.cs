@@ -1,4 +1,6 @@
-namespace AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
+
+namespace AutoTf.CentralBridgeOS.Models.DataModels;
 
 public class LeverModel
 {

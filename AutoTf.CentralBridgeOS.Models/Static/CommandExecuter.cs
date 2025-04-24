@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace AutoTf.CentralBridgeOS.Models;
+namespace AutoTf.CentralBridgeOS.Models.Static;
 
 public static class CommandExecuter
 {

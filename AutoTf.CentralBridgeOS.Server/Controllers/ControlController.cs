@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Gps;
 using AutoTf.CentralBridgeOS.TrainModels;
@@ -59,6 +60,85 @@ public class ControlController : ControllerBase
 	}
 
 	[MacAuthorize]
+	[HttpGet("areMotorsReleased")]
+	public IActionResult AreMotorsReleased()
+	{
+		try
+		{
+			return Content(_trainModel.AreMotorsReleased().ToString());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("Error while supplying AreMotorsReleased:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[HttpGet("isEasyControlAvailable")]
+	public ActionResult<bool> IsEasyControlAvailable()
+	{
+		try
+		{
+			return _trainModel.IsEasyControlAvailable;
+		}
+		catch (Exception e)
+		{
+			_logger.Log("Error while supplying IsEasyControlAvailable:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[MacAuthorize]
+	[HttpGet("leverCount")]
+	public IActionResult LeverCount()
+	{
+		try
+		{
+			return Content(_trainModel.LeverCount().ToString());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("Error while supplying lever count:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[MacAuthorize]
+	[HttpGet("leverPosition")]
+	public IActionResult LeverPosition([FromQuery, Required] int leverIndex)
+	{
+		try
+		{
+			return Content(_trainModel.GetLeverPercentage(leverIndex).ToString() ?? string.Empty);
+		}
+		catch (Exception e)
+		{
+			_logger.Log("Error while supplying lever position:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[MacAuthorize]
+	[HttpGet("leverType")]
+	public IActionResult LeverType([FromQuery, Required] int leverIndex)
+	{
+		try
+		{
+			return Content(_trainModel.GetLeverType(leverIndex).ToString());
+		}
+		catch (Exception e)
+		{
+			_logger.Log("Error while supplying lever type:");
+			_logger.Log(e.ToString());
+			return BadRequest(e.Message);
+		}
+	}
+
+	[MacAuthorize]
 	[HttpPost("emergencybrake")]
 	public IActionResult EmergencyBrake()
 	{
@@ -89,22 +169,6 @@ public class ControlController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("Error while setting easy control:");
-			_logger.Log(e.ToString());
-			return BadRequest(e.Message);
-		}
-	}
-
-	[MacAuthorize]
-	[HttpGet("areMotorsReleased")]
-	public IActionResult AreMotorsReleased()
-	{
-		try
-		{
-			return Content(_trainModel.AreMotorsReleased().ToString());
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Error while supplying AreMotorsReleased:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
@@ -173,54 +237,6 @@ public class ControlController : ControllerBase
 		catch (Exception e)
 		{
 			_logger.Log("Error while engaging motors:");
-			_logger.Log(e.ToString());
-			return BadRequest(e.Message);
-		}
-	}
-
-	[MacAuthorize]
-	[HttpGet("leverCount")]
-	public IActionResult LeverCount()
-	{
-		try
-		{
-			return Content(_trainModel.LeverCount().ToString());
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Error while supplying lever count:");
-			_logger.Log(e.ToString());
-			return BadRequest(e.Message);
-		}
-	}
-
-	[MacAuthorize]
-	[HttpGet("leverPosition")]
-	public IActionResult LeverPosition([FromQuery, Required] int leverIndex)
-	{
-		try
-		{
-			return Content(_trainModel.GetLeverPercentage(leverIndex).ToString() ?? string.Empty);
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Error while supplying lever position:");
-			_logger.Log(e.ToString());
-			return BadRequest(e.Message);
-		}
-	}
-
-	[MacAuthorize]
-	[HttpGet("leverType")]
-	public IActionResult LeverType([FromQuery, Required] int leverIndex)
-	{
-		try
-		{
-			return Content(_trainModel.GetLeverType(leverIndex).ToString());
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Error while supplying lever type:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}

@@ -10,10 +10,11 @@
       <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
       <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
       <PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.10.0.5680" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AutoTf.CentralBridgeOS.FahrplanParser.Models\AutoTf.CentralBridgeOS.FahrplanParser.Models.csproj" />
+      <Folder Include="Bases\" />
     </ItemGroup>
 
 </Project>

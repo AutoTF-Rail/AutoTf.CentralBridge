@@ -1,6 +1,9 @@
 using System.Diagnostics;
 using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -9,7 +12,7 @@ namespace AutoTf.CentralBridgeOS.CameraService;
 public class CameraManager : IHostedService
 {
 	private readonly Logger _logger;
-	private readonly ProxyManager _proxy;
+	private readonly IProxyManager _proxy;
 	private readonly ITrainModel _train;
 
 	// Used for the port of the displays, the first display is 4001, the second 4002, etc.
@@ -17,7 +20,7 @@ public class CameraManager : IHostedService
 	
 	private readonly List<KeyValuePair<VideoDevice, Process>> _ffmpegProcesses = new List<KeyValuePair<VideoDevice, Process>>();
 
-	public CameraManager(Logger logger, ProxyManager proxy, ITrainModel train)
+	public CameraManager(Logger logger, IProxyManager proxy, ITrainModel train)
 	{
 		_logger = logger;
 		_proxy = proxy;

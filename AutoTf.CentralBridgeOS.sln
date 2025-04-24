@@ -20,7 +20,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Fahr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Displays", "AutoTf.CentralBridgeOS.Displays\AutoTf.CentralBridgeOS.Displays.csproj", "{327948C0-16CB-426A-A289-AF0F32D90411}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.CcdDisplays", "AutoTf.CentralBridgeOS.CcdDisplays\AutoTf.CentralBridgeOS.CcdDisplays.csproj", "{E35BB255-D5D2-4512-92C3-BC18C3AF1217}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.TrainModels.CcdDisplays", "AutoTf.CentralBridgeOS.TrainModels.CcdDisplays\AutoTf.CentralBridgeOS.TrainModels.CcdDisplays.csproj", "{E35BB255-D5D2-4512-92C3-BC18C3AF1217}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

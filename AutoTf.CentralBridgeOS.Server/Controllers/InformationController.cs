@@ -2,7 +2,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.CentralBridgeOS.Services.Network;
 using AutoTf.CentralBridgeOS.Sync;
@@ -17,11 +19,11 @@ public class InformationController : ControllerBase
 {
 	private readonly CodeValidator _codeValidator;
 	private readonly IFileManager _fileManager;
-	private readonly TrainSessionService _trainSessionService;
+	private readonly ITrainSessionService _trainSessionService;
 	private readonly Logger _logger;
 	private readonly string _logDir = "/var/log/AutoTF/AutoTf.CentralBridgeOS.Server/";
 
-	public InformationController(Logger logger, CodeValidator codeValidator, IFileManager fileManager, TrainSessionService trainSessionService)
+	public InformationController(Logger logger, CodeValidator codeValidator, IFileManager fileManager, ITrainSessionService trainSessionService)
 	{
 		_logger = logger;
 		_codeValidator = codeValidator;

@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 
 namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
 
@@ -21,7 +22,7 @@ public class Station : RowContent
 		return $"{Name} Arrival: {Arrival} Departure: {Departure}";
 	}
 
-	public static bool TryParse(string additionalText, string arrival, string departure, out RowContent? content)
+	public static bool TryParse(string additionalText, string arrival, string departure, out IRowContent? content)
 	{
 		content = null;
 

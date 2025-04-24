@@ -1,47 +1,54 @@
-using AutoTf.CentralBridgeOS.FahrplanParser.Models;
 using AutoTf.CentralBridgeOS.Models;
-using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays;
 using AutoTf.Logging;
-using Iot.Device.RadioTransmitter;
 
 namespace AutoTf.CentralBridgeOS.TrainModels;
 
 public abstract class DefaultModel : ITrainModel
 {
-	internal readonly MotorManager MotorManager;
-	internal readonly Logger Logger;
-
 	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
+	
+	internal readonly IMotorManager MotorManager;
+	internal readonly Logger Logger;
 	
 	internal int _currentPower = 0;
 
-	public DefaultModel(MotorManager motorManager, Logger logger)
+	public DefaultModel(IMotorManager motorManager, Logger logger)
 	{
 		MotorManager = motorManager;
 		Logger = logger;
 	}
 
-	public abstract CcdDisplayBase CcdDisplay { get; }
+	public bool IsEasyControlAvailable
+	{
+		get
+		{
+			// TODO: Implement some proper check in the future, also for errors on the motors etc.
+			if (LeverCount() != 0)
+				return true;
+
+			return false;
+		}
+	}
+	
+	public abstract void Initialize();
+
+	public abstract ICcdDisplayBase CcdDisplay { get; }
 	public abstract RegionMappings Mappings { get; }
+
+	public Action? OnEmergencyBrake { get; set; }
 
 	public abstract void EasyControl(int power);
 
 	public abstract void EmergencyBrake();
 	
-	public abstract void Initialize();
+	public int LeverCount() => Levers.Count;
+	
 
-	public Action? OnEmergencyBrake { get; set; }
-
-
-	public int LeverCount()
-	{
-		return Levers.Count;
-	}
-
-	public LeverType GetLeverType(int index)
-	{
-		return Levers[index].Type;
-	}
+	public LeverType GetLeverType(int index) => Levers[index].Type;
 
 	public double? GetLeverPercentage(int index)
 	{

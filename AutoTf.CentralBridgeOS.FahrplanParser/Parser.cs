@@ -3,6 +3,8 @@ using AutoTf.CentralBridgeOS.FahrplanParser.Extensions;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models;
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Emgu.CV;
 using Emgu.CV.OCR;
 
@@ -12,12 +14,12 @@ public class Parser : InfoParser
 {
 	public Parser(Tesseract engine, ITrainModel train) : base(engine, train) { }
 
-	public void ReadPage(Mat mat, ref List<KeyValuePair<string, RowContent>> rows, ref List<KeyValuePair<string, string>> speedChanges)
+	public void ReadPage(Mat mat, ref List<KeyValuePair<string, IRowContent>> rows, ref List<KeyValuePair<string, string>> speedChanges)
 	{
 		List<Rectangle> rowsRoi = [..Train.Mappings.Rows];
 		rowsRoi.Reverse();
 
-		List<RowContent> additionalContent = new List<RowContent>();
+		List<IRowContent> additionalContent = new List<IRowContent>();
 		
 		foreach (Rectangle row in rowsRoi)
 		{
@@ -29,7 +31,7 @@ public class Parser : InfoParser
 			// If we don't have a hektometer, we will add it's info to the next one
 			if (string.IsNullOrWhiteSpace(hektometer))
 			{
-				RowContent? content = ResolveContent(additionalText, arrivalTime, departureTime);
+				IRowContent? content = ResolveContent(additionalText, arrivalTime, departureTime);
 				
 				if(content == null)
 					continue;
@@ -40,7 +42,7 @@ public class Parser : InfoParser
 			}
 			else
 			{
-				rows.AddRange(additionalContent.Select(x => new KeyValuePair<string, RowContent>(hektometer, x)));
+				rows.AddRange(additionalContent.Select(x => new KeyValuePair<string, IRowContent>(hektometer, x)));
 				additionalContent.Clear();
 				
 				string speedLimit = SpeedLimit(mat, row);
@@ -61,12 +63,12 @@ public class Parser : InfoParser
 					}
 				}
 
-				RowContent? content = null;
+				IRowContent? content = null;
 				
 				// We need to save this, because tunnelContent could return to being null, if it's duplicate, but in the check after the tunnel parsing, we need to know if we had a tunnel. (And which type)
 				TunnelType tunnelType = TunnelType.None;
 				
-				if (TryParseTunnel(mat, row, additionalText, out RowContent? tunnelContent))
+				if (TryParseTunnel(mat, row, additionalText, out IRowContent? tunnelContent))
 				{
 					if(tunnelContent is TunnelContent tunnel)
 						tunnelType = tunnel.GetTunnelType();
@@ -75,14 +77,14 @@ public class Parser : InfoParser
 					tunnelContent = CheckForDuplicateContent(tunnelContent!, hektometer, rows);
 					
 					if (tunnelContent != null)
-						rows.Add(new KeyValuePair<string, RowContent>(hektometer, tunnelContent));
+						rows.Add(new KeyValuePair<string, IRowContent>(hektometer, tunnelContent));
 				}
 
 				if (tunnelType != TunnelType.End)
 				{
 					if (string.IsNullOrWhiteSpace(additionalText))
 					{
-						if (TryParseIcon(mat, row, out RowContent? result))
+						if (TryParseIcon(mat, row, out IRowContent? result))
 							content = result;
 					}
 					else
@@ -102,7 +104,7 @@ public class Parser : InfoParser
 				if (content == null)
 					continue;
 
-				rows.Add(new KeyValuePair<string, RowContent>(hektometer, content));
+				rows.Add(new KeyValuePair<string, IRowContent>(hektometer, content));
 			}
 		}
 	}

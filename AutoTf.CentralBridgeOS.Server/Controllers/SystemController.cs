@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.CentralBridgeOS.Services;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ public class SystemController : ControllerBase
 			_logger.Log("Restarting after date set.");
 			
 			_lifetime.StopApplication();
-			CommandExecuter.ExecuteSilent("bash -c \"sleep 30; shutdown -h now\"&", true);
+			CommandExecuter.ExecuteSilent("(sleep 30; shutdown -h now) &", true);
 			
 			return Ok();
 		}
@@ -84,7 +85,7 @@ public class SystemController : ControllerBase
 		// While the application calls this on shutdown, we need to do so as well. We cannot just exit the app here instead because then shutdown now wouldn't be called. That's why we also can't use IHostedService.
 		
 		_lifetime.StopApplication();
-		CommandExecuter.ExecuteSilent("bash -c \"sleep 30; shutdown -h now\"&", true);
+		CommandExecuter.ExecuteSilent("(sleep 30; shutdown -h now) &", true);
 		return Ok();
 	}
 
@@ -94,7 +95,7 @@ public class SystemController : ControllerBase
 	{
 		// TODO: Notify user of restart
 		_lifetime.StopApplication();
-		CommandExecuter.ExecuteSilent("bash -c \"sleep 30; reboot now\"&", true);
+		CommandExecuter.ExecuteSilent("(sleep 30; reboot now) &", true);
 		return Ok();
 	}
 }

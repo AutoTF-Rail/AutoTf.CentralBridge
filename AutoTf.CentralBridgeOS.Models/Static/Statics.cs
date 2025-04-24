@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using AutoTf.Logging;
 
-namespace AutoTf.CentralBridgeOS.Models;
+namespace AutoTf.CentralBridgeOS.Models.Static;
 
 public static class Statics
 {

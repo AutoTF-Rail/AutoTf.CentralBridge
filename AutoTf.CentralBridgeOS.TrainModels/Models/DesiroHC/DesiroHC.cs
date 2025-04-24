@@ -1,7 +1,9 @@
-using AutoTf.CentralBridgeOS.CcdDisplays.DesiroHc;
 using AutoTf.CentralBridgeOS.Models;
-using AutoTf.CentralBridgeOS.Services;
-using Emgu.CV.OCR;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays.DesiroHc;
 using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
@@ -9,7 +11,7 @@ namespace AutoTf.CentralBridgeOS.TrainModels.Models.DesiroHC;
 // ReSharper disable once InconsistentNaming
 public class DesiroHC : DefaultModel
 {
-    public DesiroHC(MotorManager motorManager, Logger logger) : base(motorManager, logger)
+    public DesiroHC(IMotorManager motorManager, Logger logger) : base(motorManager, logger)
     {
         Task.Run(Initialize);
     }

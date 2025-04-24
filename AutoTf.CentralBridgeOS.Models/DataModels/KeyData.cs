@@ -1,4 +1,4 @@
-namespace AutoTf.CentralBridgeOS.Models;
+namespace AutoTf.CentralBridgeOS.Models.DataModels;
 
 public class KeyData
 {

@@ -1,9 +1,14 @@
-namespace AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
+
+namespace AutoTf.CentralBridgeOS.Models.DataModels;
 
 public interface ITrainModel
 {
-	public CcdDisplayBase CcdDisplay { get; }
+	public ICcdDisplayBase CcdDisplay { get; }
 	public RegionMappings Mappings { get; }
+	public Action? OnEmergencyBrake { get; set; }
+	public bool IsEasyControlAvailable { get; }
 	public int LeverCount();
 	public void SetLever(int index, double percentage);
 	public LeverType GetLeverType(int index);
@@ -15,6 +20,5 @@ public interface ITrainModel
 	public bool AreMotorsReleased();
 	public void EasyControl(int power);
 	public void EmergencyBrake();
-	public Action? OnEmergencyBrake { get; set; }
 	void Initialize();
 }

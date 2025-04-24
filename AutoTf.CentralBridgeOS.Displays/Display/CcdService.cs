@@ -1,29 +1,26 @@
-using AutoTf.CentralBridgeOS.CameraService;
-using AutoTf.CentralBridgeOS.FahrplanParser;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
+using AutoTf.CentralBridgeOS.Models.DataModels;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Emgu.CV;
-using Emgu.CV.OCR;
-using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Localise.Display;
 
-public class CcdService : IHostedService
+public class CcdService : ICcdService
 {
     private readonly Logger _logger;
-    private readonly ProxyManager _proxy;
-    private CcdDisplayBase _displayBase;
-
-    public bool Initialized = false;
+    private readonly IProxyManager _proxy;
+    private ICcdDisplayBase _displayBase;
     
-    public CcdService(Logger logger, ITrainModel train, ProxyManager proxy)
+    public CcdService(Logger logger, ITrainModel train, IProxyManager proxy)
     {
         _logger = logger;
         _proxy = proxy;
 
         _displayBase = train.CcdDisplay;
     }
+    
+    public bool Initialized { get; private set; }
     
     public Task StartAsync(CancellationToken cancellationToken)
     {

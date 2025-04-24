@@ -1,4 +1,5 @@
 using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 
 namespace AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Markers;
 
@@ -21,7 +22,7 @@ public class Abzweigung : RowContent
 		return $"{Tag} {Name}";
 	}
 
-	public static bool TryParse(string additionalText, out RowContent? content)
+	public static bool TryParse(string additionalText, out IRowContent? content)
 	{
 		content = null;
 

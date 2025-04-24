@@ -1,9 +1,7 @@
 using System.Text;
 using System.Text.Json;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
-using AutoTf.CentralBridgeOS.Services;
-using AutoTf.CentralBridgeOS.Services.Network;
+using AutoTf.CentralBridgeOS.Models.Static;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.Sync;
@@ -12,7 +10,7 @@ public class DataSync : Sync
 {
 	private readonly List<string> _collectedLogs = new List<string>();
 	
-	public DataSync(Logger logger, IFileManager fileManager, TrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
+	public DataSync(Logger logger, IFileManager fileManager, ITrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
 	{
 		Logger.NewLog += log => _collectedLogs.Add(log);
 		Statics.SyncEvent += Sync;

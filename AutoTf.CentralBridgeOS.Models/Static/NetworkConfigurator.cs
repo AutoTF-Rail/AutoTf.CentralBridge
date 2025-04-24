@@ -1,13 +1,11 @@
 using System.Net.NetworkInformation;
-using System.Text.RegularExpressions;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.Logging;
 
-namespace AutoTf.CentralBridgeOS.Services.Network;
+namespace AutoTf.CentralBridgeOS.Models.Static;
 
-public class NetworkConfigurator
+public static class NetworkConfigurator
 {
-	private static readonly Logger _logger = Statics.Logger;
+	private static readonly Logger Logger = Statics.Logger;
 	
 	public static bool IsInternetAvailable()
 	{
@@ -26,7 +24,7 @@ public class NetworkConfigurator
 			// ignored
 		}
 
-		_logger.Log("Got no internet connection.");
+		Logger.Log("Got no internet connection.");
 		return false;
 	}
 	
@@ -36,19 +34,19 @@ public class NetworkConfigurator
 		{
 			if (CheckIpAddress(newInterface))
 				return;
-			_logger.Log("Setting Static IP.");
+			Logger.Log("Setting Static IP.");
 			string setIpCommand = $"ip addr add {ipAddress}/{subnetMask} dev {newInterface}";
 			string bringUpInterfaceCommand = $"ip link set {newInterface} up";
 
 			CommandExecuter.ExecuteSilent(setIpCommand, false);
 			CommandExecuter.ExecuteSilent(bringUpInterfaceCommand, false);
 
-			_logger.Log($"Set {ipAddress} on {newInterface} with subnet mask {subnetMask}");
+			Logger.Log($"Set {ipAddress} on {newInterface} with subnet mask {subnetMask}");
 		}
 		catch (Exception ex)
 		{
-			_logger.Log($"An error occurred while setting IP: {ex.Message}");
-			_logger.Log(ex.ToString());
+			Logger.Log($"An error occurred while setting IP: {ex.Message}");
+			Logger.Log(ex.ToString());
 			throw;
 		}
 	}
@@ -61,11 +59,11 @@ public class NetworkConfigurator
 		if (output.Contains("inet"))
 		{
 			string currIp = output.Split('\n').FirstOrDefault(x => x.Contains("inet"))?.Split("brd")[0].Replace("inet", "").Trim()!;
-			_logger.Log($"Current IP settings for {interfaceName}: {currIp}");
+			Logger.Log($"Current IP settings for {interfaceName}: {currIp}");
 			return true;
 		}
 
-		_logger.Log($"{interfaceName} does not have an IP address set.");
+		Logger.Log($"{interfaceName} does not have an IP address set.");
 		return false;
 	}
 }

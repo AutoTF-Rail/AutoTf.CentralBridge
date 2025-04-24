@@ -1,6 +1,6 @@
 using System.Net;
-using AutoTf.CentralBridgeOS.CameraService;
-using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 
@@ -9,12 +9,12 @@ namespace AutoTf.CentralBridgeOS.Services.Camera;
 public class MainCameraService : IHostedService
 {
     private readonly Logger _logger;
-    private readonly TrainSessionService _trainSessionService;
-    private readonly ProxyManager _proxy;
+    private readonly ITrainSessionService _trainSessionService;
+    private readonly IProxyManager _proxy;
 
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    public MainCameraService(Logger logger, TrainSessionService trainSessionService, ProxyManager proxy)
+    public MainCameraService(Logger logger, ITrainSessionService trainSessionService, IProxyManager proxy)
     {
         _logger = logger;
         _trainSessionService = trainSessionService;

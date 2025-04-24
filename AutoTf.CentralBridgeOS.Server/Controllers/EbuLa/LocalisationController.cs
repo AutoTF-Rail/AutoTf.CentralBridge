@@ -1,6 +1,8 @@
 using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Localise.Display;
 using AutoTf.CentralBridgeOS.Models;
+using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +17,9 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers.EbuLa;
 public class LocalisationController : ControllerBase
 {
     private readonly Logger _logger;
-    private readonly EbuLaService _ebula;
+    private readonly IEbuLaService _ebula;
     
-    public LocalisationController(Logger logger, EbuLaService ebula)
+    public LocalisationController(Logger logger, IEbuLaService ebula)
     {
         _logger = logger;
         _ebula = ebula;

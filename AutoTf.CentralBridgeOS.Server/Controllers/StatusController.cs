@@ -1,6 +1,7 @@
 using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.Localise;
 using AutoTf.CentralBridgeOS.Models.CameraService;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.CentralBridgeOS.Services.Gps;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,11 +11,11 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 [Route("/status")]
 public class StatusController : ControllerBase
 {
-    private readonly ProxyManager _proxy;
+    private readonly IProxyManager _proxy;
     private readonly LocaliseService _localiseService;
     private readonly MotionService _motionService;
 
-    public StatusController(ProxyManager proxy, LocaliseService localiseService, MotionService motionService)
+    public StatusController(IProxyManager proxy, LocaliseService localiseService, MotionService motionService)
     {
         _proxy = proxy;
         _localiseService = localiseService;

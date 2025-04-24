@@ -14,4 +14,12 @@ public static class ServiceExtension
 		collection.AddSingleton<THostedService>();
 		collection.AddHostedService(provider => provider.GetRequiredService<THostedService>());
 	}
+	
+	public static void AddHostedSingleton<TInterface, TService>(this IServiceCollection collection) 
+		where TInterface : class, IHostedService
+		where TService : class, TInterface
+	{
+		collection.AddSingleton<TInterface, TService>();
+		collection.AddHostedService(provider => provider.GetRequiredService<TInterface>());
+	}
 }

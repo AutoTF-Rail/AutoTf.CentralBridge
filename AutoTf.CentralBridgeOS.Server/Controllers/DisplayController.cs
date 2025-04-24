@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.Models.CameraService;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,9 +16,9 @@ namespace AutoTf.CentralBridgeOS.Server.Controllers;
 public class DisplayController : ControllerBase
 {
     private readonly Logger _logger;
-    private readonly ProxyManager _proxy;
+    private readonly IProxyManager _proxy;
 
-    public DisplayController(Logger logger, ProxyManager proxy)
+    public DisplayController(Logger logger, IProxyManager proxy)
     {
         _logger = logger;
         _proxy = proxy;

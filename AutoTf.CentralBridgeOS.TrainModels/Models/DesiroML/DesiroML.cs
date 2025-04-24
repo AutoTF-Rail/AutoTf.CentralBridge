@@ -1,6 +1,7 @@
-using AutoTf.CentralBridgeOS.CcdDisplays.DesiroHc;
 using AutoTf.CentralBridgeOS.Models;
-using AutoTf.CentralBridgeOS.Services;
+using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays;
+using AutoTf.CentralBridgeOS.TrainModels.CcdDisplays.DesiroHc;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
@@ -8,7 +9,7 @@ namespace AutoTf.CentralBridgeOS.TrainModels.Models.DesiroML;
 // ReSharper disable once InconsistentNaming
 public sealed class DesiroML : DefaultModel
 {
-	public DesiroML(MotorManager motorManager, Logger logger) : base(motorManager, logger)
+	public DesiroML(IMotorManager motorManager, Logger logger) : base(motorManager, logger)
 	{
 		Task.Run(Initialize);
 	}
