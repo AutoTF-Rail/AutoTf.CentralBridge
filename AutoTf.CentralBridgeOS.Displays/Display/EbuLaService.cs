@@ -1,15 +1,12 @@
-using AutoTf.CentralBridgeOS.CameraService;
 using AutoTf.CentralBridgeOS.FahrplanParser;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.CameraService;
 using AutoTf.CentralBridgeOS.Models.DataModels;
 using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.FahrplanParser.Content;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.OCR;
-using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Localise.Display;
 

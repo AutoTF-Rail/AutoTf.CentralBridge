@@ -16,11 +16,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Came
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.FahrplanParser", "AutoTf.CentralBridgeOS.FahrplanParser\AutoTf.CentralBridgeOS.FahrplanParser.csproj", "{7ECBE64B-6AAE-48AA-8B4A-0F13F9361C31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.FahrplanParser.Models", "AutoTf.CentralBridgeOS.FahrplanParser.Models\AutoTf.CentralBridgeOS.FahrplanParser.Models.csproj", "{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.Displays", "AutoTf.CentralBridgeOS.Displays\AutoTf.CentralBridgeOS.Displays.csproj", "{327948C0-16CB-426A-A289-AF0F32D90411}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.CentralBridgeOS.TrainModels.CcdDisplays", "AutoTf.CentralBridgeOS.TrainModels.CcdDisplays\AutoTf.CentralBridgeOS.TrainModels.CcdDisplays.csproj", "{E35BB255-D5D2-4512-92C3-BC18C3AF1217}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTf.FahrplanParser.Models", "SubModules\AutoTf.FahrplanParser\AutoTf.FahrplanParser.Models\AutoTf.FahrplanParser.Models.csproj", "{1FE53EFF-CB44-471E-B778-E63A0F80B7E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,10 +60,6 @@ Global
 		{7ECBE64B-6AAE-48AA-8B4A-0F13F9361C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ECBE64B-6AAE-48AA-8B4A-0F13F9361C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ECBE64B-6AAE-48AA-8B4A-0F13F9361C31}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D8064C8-8B4C-4BC2-900A-0C42EA74F966}.Release|Any CPU.Build.0 = Release|Any CPU
 		{327948C0-16CB-426A-A289-AF0F32D90411}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{327948C0-16CB-426A-A289-AF0F32D90411}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{327948C0-16CB-426A-A289-AF0F32D90411}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -72,5 +68,9 @@ Global
 		{E35BB255-D5D2-4512-92C3-BC18C3AF1217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E35BB255-D5D2-4512-92C3-BC18C3AF1217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E35BB255-D5D2-4512-92C3-BC18C3AF1217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FE53EFF-CB44-471E-B778-E63A0F80B7E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FE53EFF-CB44-471E-B778-E63A0F80B7E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FE53EFF-CB44-471E-B778-E63A0F80B7E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FE53EFF-CB44-471E-B778-E63A0F80B7E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

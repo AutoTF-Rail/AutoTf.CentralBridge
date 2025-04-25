@@ -1,10 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using AutoTf.CentralBridgeOS.Extensions;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Base;
-using AutoTf.CentralBridgeOS.Localise.Display;
-using AutoTf.CentralBridgeOS.Models;
 using AutoTf.CentralBridgeOS.Models.Enums;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.FahrplanParser.Content;
+using AutoTf.FahrplanParser.Content.Content.Base;
 using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 

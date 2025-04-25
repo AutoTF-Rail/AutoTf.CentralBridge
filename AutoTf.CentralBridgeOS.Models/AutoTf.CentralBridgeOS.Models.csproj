@@ -17,4 +17,8 @@
       <Folder Include="Bases\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SubModules\AutoTf.FahrplanParser\AutoTf.FahrplanParser.Models\AutoTf.FahrplanParser.Models.csproj" />
+    </ItemGroup>
+
 </Project>

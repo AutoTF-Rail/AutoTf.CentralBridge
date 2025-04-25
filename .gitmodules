@@ -1,0 +1,3 @@
+[submodule "SubModules/AutoTf.FahrplanParser"]
+	path = SubModules/AutoTf.FahrplanParser
+	url = git@github.com:AutoTF-Rail/AutoTf.FahrplanParser.git

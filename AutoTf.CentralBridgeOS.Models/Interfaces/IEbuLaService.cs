@@ -1,4 +1,5 @@
 using AutoTf.CentralBridgeOS.Models.Enums;
+using AutoTf.FahrplanParser.Content;
 using Microsoft.Extensions.Hosting;
 
 namespace AutoTf.CentralBridgeOS.Models.Interfaces;

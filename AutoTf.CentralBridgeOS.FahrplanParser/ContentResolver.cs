@@ -1,11 +1,11 @@
 using System.Drawing;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Icons;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Icons.Tunnels;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Markers;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Signals;
-using AutoTf.CentralBridgeOS.FahrplanParser.Models.Content.Signals.Vorsignal;
-using AutoTf.CentralBridgeOS.Models.Interfaces;
+using AutoTf.FahrplanParser.Content;
+using AutoTf.FahrplanParser.Content.Content;
+using AutoTf.FahrplanParser.Content.Content.Icons;
+using AutoTf.FahrplanParser.Content.Content.Icons.Tunnels;
+using AutoTf.FahrplanParser.Content.Content.Markers;
+using AutoTf.FahrplanParser.Content.Content.Signals;
+using AutoTf.FahrplanParser.Content.Content.Signals.Vorsignal;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 
