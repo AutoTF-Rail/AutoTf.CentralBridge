@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridge.Models\AutoTf.CentralBridge.Models.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridge.TrainModels.CcdDisplays\AutoTf.CentralBridge.TrainModels.CcdDisplays.csproj" />
+    </ItemGroup>
+
+</Project>

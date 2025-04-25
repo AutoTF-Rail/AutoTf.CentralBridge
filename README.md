@@ -1,4 +1,4 @@
-# AutoTf.CentralBridgeOS
+# AutoTf.CentralBridge
 
 ## API documentation
 The API documentation can be found at [docs.autotf.de/centralbridge](https://docs.autotf.de/centralbridge)
@@ -6,6 +6,11 @@ The API documentation can be found at [docs.autotf.de/centralbridge](https://doc
 ## Info & Contributions
 
 Further documentation can be seen in [AutoTF-Rail/AutoTf-Documentation](https://github.com/AutoTF-Rail/AutoTf-Documentation)
+
+To initialize this repository run the following command:
+
+`git submodule update --init --recursive`
+
 
 
 Would you like to contribute to this project, or noticed something wrong?
