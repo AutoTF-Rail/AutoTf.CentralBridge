@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UseRidGraph>true</UseRidGraph>
+        <RuntimeIdentifier>linux-arm64</RuntimeIdentifier>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+        <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
+        <PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.10.0.5680" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <None Update="scripts\install.sh">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="scripts\startup.sh">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridge.CameraService\AutoTf.CentralBridge.CameraService.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridge.Extensions\AutoTf.CentralBridge.Extensions.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridge.Displays\AutoTf.CentralBridge.Displays.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridge.Services\AutoTf.CentralBridge.Services.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridge.Sync\AutoTf.CentralBridge.Sync.csproj" />
+      <ProjectReference Include="..\AutoTf.CentralBridge.TrainModels\AutoTf.CentralBridge.TrainModels.csproj" />
+    </ItemGroup>
+
+
+    <PropertyGroup>
+        <UseRidGraph>true</UseRidGraph>
+    </PropertyGroup>
+</Project>

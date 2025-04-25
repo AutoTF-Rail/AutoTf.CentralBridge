@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <UseRidGraph>true</UseRidGraph>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+      <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
+      <PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.10.0.5680" />
+      <PackageReference Include="Iot.Device.Bindings" Version="3.2.0" />
+      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
+      <PackageReference Include="Otp.NET" Version="1.4.0" />
+      <PackageReference Include="System.Device.Gpio" Version="3.2.0" />
+      <PackageReference Include="Yubico.YubiKey" Version="1.12.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\AutoTf.CentralBridge.Models\AutoTf.CentralBridge.Models.csproj" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <UseRidGraph>true</UseRidGraph>
+    </PropertyGroup>
+</Project>
