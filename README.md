@@ -8,7 +8,7 @@ The central bridge is the central API to interact with the train via motors, cam
 It calculates paths, brake ways and more internally, but parses things like object detection onto the [AIC unit](https://github.com/AutoTf-Rail/AutoTf.Aic).
 
 
-On startup it creates a bluetooth beacon, which contains it's SSID, with which you can connect yourself with the password "CentralBridgePW" (not secure on purpose.
+On startup it creates a bluetooth beacon, which contains it's SSID, with which you can connect yourself with the password "CentralBridgePW" (not secure on purpose.)
 
 Afterwards your device has to login at /information/login with its mac address, and the serial number as well as current code of your yubikey.
 
