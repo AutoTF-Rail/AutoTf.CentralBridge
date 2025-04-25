@@ -2,7 +2,7 @@
 
 ## Basic explanation
 
-The central bridge is the central API to interact with the train via motors, cameras, and other motors.
+The central bridge is the central API to interact with the train via motors, cameras, and other sensors.
 
 
 It calculates paths, brake ways and more internally, but parses things like object detection onto the [AIC unit](https://github.com/AutoTf-Rail/AutoTf.Aic).
