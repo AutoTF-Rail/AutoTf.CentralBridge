@@ -3,4 +3,4 @@
 	url = git@github.com:AutoTF-Rail/AutoTf.FahrplanParser.git
 [submodule "SubModules/AutoTf.CentralBridge.Shared"]
 	path = SubModules/AutoTf.CentralBridge.Shared
-	url = https://github.com/AutoTF-Rail/AutoTf.CentralBridge.Shared
+	url = git@github.com:AutoTF-Rail/AutoTf.CentralBridge.Shared

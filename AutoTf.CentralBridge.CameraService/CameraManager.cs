@@ -4,6 +4,7 @@ using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Models.Static;
+using AutoTf.CentralBridge.Shared.Models.Enums;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
 

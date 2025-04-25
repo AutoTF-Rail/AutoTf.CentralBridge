@@ -3,6 +3,7 @@ using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
+using AutoTf.CentralBridge.Shared.Models.Enums;
 using AutoTf.FahrplanParser.Content;
 using AutoTf.Logging;
 using Emgu.CV;

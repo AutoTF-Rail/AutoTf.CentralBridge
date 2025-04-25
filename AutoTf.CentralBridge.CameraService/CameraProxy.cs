@@ -6,6 +6,7 @@ using AutoTf.CentralBridge.FahrplanParser;
 using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
+using AutoTf.CentralBridge.Shared.Models.Enums;
 using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;

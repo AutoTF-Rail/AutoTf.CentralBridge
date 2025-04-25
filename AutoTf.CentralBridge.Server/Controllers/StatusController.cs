@@ -1,6 +1,7 @@
 using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Services.Gps;
+using AutoTf.CentralBridge.Shared.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridge.Server.Controllers;

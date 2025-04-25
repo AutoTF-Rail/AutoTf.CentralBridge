@@ -1,3 +1,5 @@
+using AutoTf.CentralBridge.Shared.Models.Enums;
+
 namespace AutoTf.CentralBridge.Models.CameraService;
 
 public class VideoDevice

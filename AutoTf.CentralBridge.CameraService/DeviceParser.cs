@@ -1,6 +1,7 @@
 using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.Static;
+using AutoTf.CentralBridge.Shared.Models.Enums;
 
 namespace AutoTf.CentralBridge.CameraService;
 

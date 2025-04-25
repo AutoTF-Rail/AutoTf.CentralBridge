@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SubModules\AutoTf.CentralBridge.Shared\AutoTf.CentralBridge.Shared.Models\AutoTf.CentralBridge.Shared.Models.csproj" />
       <ProjectReference Include="..\SubModules\AutoTf.FahrplanParser\AutoTf.FahrplanParser.Models\AutoTf.FahrplanParser.Models.csproj" />
     </ItemGroup>
 
