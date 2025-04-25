@@ -65,6 +65,7 @@ public class InformationController : ControllerBase
 	{
 		try
 		{
+			// TODO: We could also just return an empty array here if the file doesn't exist?
 			return System.IO.File.ReadAllLines(_logDir + date + ".txt").ToList();
 		}
 		catch (Exception e)

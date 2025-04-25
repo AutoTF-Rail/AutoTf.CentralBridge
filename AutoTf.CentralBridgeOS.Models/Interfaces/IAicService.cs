@@ -27,6 +27,16 @@ public interface IAicService : IHostedService
     /// </summary>
     public Task<string> Version();
 
+    /// <summary>
+    /// Returns all available log dates.
+    /// </summary>
+    public Task<string[]> LogDates();
+
+    /// <summary>
+    /// Returns the logs for the given date
+    /// </summary>
+    public Task<string[]> Logs(string date);
+
     public void Shutdown();
 
     public void Restart();

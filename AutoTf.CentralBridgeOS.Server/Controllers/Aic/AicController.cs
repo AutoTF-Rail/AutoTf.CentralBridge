@@ -2,7 +2,7 @@ using AutoTf.CentralBridgeOS.Extensions;
 using AutoTf.CentralBridgeOS.Models.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AutoTf.CentralBridgeOS.Server.Controllers;
+namespace AutoTf.CentralBridgeOS.Server.Controllers.Aic;
 
 [ApiController]
 [Route("/aic")]
