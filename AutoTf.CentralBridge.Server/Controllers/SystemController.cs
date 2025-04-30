@@ -56,7 +56,7 @@ public class SystemController : ControllerBase
 			_logger.Log("Update was requested.");
 			string prevDir = Directory.GetCurrentDirectory();
 		
-			Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridgeOS/AutoTf.CentralBridge.Server");
+			Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridge/AutoTf.CentralBridge.Server");
 			_logger.Log(CommandExecuter.ExecuteCommand("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github && git reset --hard && git pull && dotnet build -c RELEASE -m\""));
 			//TODO:
 		
