@@ -252,7 +252,7 @@ public class ControlController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			_logger.Log("Error while supplying lever type:");
+			_logger.Log("Error while supplying setting a lever:");
 			_logger.Log(e.ToString());
 			return BadRequest(e.Message);
 		}
