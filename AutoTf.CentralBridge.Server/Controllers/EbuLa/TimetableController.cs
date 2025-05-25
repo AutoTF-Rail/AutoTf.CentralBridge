@@ -4,7 +4,6 @@ using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.FahrplanParser.Content;
 using AutoTf.FahrplanParser.Content.Content.Base;
-using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridge.Server.Controllers.EbuLa;
@@ -16,63 +15,35 @@ namespace AutoTf.CentralBridge.Server.Controllers.EbuLa;
 [Route("ebula/timetable")]
 public class TimetableController : ControllerBase
 {
-    private readonly Logger _logger;
     private readonly IEbuLaService _ebula;
     
-    public TimetableController(Logger logger, IEbuLaService ebula)
+    public TimetableController(IEbuLaService ebula)
     {
-        _logger = logger;
         _ebula = ebula;
     }
 
     [HttpGet("currentTable")]
     public ActionResult<List<KeyValuePair<string, IRowContent>>> CurrentTable()
     {
-        try
-        {
-            // TODO: Merge in the speed changes (if we decide to keep this seperate
-            return _ebula.CurrentTimetable.ToList();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong while supplying the current Table:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: Merge in the speed changes (if we decide to keep this seperate
+        return _ebula.CurrentTimetable.ToList();
     }
 
+    [Catch]
     [MacAuthorize]
     [HttpPost("edit")]
     public IActionResult Edit([FromBody, Required] List<KeyValuePair<string, IRowContent>> newTable)
     {
-        try
-        {
-            // TODO: Notify other services that it has changed and location service should recalculate the current position. (This probably isn't allowed to happen while moving)
-            _ebula.OverwriteTable(newTable);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong while editing the current timetable:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: Notify other services that it has changed and location service should recalculate the current position. (This probably isn't allowed to happen while moving)
+        _ebula.OverwriteTable(newTable);
+        return Ok();
     }
 
     [HttpGet("currentConditions")]
     public ActionResult<List<KeyValuePair<string, RowContent>>> CurrentConditions()
     {
-        try
-        {
-            // TODO: Grab current conditions from _ebula, and maybe rework the return type, so that we can represent things like speed changes better? (Or just supply the next change too?)
-            return new List<KeyValuePair<string, RowContent>>();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when supplying the current conditions:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: Grab current conditions from _ebula, and maybe rework the return type, so that we can represent things like speed changes better? (Or just supply the next change too?)
+        return new List<KeyValuePair<string, RowContent>>();
     }
 
     /// <summary>
@@ -83,37 +54,20 @@ public class TimetableController : ControllerBase
     [HttpPost("disable")]
     public IActionResult DisableAutoDetection()
     {
-        try
-        {
-            // TODO: save the bool in _ebula, so that others can access it via that. This doesn't need to be saved to a file.
-            _ebula.AutoDetectState = ServiceState.TemporaryOff;
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when disabling auto timetable detection:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: save the bool in _ebula, so that others can access it via that. This doesn't need to be saved to a file.
+        _ebula.AutoDetectState = ServiceState.TemporaryOff;
+        return Ok();
     }
     
+    [Catch]
     [MacAuthorize]
     [HttpPost("enable")]
     public IActionResult EnableAutoDetection()
     {
-        try
-        {
-            // TODO: Save this as a bool in _ebula and notify the needed services. This doesn't need to be saved to a file.
-            // TODO: Invoke a full rescan of the timetable
-            _ebula.AutoDetectState = ServiceState.TemporaryOn;
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when enabling auto timetable detection:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: Save this as a bool in _ebula and notify the needed services. This doesn't need to be saved to a file.
+        // TODO: Invoke a full rescan of the timetable
+        _ebula.AutoDetectState = ServiceState.TemporaryOn;
+        return Ok();
     }
     
     /// <summary>
@@ -124,145 +78,77 @@ public class TimetableController : ControllerBase
     [HttpPost("turnOff")]
     public IActionResult TurnOffAutoDetection()
     {
-        try
-        {
-            // TODO: Notify the corresponding services, that this has changed.
-            _ebula.AutoDetectState = ServiceState.AlwaysOff;
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when turning off auto timetable detection:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: Notify the corresponding services, that this has changed.
+        _ebula.AutoDetectState = ServiceState.AlwaysOff;
+        return Ok();
     }
     
     [MacAuthorize]
     [HttpPost("turnOn")]
     public IActionResult TurnOnAutoDetection()
     {
-        try
-        {
-            // TODO: Only invoke a rescan if the train isn't moving already
-            _ebula.AutoDetectState = ServiceState.AlwaysOn;
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when turning on auto timetable detection:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: Only invoke a rescan if the train isn't moving already
+        _ebula.AutoDetectState = ServiceState.AlwaysOn;
+        return Ok();
     }
     
     [MacAuthorize]
     [HttpPost("autoDetectionState")]
     public ActionResult<ServiceState> AutoDetectionState()
     {
-        try
-        {
-            return _ebula.AutoDetectState;
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when supplying the auto timetable detection state:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        return _ebula.AutoDetectState;
     }
     
     /// <summary>
     /// Scans the current page and adds it to the existing table.
     /// </summary>
+    [Catch]
     [MacAuthorize]
     [HttpPost("scan")]
     public IActionResult Scan()
     {
-        try
-        {
-            _ebula.ScanCurrentPage();
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when scanning the current timetable page:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        _ebula.ScanCurrentPage();
+        return Ok();
     }
     
     /// <summary>
     /// Locks the ebula to not be scanned by any other tasks.
     /// </summary>
+    [Catch]
     [MacAuthorize]
     [HttpPost("lock")]
     public IActionResult Lock()
     {
-        try
-        {
-            _ebula.ScanCurrentPage();
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when locking the ebula:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        _ebula.ScanCurrentPage();
+        return Ok();
     }
     
     /// <summary>
     /// Unlocks the ebula to be scanned by other tasks again.
     /// </summary>
+    [Catch]
     [MacAuthorize]
     [HttpPost("unlock")]
     public IActionResult Unlock()
     {
-        try
-        {
-            _ebula.ScanCurrentPage();
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when unlocking the ebula:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        _ebula.ScanCurrentPage();
+        return Ok();
     }
     
     [MacAuthorize]
     [HttpPost("lockState")]
     public ActionResult<bool> LockState()
     {
-        try
-        {
-            return _ebula.LockState();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when returning the current lock state:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        return _ebula.LockState();
     }
     
+    [Catch]
     [MacAuthorize]
     [HttpPost("rescan")]
     public IActionResult Rescan()
     {
-        try
-        {
-            // TODO: Implement check for if the train is currently moving. Can't rescan if it is moving
-            _ebula.ScanTimetable();
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            _logger.Log("Something went wrong when rescanning the timetable:");
-            _logger.Log(e.ToString());
-            return BadRequest(e.ToString());
-        }
+        // TODO: Implement check for if the train is currently moving. Can't rescan if it is moving
+        _ebula.ScanTimetable();
+        return Ok();
     }
 }

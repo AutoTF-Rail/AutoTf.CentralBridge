@@ -20,57 +20,41 @@ public class SystemController : ControllerBase
 		_lifetime = lifetime;
 	}
 	
+	[Catch]
 	[MacAuthorize]
 	[HttpPost("setdate")]
 	public IActionResult SetDate([FromBody, Required] DateTime date)
 	{
-		try
-		{
-			_logger.Log($"Date set was requested for date {date.ToString(CultureInfo.InvariantCulture)}.");
-			
-			string output = CommandExecuter.ExecuteCommand($"date -s \"{date:yyyy-MM-dd HH:mm:ss}\"");
-			if(!string.IsNullOrEmpty(output))
-				_logger.Log(output);
+		_logger.Log($"Date set was requested for date {date.ToString(CultureInfo.InvariantCulture)}.");
+		
+		string output = CommandExecuter.ExecuteCommand($"date -s \"{date:yyyy-MM-dd HH:mm:ss}\"");
+		if(!string.IsNullOrEmpty(output))
+			_logger.Log(output);
 
-			_logger.Log("Restarting after date set.");
-			
-			_lifetime.StopApplication();
-			CommandExecuter.ExecuteSilent("(sleep 30; shutdown -h now) &", true);
-			
-			return Ok();
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Could not update:");
-			_logger.Log(e.ToString());
-			return BadRequest("Could not update.");
-		}
+		_logger.Log("Restarting after date set.");
+		
+		_lifetime.StopApplication();
+		CommandExecuter.ExecuteSilent("(sleep 30; shutdown -h now) &", true);
+		
+		return Ok();
 	}
 	
+	[Catch]
 	[MacAuthorize]
 	[HttpPost("update")]
 	public IActionResult Update()
 	{
-		try
-		{
-			_logger.Log("Update was requested.");
-			string prevDir = Directory.GetCurrentDirectory();
-		
-			Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridge/AutoTf.CentralBridge.Server");
-			_logger.Log(CommandExecuter.ExecuteCommand("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github && git reset --hard && git pull && dotnet build -c RELEASE -m\""));
-			//TODO:
-		
-			Directory.SetCurrentDirectory(prevDir);
+		_logger.Log("Update was requested.");
+		string prevDir = Directory.GetCurrentDirectory();
+	
+		Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridge/AutoTf.CentralBridge.Server");
+		_logger.Log(CommandExecuter.ExecuteCommand("bash -c \"eval $(ssh-agent) && ssh-add /home/CentralBridge/github && git reset --hard && git pull && dotnet build -c RELEASE -m\""));
+		//TODO:
+	
+		Directory.SetCurrentDirectory(prevDir);
 
-			_logger.Log("Update finished. Restart pending.");
-			return Ok();
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Could not update:");
-			_logger.Log(e.ToString());
-			return BadRequest("Could not update.");
-		}
+		_logger.Log("Update finished. Restart pending.");
+		return Ok();
 	}
 
 	[MacAuthorize]

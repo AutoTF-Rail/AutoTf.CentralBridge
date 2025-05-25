@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Net;
+using AutoTf.CentralBridge.Extensions;
 using AutoTf.CentralBridge.Services.Camera;
 using AutoTf.CentralBridge.Sync;
 using AutoTf.Logging;
@@ -22,69 +23,44 @@ public class CameraController : ControllerBase
 		_mainCameraProxy = mainCameraProxy;
 	}
 	
+	[Catch]
 	[HttpPost("startStream")]
 	public IActionResult StartStream([FromQuery, Required] int port)
 	{
-		try
+		IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
+		
+		if (ipAddress != null)
 		{
-			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
-			
-			if (ipAddress != null)
-			{
-				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, port);
-				_mainCameraProxy.AddClient(receiverEndpoint);
-                
-				_logger.Log($"Added receiver: {receiverEndpoint}");
-				return Ok("Receiver added successfully.");
-			}
-			
-			return BadRequest("Could not retrieve client IP address.");
+			IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, port);
+			_mainCameraProxy.AddClient(receiverEndpoint);
+            
+			_logger.Log($"Added receiver: {receiverEndpoint}");
+			return Ok("Receiver added successfully.");
 		}
-		catch (Exception ex)
-		{
-			_logger.Log("Error in startStream.");
-			_logger.Log(ex.ToString());
-			return BadRequest("Failed to add receiver.");
-		}
+		
+		return BadRequest("Could not retrieve client IP address.");
 	}
 	
+	[Catch]
 	[HttpPost("stopStream")]
 	public IActionResult StopStream()
 	{
-		try
+		IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
+		
+		if (ipAddress != null)
 		{
-			IPAddress? ipAddress = HttpContext.Connection.RemoteIpAddress;
+			_mainCameraProxy.RemoveClient(ipAddress);
 			
-			if (ipAddress != null)
-			{
-				_mainCameraProxy.RemoveClient(ipAddress);
-				
-				_logger.Log($"Removed receiver: {ipAddress}");
-				return Ok("Receiver removed successfully.");
-			}
-			
-			return BadRequest("Could not retrieve client IP address.");
+			_logger.Log($"Removed receiver: {ipAddress}");
+			return Ok("Receiver removed successfully.");
 		}
-		catch (Exception ex)
-		{
-			_logger.Log("Error in stopStream.");
-			_logger.Log(ex.ToString());
-			return BadRequest("Failed to remove receiver.");
-		}
+		
+		return BadRequest("Could not retrieve client IP address.");
 	}
 
 	[HttpGet("nextSave")]
 	public ActionResult<DateTime> NextSave()
 	{
-		try
-		{
-			return _syncManager.NextInterval();
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Could not supply next save:");
-			_logger.Log(e.ToString());
-			return BadRequest("Could not supply next save.");
-		}
+		return _syncManager.NextInterval();
 	}
 }
