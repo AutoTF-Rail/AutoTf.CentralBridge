@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
         <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.5" />
     </ItemGroup>
 

@@ -2,18 +2,18 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Sync;
 
 public abstract class Sync
 {
-	protected readonly Logger Logger;
+	protected readonly ILogger Logger;
 	protected internal readonly string RootDomain;
 	protected readonly IFileManager FileManager;
 	private readonly ITrainSessionService _trainSessionService;
 
-	public Sync(Logger logger, IFileManager fileManager, ITrainSessionService trainSessionService)
+	public Sync(ILogger logger, IFileManager fileManager, ITrainSessionService trainSessionService)
 	{
 		Logger = logger;
 		FileManager = fileManager;
@@ -22,6 +22,7 @@ public abstract class Sync
 		RootDomain = $"https://{_trainSessionService.EvuName}.server.autotf.de";
 	}
 
+	// TODO: HTTPHelper with result?
 	protected async Task<string> SendGet(string endpoint)
 	{
 		try
@@ -40,8 +41,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, $"An error occured while sending a request to: {endpoint}.");
 			throw;
 		}
 	}
@@ -64,8 +64,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, $"An error occured while sending a request to: {endpoint}.");
 			throw;
 		}
 	}
@@ -88,8 +87,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, $"An error occured while sending a request to: {endpoint}.");
 			throw;
 		}
 	}
@@ -116,8 +114,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.Message);
+			Logger.LogError(e, $"An error occured while sending a request to: {endpoint}.");
 			throw;
 		}	
 	}
@@ -146,8 +143,7 @@ public abstract class Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log($"ERROR: An error occured while sending a request to: {endpoint}.");
-			Logger.Log(e.Message);
+			Logger.LogError(e, $"An error occured while sending a request to: {endpoint}.");
 			throw;
 		}
 		finally

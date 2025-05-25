@@ -1,19 +1,18 @@
 using AutoTf.CentralBridge.FahrplanParser;
-using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Shared.Models.Enums;
 using AutoTf.FahrplanParser.Content;
-using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.OCR;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Localise.Display;
 
 public class EbuLaService : IEbuLaService
 {
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
     private readonly ITrainModel _train;
     private readonly IProxyManager _proxy;
     private readonly IFileManager _fileManager;
@@ -27,7 +26,7 @@ public class EbuLaService : IEbuLaService
 
     private ManualResetEvent _ebulaReadBlock = new ManualResetEvent(true);
     
-    public EbuLaService(Logger logger, ITrainModel train, IProxyManager proxy, IFileManager fileManager)
+    public EbuLaService(ILogger logger, ITrainModel train, IProxyManager proxy, IFileManager fileManager)
     {
         _logger = logger;
         _train = train;
@@ -40,7 +39,7 @@ public class EbuLaService : IEbuLaService
     
     private async Task Initialize()
     {
-        _logger.Log("Waiting for EbuLa display to be available.");
+        _logger.LogTrace("Waiting for EbuLa display to be available.");
 
         bool isCamAvailable = _proxy.IsDisplayRegistered(DisplayType.EbuLa);
         int retryCount = 0;
@@ -54,11 +53,11 @@ public class EbuLaService : IEbuLaService
 
         if (retryCount == 10)
         {
-            _logger.Log("Failed to wait for EbuLa display after 10 tries.");
+            _logger.LogInformation("Failed to wait for EbuLa display after 10 tries.");
             return;
         }
         
-        _logger.Log($"EbuLa is now available after {retryCount} retries.");
+        _logger.LogInformation($"EbuLa is now available after {retryCount} retries.");
 
         Started = true;
     }
@@ -160,7 +159,7 @@ public class EbuLaService : IEbuLaService
 
     public void OverwriteTable(List<KeyValuePair<string, IRowContent>> newTable)
     {
-        _logger.Log("Overwriting current timetable.");
+        _logger.LogInformation("Overwriting current timetable.");
         CurrentTimetable = newTable;
     }
 

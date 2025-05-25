@@ -1,9 +1,8 @@
-using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Models.Static;
-using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services.Network;
 
@@ -13,10 +12,11 @@ public class HotspotService : IHostedService
     
     private readonly IFileManager _fileManager;
     private readonly ITrainSessionService _trainSessionService;
-    private readonly Logger _logger = Statics.Logger;
+    private readonly ILogger<HotspotService> _logger;
 
-    public HotspotService(IFileManager fileManager, ITrainSessionService trainSessionService)
+    public HotspotService(ILogger<HotspotService> logger, IFileManager fileManager, ITrainSessionService trainSessionService)
     {
+        _logger = logger;
         _fileManager = fileManager;
         _trainSessionService = trainSessionService;
     }
@@ -29,14 +29,14 @@ public class HotspotService : IHostedService
     
     private void Configure()
     {
-        _logger.Log("Configuring network");
+        _logger.LogTrace("Configuring network");
 	
         // Unblocks hostapd
         CommandExecuter.ExecuteSilent("rfkill unblock all", true);
         
         string interfaceName = "wlan1";
         
-        _logger.Log($"Starting with SSID: {_trainSessionService.Ssid}");
+        _logger.LogTrace($"Starting with SSID: {_trainSessionService.Ssid}");
 		
         string password = "CentralBridgePW";
         
@@ -59,7 +59,7 @@ public class HotspotService : IHostedService
                 // TODO: rework this so it's not this ugly
             }
             
-            _logger.Log("Successfully set local IP.");
+            _logger.LogTrace("Successfully set local IP.");
 			
             // TODO: Check if this creates conflicts/transfers are seamless when moving between Bridges
             StartWifi(interfaceName, password);
@@ -67,12 +67,11 @@ public class HotspotService : IHostedService
             if(ipEnding == "1")
                 SetupDhcpConfig(interfaceName);
 			
-            _logger.Log($"Started WIFI as: {_trainSessionService.Ssid} with LAN IP {ownIp}.");
+            _logger.LogInformation($"Started WIFI as: {_trainSessionService.Ssid} with LAN IP {ownIp}.");
         }
         catch (Exception ex)
         {
-            _logger.Log("ERROR: Could not configure network");
-            _logger.Log(ex.ToString());
+            _logger.LogError(ex, "Could not configure network.");
         }
     }
 
@@ -110,7 +109,7 @@ public class HotspotService : IHostedService
         
         File.WriteAllText(configPath, hostapdConfig);
         
-        _logger.Log("Hostapd config updated successfully!");
+        _logger.LogTrace("Hostapd config updated successfully!");
         // TODO: Try catch this when wlan1 is not available
         CommandExecuter.ExecuteSilent("sudo systemctl restart hostapd", true);
     }
@@ -125,7 +124,7 @@ public class HotspotService : IHostedService
         File.WriteAllText(DhcpConfigPath, dhcpConfig);
         
         CommandExecuter.ExecuteSilent("sudo systemctl restart dnsmasq", false);
-        _logger.Log("DHCP server configuration updated successfully!");
+        _logger.LogTrace("DHCP server configuration updated successfully!");
     }
 
     private void CheckDependencies()
@@ -144,7 +143,7 @@ public class HotspotService : IHostedService
             }
         }
         
-        _logger.Log("All dependencies are installed.");
+        _logger.LogTrace("All dependencies are installed.");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -155,7 +154,7 @@ public class HotspotService : IHostedService
 
     public void Dispose()
     {
-        _logger.Log("Shutting down.");
+        _logger.LogTrace("Disposing hotspot service.");
         CommandExecuter.ExecuteSilent("sudo systemctl stop hostapd", true);
         CommandExecuter.ExecuteSilent("sudo systemctl stop dnsmasq", true);
     }

@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using AutoTf.CentralBridge.Services.Camera;
 using AutoTf.CentralBridge.Sync;
-using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridge.Server.Controllers;
@@ -11,11 +10,11 @@ namespace AutoTf.CentralBridge.Server.Controllers;
 [Route("/camera")]
 public class CameraController : ControllerBase
 {
-	private readonly Logger _logger;
+	private readonly ILogger<CameraController> _logger;
 	private readonly SyncManager _syncManager;
 	private readonly MainCameraProxyService _mainCameraProxy;
 	
-	public CameraController(Logger logger, SyncManager syncManager, MainCameraProxyService mainCameraProxy)
+	public CameraController(ILogger<CameraController> logger, SyncManager syncManager, MainCameraProxyService mainCameraProxy)
 	{
 		_logger = logger;
 		_syncManager = syncManager;
@@ -34,7 +33,7 @@ public class CameraController : ControllerBase
 				IPEndPoint receiverEndpoint = new IPEndPoint(ipAddress, port);
 				_mainCameraProxy.AddClient(receiverEndpoint);
                 
-				_logger.Log($"Added receiver: {receiverEndpoint}");
+				_logger.LogTrace($"Added receiver: {receiverEndpoint}");
 				return Ok("Receiver added successfully.");
 			}
 			
@@ -42,8 +41,7 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("Error in startStream.");
-			_logger.Log(ex.ToString());
+			_logger.LogError(ex, "Error in startStream.");
 			return BadRequest("Failed to add receiver.");
 		}
 	}
@@ -59,7 +57,7 @@ public class CameraController : ControllerBase
 			{
 				_mainCameraProxy.RemoveClient(ipAddress);
 				
-				_logger.Log($"Removed receiver: {ipAddress}");
+				_logger.LogTrace($"Removed receiver: {ipAddress}");
 				return Ok("Receiver removed successfully.");
 			}
 			
@@ -67,8 +65,7 @@ public class CameraController : ControllerBase
 		}
 		catch (Exception ex)
 		{
-			_logger.Log("Error in stopStream.");
-			_logger.Log(ex.ToString());
+			_logger.LogTrace(ex, "Error in stopStream.");
 			return BadRequest("Failed to remove receiver.");
 		}
 	}
@@ -76,15 +73,6 @@ public class CameraController : ControllerBase
 	[HttpGet("nextSave")]
 	public ActionResult<DateTime> NextSave()
 	{
-		try
-		{
-			return _syncManager.NextInterval();
-		}
-		catch (Exception e)
-		{
-			_logger.Log("Could not supply next save:");
-			_logger.Log(e.ToString());
-			return BadRequest("Could not supply next save.");
-		}
+		return _syncManager.NextInterval();
 	}
 }

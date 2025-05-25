@@ -1,16 +1,20 @@
-using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.Static;
-using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services.Network;
 
 public class NetworkManager : IHostedService
 {
-	private readonly Logger _logger = Statics.Logger;
+	private readonly ILogger<NetworkManager> _logger;
 	private readonly FileSystemWatcher _watcher = new FileSystemWatcher();
 
 	private HashSet<string> _knownDevices = new HashSet<string>();
+
+	public NetworkManager(ILogger<NetworkManager> logger)
+	{
+		_logger = logger;
+	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
@@ -33,11 +37,10 @@ public class NetworkManager : IHostedService
 	{
 		if (!File.Exists(e.FullPath))
 		{
-			_logger.Log("Leases file missing. Skipping device update.");
+			_logger.LogTrace("Leases file missing. Skipping device update.");
 			return;
 		}
 		
-		_logger.Log("Leases file changed. Checking connected devices...");
 		HashSet<string> currentDevices = new HashSet<string>();
 		string[] lines = File.ReadAllLines(e.FullPath);
 		
@@ -52,19 +55,15 @@ public class NetworkManager : IHostedService
         
 			if (!_knownDevices.Contains(mac))
 			{
-				_logger.Log("New device connected:");
-				_logger.Log($"MAC: {mac}");
-				_logger.Log($"IP: {parts[2]}");
-				_logger.Log($"Host: {parts[3]}");
+				_logger.LogInformation($"New device connected with MAC {mac}. New device count: {currentDevices.Count}.");
 			}
 		}
 
-		_logger.Log($"Previous devices: {_knownDevices.Count} | New devices: {currentDevices.Count}");
 		foreach (string mac in _knownDevices)
 		{
 			if (!currentDevices.Contains(mac))
 			{
-				_logger.Log($"Device disconnected: {mac}");
+				_logger.LogTrace($"Device disconnected: {mac}");
 				if (Statics.AllowedDevices.Contains(mac))
 					Statics.AllowedDevices.Remove(mac);
 			}

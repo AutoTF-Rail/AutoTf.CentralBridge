@@ -1,12 +1,12 @@
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services.Gps;
 
 public class LocaliseService : IHostedService
 {
-    private readonly Logger _logger;
+    private readonly ILogger<LocaliseService> _logger;
     private readonly IEbuLaService _ebuLaService;
     private readonly ICcdService _ccdService;
 
@@ -16,7 +16,7 @@ public class LocaliseService : IHostedService
 
     private bool _canRun = true;
     
-    public LocaliseService(Logger logger, IEbuLaService ebuLaService, ICcdService ccdService)
+    public LocaliseService(ILogger<LocaliseService> logger, IEbuLaService ebuLaService, ICcdService ccdService)
     {
         _logger = logger;
         _ebuLaService = ebuLaService;
@@ -70,7 +70,7 @@ public class LocaliseService : IHostedService
                 if (locationMarker != LocationMarker)
                 {
                     LocationMarker = locationMarker;
-                    _logger.Log("Location marker has changed to: " + LocationMarker);
+                    _logger.LogTrace("Location marker has changed to: " + LocationMarker);
                 }
             }
             

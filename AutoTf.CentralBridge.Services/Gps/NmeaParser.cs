@@ -1,5 +1,6 @@
 using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.Static;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services.Gps;
 
@@ -18,7 +19,7 @@ public static class NmeaParser
 		}
 		catch 
 		{
-			Statics.Logger.Log("Could not extract speed from nmea data.");
+			Statics.Logger.LogTrace("Could not extract speed from nmea data.");
 		}
 
 		return 0;
@@ -38,7 +39,7 @@ public static class NmeaParser
 		}
 		catch
 		{
-			Statics.Logger.Log("Could not extract status from nmea data.");
+			Statics.Logger.LogTrace("Could not extract status from nmea data.");
 		}
 
 		return false; 
@@ -60,7 +61,7 @@ public static class NmeaParser
 		}
 		catch
 		{
-			Statics.Logger.Log("Could not extract coordinates from nmea data.");
+			Statics.Logger.LogTrace("Could not extract coordinates from nmea data.");
 			return null;
 		}
 	}

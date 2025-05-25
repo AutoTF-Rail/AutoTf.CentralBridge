@@ -13,13 +13,14 @@ using AutoTf.CentralBridge.TrainModels;
 using AutoTf.CentralBridge.TrainModels.Models;
 using AutoTf.CentralBridge.TrainModels.Models.DesiroHC;
 using AutoTf.CentralBridge.TrainModels.Models.DesiroML;
+using AutoTf.Logging;
 using Logger = AutoTf.Logging.Logger;
 
 namespace AutoTf.CentralBridge.Server;
 
 public static class Program
 {
-	private static readonly Logger Logger = Statics.Logger;
+	private static readonly Logger Logger = new Logger(logToConsole: true);
 	
 	public static void Main(string[] args)
 	{
@@ -31,7 +32,15 @@ public static class Program
 			
 			ConfigureServices(builder);
 			
+			builder.Logging.ClearProviders();
+			builder.Logging.AddProvider(new AutoTfLoggerProvider(Logger));
+			builder.Logging.AddConsole();
+
+			builder.Services.AddSingleton(Logger);
+			
 			WebApplication app = builder.Build();
+			
+			Statics.Logger = app.Services.GetRequiredService<ILogger>();
 			
 			app.MapControllers();
 
@@ -46,16 +55,17 @@ public static class Program
 		}
 		catch (Exception e)
 		{
-			Statics.Logger.Log("Root Error:");
-			Statics.Logger.Log(e.ToString());
+			Statics.Logger.LogError(e, "Root error");
 		}
 	}
 
 	private static void ConfigureServices(WebApplicationBuilder builder)
 	{
-		builder.Services.AddControllers();
-			
-		builder.Services.AddSingleton(Logger);
+		builder.Services.AddControllers(options =>
+		{
+			options.Filters.Add<CatchAttribute>();
+		});
+		
 		builder.Services.AddSingleton<ITrainSessionService, TrainSessionService>();
 		builder.Services.AddSingleton<IFileManager, FileManager>();
 		builder.Services.AddSingleton<CodeValidator>();

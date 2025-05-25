@@ -1,19 +1,18 @@
-using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Shared.Models.Enums;
-using AutoTf.Logging;
 using Emgu.CV;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Localise.Display;
 
 public class CcdService : ICcdService
 {
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
     private readonly IProxyManager _proxy;
     private ICcdDisplayBase _displayBase;
     
-    public CcdService(Logger logger, ITrainModel train, IProxyManager proxy)
+    public CcdService(ILogger logger, ITrainModel train, IProxyManager proxy)
     {
         _logger = logger;
         _proxy = proxy;
@@ -31,7 +30,7 @@ public class CcdService : ICcdService
     
     private async Task Initialize()
     {
-        _logger.Log("Waiting for CCD display to be available.");
+        _logger.LogTrace("Waiting for CCD display to be available.");
 
         bool isCamAvailable = _proxy.IsDisplayRegistered(DisplayType.CCD);
         int retryCount = 0;
@@ -45,11 +44,11 @@ public class CcdService : ICcdService
 
         if (retryCount == 10)
         {
-            _logger.Log("Failed to wait for CCD display after 10 tries.");
+            _logger.LogInformation("Failed to wait for CCD display after 10 tries.");
             return;
         }
         
-        _logger.Log($"CCD is now available after {retryCount} retries.");
+        _logger.LogInformation($"CCD is now available after {retryCount} retries.");
 
         Initialized = true;
     }

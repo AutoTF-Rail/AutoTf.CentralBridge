@@ -1,11 +1,10 @@
 using System.Net;
-using AutoTf.CentralBridge.Models;
-using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Interfaces;
+using AutoTf.CentralBridge.Shared.Models;
 using AutoTf.CentralBridge.Shared.Models.Enums;
-using AutoTf.Logging;
 using Emgu.CV;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.CameraService;
 
@@ -16,7 +15,7 @@ public class ProxyManager : IProxyManager
 
 	private CameraProxy? _mainCamera;
 
-	public async Task CreateProxy(int port, bool isDisplay, Logger logger, ITrainModel train)
+	public async Task CreateProxy(int port, bool isDisplay, ILogger logger, ITrainModel train)
 	{
 		CameraProxy proxy = new CameraProxy(port, isDisplay, logger, train);
 		
@@ -48,9 +47,12 @@ public class ProxyManager : IProxyManager
 		return _displays.Select(x => new KeyValuePair<DisplayType, bool>(x.DisplayType, x.IsRunning)).ToList();
 	}
 
-	public bool? MainCameraStatus()
+	public Result<bool> MainCameraStatus()
 	{
-		return _mainCamera?.IsRunning;
+		if (_mainCamera == null)
+			return Result<bool>.Fail(ResultCode.NotFound, "Main camera was not found.");
+		
+		return _mainCamera.IsRunning;
 	}
 
 	public bool IsCameraAvailable()

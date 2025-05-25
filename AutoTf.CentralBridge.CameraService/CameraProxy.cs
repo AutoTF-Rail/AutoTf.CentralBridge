@@ -3,14 +3,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using AutoTf.CentralBridge.FahrplanParser;
-using AutoTf.CentralBridge.Models;
-using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Shared.Models.Enums;
-using AutoTf.Logging;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.OCR;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.CameraService;
 
@@ -27,7 +25,7 @@ internal class CameraProxy : IDisposable
 
 	private readonly int _port;
 	private bool _isDisplay;
-	private readonly Logger _logger;
+	private readonly ILogger _logger;
 	private readonly ITrainModel _train;
 
 	internal bool CanStream = true;
@@ -42,7 +40,7 @@ internal class CameraProxy : IDisposable
 
 	public bool IsRunning = false;
 
-	public CameraProxy(int port, bool isDisplay, Logger logger, ITrainModel train)
+	public CameraProxy(int port, bool isDisplay, ILogger logger, ITrainModel train)
 	{
 		_port = port;
 		_isDisplay = isDisplay;
@@ -87,7 +85,7 @@ internal class CameraProxy : IDisposable
 				
 				if (_buffer.Count > 10_000_000) // 10MB
 				{
-					_logger.Log("CP: Warning: Clearing oversized buffer");
+					_logger.LogWarning("CP: Warning: Clearing oversized buffer");
 					_buffer.Clear();
 				}
 				
@@ -141,8 +139,7 @@ internal class CameraProxy : IDisposable
 			if (CanStream)
 			{
 				// TODO: Tell parent that it's unavailable? So other services can't use this anymore?
-				_logger.Log($"Failed while listening for a camera on port {_port}:");
-				_logger.Log(e.ToString());
+				_logger.LogError(e, $"Failed while listening for a camera on port {_port}.");
 				IsRunning = false;
 			}
 		}
@@ -160,7 +157,7 @@ internal class CameraProxy : IDisposable
 		catch (Exception ex)
 		{
 			// This error sort of happens quite often, but we can safely ignore it. (Afaik there hasn't been any consequences)
-			_logger.Log("Failed to decode JPEG frame: " + ex.Message);
+			_logger.LogError(ex, "Failed to decode JPEG frame.");
 			return null;
 		}
 	}
@@ -173,7 +170,7 @@ internal class CameraProxy : IDisposable
 		// This doesn't work if we use a example Fahrplan picture, but IRL this would work
 		// DisplayType = date.Trim().Contains(DateTime.Now.Year.ToString()) ? DisplayType.EbuLa : DisplayType.CCD;
 		DisplayType = Regex.IsMatch(date.Trim(), @"^[0-9.]+$") ? DisplayType.EbuLa : DisplayType.CCD;
-		_logger.Log($"Registered display camera as {DisplayType.ToString()}.");
+		_logger.LogTrace($"Registered display camera as {DisplayType.ToString()}.");
 	}
 
 	private int IndexOfSequence(List<byte> source, byte[] sequence)

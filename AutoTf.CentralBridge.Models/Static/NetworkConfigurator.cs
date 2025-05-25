@@ -1,11 +1,11 @@
 using System.Net.NetworkInformation;
-using AutoTf.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Models.Static;
 
 public static class NetworkConfigurator
 {
-	private static readonly Logger Logger = Statics.Logger;
+	private static readonly ILogger Logger = Statics.Logger;
 	
 	public static bool IsInternetAvailable()
 	{
@@ -24,7 +24,6 @@ public static class NetworkConfigurator
 			// ignored
 		}
 
-		Logger.Log("Got no internet connection.");
 		return false;
 	}
 	
@@ -34,19 +33,19 @@ public static class NetworkConfigurator
 		{
 			if (CheckIpAddress(newInterface))
 				return;
-			Logger.Log("Setting Static IP.");
+			
+			Logger.LogTrace("Setting Static IP.");
 			string setIpCommand = $"ip addr add {ipAddress}/{subnetMask} dev {newInterface}";
 			string bringUpInterfaceCommand = $"ip link set {newInterface} up";
 
 			CommandExecuter.ExecuteSilent(setIpCommand, false);
 			CommandExecuter.ExecuteSilent(bringUpInterfaceCommand, false);
 
-			Logger.Log($"Set {ipAddress} on {newInterface} with subnet mask {subnetMask}");
+			Logger.LogTrace($"Set {ipAddress} on {newInterface} with subnet mask {subnetMask}");
 		}
 		catch (Exception ex)
 		{
-			Logger.Log($"An error occurred while setting IP: {ex.Message}");
-			Logger.Log(ex.ToString());
+			Logger.LogError(ex, $"An error occurred while setting IP: {ex.Message}");
 			throw;
 		}
 	}
@@ -58,12 +57,11 @@ public static class NetworkConfigurator
 
 		if (output.Contains("inet"))
 		{
-			string currIp = output.Split('\n').FirstOrDefault(x => x.Contains("inet"))?.Split("brd")[0].Replace("inet", "").Trim()!;
-			Logger.Log($"Current IP settings for {interfaceName}: {currIp}");
+			// string currIp = output.Split('\n').FirstOrDefault(x => x.Contains("inet"))?.Split("brd")[0].Replace("inet", "").Trim()!;
 			return true;
 		}
 
-		Logger.Log($"{interfaceName} does not have an IP address set.");
+		Logger.LogInformation($"{interfaceName} does not have an IP address set.");
 		return false;
 	}
 }

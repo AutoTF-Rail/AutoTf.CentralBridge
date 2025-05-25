@@ -1,8 +1,7 @@
 using System.Device.I2c;
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.Logging;
 using Iot.Device.Pwm;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services;
 
@@ -12,7 +11,7 @@ namespace AutoTf.CentralBridge.Services;
 // 5: SCL 6: GND
 public class MotorManager : IMotorManager
 {
-	private readonly Logger _logger;
+	private readonly ILogger<MotorManager> _logger;
 	
 	private I2cDevice _i2CDevice = null!;
 	private I2cConnectionSettings _i2CSettings = null!;
@@ -21,10 +20,10 @@ public class MotorManager : IMotorManager
 	private bool? _areMotorsAvailable;
 
 	private bool _areMotorsReleased;
-	private volatile bool _isInitialized = false;
+	private volatile bool _isInitialized;
 	
 	// TODO: Listen on a certain pin for a button press to physically disable the motors.
-	public MotorManager(Logger logger)
+	public MotorManager(ILogger<MotorManager> logger)
 	{
 		_logger = logger;
 	}
@@ -53,8 +52,7 @@ public class MotorManager : IMotorManager
 		}
 		catch (Exception e)
 		{
-			_logger.Log("Initialization of Motor manager failed.");
-			_logger.Log(e.ToString());
+			_logger.LogError(e, "Initialization of Motor manager failed.");
 		}
 	}
 	
@@ -73,12 +71,12 @@ public class MotorManager : IMotorManager
 				try
 				{
 					_i2CDevice.ReadByte();
-					_logger.Log("Motors are available.");
+					_logger.LogInformation("Motors are available.");
 					_areMotorsAvailable = true;
 				}
 				catch
 				{
-					_logger.Log("Motors are not available.");
+					_logger.LogInformation("Motors are not available.");
 					_areMotorsAvailable = false;
 				}
 			}
@@ -101,11 +99,11 @@ public class MotorManager : IMotorManager
 					TurnOnMotor(i);
 					// TODO: Add sound feedback? e.g. if disabled by button or so
 				}
-				_logger.Log("Motors have been engaged.");
+				_logger.LogInformation("Motors have been engaged.");
 				return;
 			}
 			
-			_logger.Log("Turning off all motors.");
+			_logger.LogInformation("Turning off all motors.");
 			for (int i = 0; i < 16; i++)
 			{
 				TurnOffMotor(i);
@@ -131,7 +129,7 @@ public class MotorManager : IMotorManager
 		if (_areMotorsReleased)
 			return;
 		
-		_logger.Log($"Setting channel {channel} to {angle}deg.");
+		_logger.LogTrace($"Setting channel {channel} to {angle}deg.");
 		
 		angle = Math.Max(0, Math.Min(270, angle));
 		double minDutyCycle = 0.065;

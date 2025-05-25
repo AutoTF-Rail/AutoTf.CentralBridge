@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Models.Static;
 
@@ -51,17 +52,10 @@ public static class CommandExecuter
 			{
 				throw new Exception($"Error: {error}");
 			}
-            
-			// TODO:
-			if(!string.IsNullOrEmpty(output))
-				Statics.Logger.Log(output);
 		}
 		catch (Exception e)
 		{
-			if(ignoreExceptions)
-				Statics.Logger.Log("Ignored exception:");
-			
-			Statics.Logger.Log(e.ToString());
+			Statics.Logger.LogError(e, ignoreExceptions ? "Ignored exception." : "");
 			if (!ignoreExceptions)
 				throw;
 		}

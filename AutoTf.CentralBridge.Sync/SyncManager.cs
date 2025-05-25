@@ -3,6 +3,7 @@ using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Models.Static;
 using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
 namespace AutoTf.CentralBridge.Sync;
@@ -18,26 +19,28 @@ public class SyncManager : IHostedService
 	// ReSharper disable once NotAccessedField.Local
 	private readonly DataSync _dataSync;
 	
-	private readonly Logger _logger = Statics.Logger;
+	private readonly ILogger<SyncManager> _logger;
 	private readonly Timer _syncTimer = new Timer(150000);
 	private DateTime _nextElapseTime;
 
 	public static DateTime LastSynced;
 	public static DateTime LastSyncTry;
 
-	public SyncManager(IFileManager fileManager, ITrainSessionService trainSessionService)
+	public SyncManager(ILogger<SyncManager> logger, Logger baseLogger, IFileManager fileManager, ITrainSessionService trainSessionService)
 	{
+		_logger = logger;
 		_fileManager = fileManager;
 		
 		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSync", DateTime.Now.Subtract(TimeSpan.FromDays(1999)).ToString("o")));
 		LastSynced = DateTime.Parse(fileManager.ReadFile("lastSyncTry", DateTime.Now.Subtract(TimeSpan.FromDays(1999)).ToString("o")));
 
 		// TODO: Log url here?
+		// TODO: Just let these register themselves? And then just inject them in the manager
 		_keySync = new KeySync(_logger, fileManager, trainSessionService);
 		_macSync = new MacSync(_logger, fileManager, trainSessionService);
-		_dataSync = new DataSync(_logger, fileManager, trainSessionService);
+		_dataSync = new DataSync(_logger, baseLogger, fileManager, trainSessionService);
 		
-		_logger.Log($"EVU Domain: {_keySync.RootDomain}");
+		_logger.LogTrace($"EVU Domain: {_keySync.RootDomain}");
 	}
 
 	public Task StartAsync(CancellationToken cancellationToken)
@@ -62,7 +65,7 @@ public class SyncManager : IHostedService
 		_syncTimer.Elapsed += SyncSyncTimerElapsed;
 		_syncTimer.Start();
 		
-		_logger.Log("Started Sync timer.");
+		_logger.LogTrace("Started Sync timer.");
 	}
 
 	private void SyncSyncTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -71,18 +74,14 @@ public class SyncManager : IHostedService
 		LastSyncTry = DateTime.Now;
 		_fileManager.WriteAllText("lastSyncTry", LastSyncTry.ToString("o"));
 		
-		_logger.Log("Checking for internet.");
-		
-		_logger.Log("Periodic sync check started.");
+		_logger.LogTrace("Periodic sync check started.");
 		TrySync();
-		// }
-		
-		// _logger.Log("VERBOSE: Train has left internet connection. Could not sync.");
 	}
 
 	private void TrySync()
 	{
 		LastSynced = DateTime.Now;
+		
 		if (NetworkConfigurator.IsInternetAvailable())
 			_fileManager.WriteAllText("lastSync", LastSynced.ToString("o"));
 		
@@ -99,7 +98,7 @@ public class SyncManager : IHostedService
 	
 	public void Dispose()
 	{
-		_logger.Log("Disposed sync timer.");
+		_logger.LogTrace("Disposed sync timer.");
 		_syncTimer.Dispose();
 	}
 }

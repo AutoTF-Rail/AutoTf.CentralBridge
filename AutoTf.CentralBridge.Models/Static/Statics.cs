@@ -1,12 +1,10 @@
 using System.Diagnostics;
-using AutoTf.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Models.Static;
 
 public static class Statics
 {
-	public static readonly Logger Logger = new Logger(true);
-	
 	public static bool AreCamerasStarted { get; set; }
 	
 	public static Action? SyncEvent;
@@ -16,6 +14,8 @@ public static class Statics
 	// Just because a device is on the network, doesn't mean it's an authorized user.
 	public static List<string> AllowedDevices { get; set; } = new List<string>();
 	
+	public static ILogger Logger { get; set; }
+
 	public static string GenerateRandomString()
 	{
 		Random random = new Random();

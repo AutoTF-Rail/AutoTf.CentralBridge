@@ -3,6 +3,7 @@ using System.Text.Json;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Models.Static;
 using AutoTf.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Sync;
 
@@ -10,9 +11,9 @@ public class DataSync : Sync
 {
 	private readonly List<string> _collectedLogs = new List<string>();
 	
-	public DataSync(Logger logger, IFileManager fileManager, ITrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
+	public DataSync(ILogger logger, Logger baseLogger, IFileManager fileManager, ITrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
 	{
-		Logger.NewLog += log => _collectedLogs.Add(log);
+		baseLogger.NewLog += log => _collectedLogs.Add(log);
 		Statics.SyncEvent += Sync;
 	}
 
@@ -29,8 +30,7 @@ public class DataSync : Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log("ERROR: Failed to sync data.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, "Failed to sync data.");
 		}
 	}
 
@@ -48,7 +48,7 @@ public class DataSync : Sync
 		if (list.Count == 0)
 			return;
 		
-		Logger.Log($"Uploading {list.Count} videos.");
+		Logger.LogTrace($"Uploading {list.Count} videos.");
 		
 		const int maxConcurrency = 5;
 		using (SemaphoreSlim semaphore = new SemaphoreSlim(maxConcurrency))
@@ -62,7 +62,7 @@ public class DataSync : Sync
 			await Task.WhenAll(uploadTasks);
 		}
 		
-		Logger.Log("Uploaded all videos.");
+		Logger.LogTrace("Uploaded all videos.");
 		
 		foreach (string recording in list)
 		{
@@ -74,16 +74,11 @@ public class DataSync : Sync
 	{
 		try
 		{
-			Logger.Log("Updating status.");
-
 			await SendPostContent("/sync/device/updatestatus", new StringContent(JsonSerializer.Serialize("Online"), Encoding.UTF8, "application/json"));
-			
-			Logger.Log("Successfully updated status.");
 		}
 		catch (Exception e)
 		{
-			Logger.Log("ERROR: An error occured while updating the status.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, "An error occured while updating the status.");
 		}
 	}
 	
@@ -94,10 +89,9 @@ public class DataSync : Sync
 		{
 			if (_collectedLogs.Count == 0)
 			{
-				Logger.Log("No logs to upload. Skipping.");
 				return;
 			}
-			Logger.Log("Uploading logs");
+			Logger.LogTrace("Uploading logs");
 			
 			List<string> tempLogStorage = [.._collectedLogs];
 			_collectedLogs.Clear();
@@ -106,12 +100,11 @@ public class DataSync : Sync
 
 			await SendPostContent("/sync/device/logs/upload", new StringContent(jsonBody, Encoding.UTF8, "application/json"));
 			
-			Logger.Log("Successfully uploaded logs.");
+			Logger.LogTrace("Successfully uploaded logs.");
 		}
 		catch (Exception e)
 		{
-			Logger.Log("ERROR: Failed to upload logs.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, "Failed to upload logs.");
 		}
 	}
 }

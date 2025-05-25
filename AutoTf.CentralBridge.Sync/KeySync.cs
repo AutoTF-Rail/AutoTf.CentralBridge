@@ -2,7 +2,7 @@ using System.Text.Json;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Models.Static;
-using AutoTf.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Sync;
 
@@ -10,7 +10,7 @@ public class KeySync : Sync
 {
 	private string[] _latestList;
 	
-	public KeySync(Logger logger, IFileManager fileManager, ITrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
+	public KeySync(ILogger logger, IFileManager fileManager, ITrainSessionService trainSessionService) : base(logger, fileManager, trainSessionService)
 	{
 		Statics.SyncEvent += Sync;
 		_latestList = FileManager.ReadAllLines("keys");
@@ -29,8 +29,7 @@ public class KeySync : Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log("ERROR: Failed to sync keys.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, "Failed to sync keys.");
 		}
 	}
 	
@@ -38,7 +37,6 @@ public class KeySync : Sync
 	{
 		try
 		{
-			Logger.Log("Syncing Keys Addresses.");
 			List<KeyData> result = JsonSerializer.Deserialize<List<KeyData>>(await SendGetString("/sync/keys/all"))!;
 
 			string[] keys = result.Select(x => x.SerialNumber + ":" + x.Secret).ToArray();
@@ -48,12 +46,10 @@ public class KeySync : Sync
 
 			_latestList = keys;
 			FileManager.WriteAllLines("keys",  keys);
-			Logger.Log("Finished syncing keys.");
 		}
 		catch (Exception e)
 		{
-			Logger.Log("ERROR: An error occured while syncing keys.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, "An error occured while syncing keys.");
 		}
 	}
 	
@@ -61,8 +57,6 @@ public class KeySync : Sync
 	{
 		try
 		{
-			Logger.Log("Checking for new keys.");
-
 			string response = await SendGet("/sync/keys/lastupdate");
 
 			string lastNewKeysTimestamp = FileManager.ReadFile("lastKeysTimestamp", DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"));
@@ -75,8 +69,7 @@ public class KeySync : Sync
 		}
 		catch (Exception e)
 		{
-			Logger.Log("ERROR: An error occured while checking for new keys.");
-			Logger.Log(e.ToString());
+			Logger.LogError(e, "An error occured while checking for new keys.");
 			return false;
 		}
 	}

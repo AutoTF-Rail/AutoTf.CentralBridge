@@ -4,8 +4,7 @@ using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.TrainModels.CcdDisplays;
 using AutoTf.CentralBridge.TrainModels.CcdDisplays.DesiroHc;
-using AutoTf.Logging;
-using Mapping = AutoTf.CentralBridge.TrainModels.Models.DesiroHC.Mapping;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.TrainModels.Models;
 
@@ -18,7 +17,7 @@ public class FallBackTrain : DefaultModel
 	public override CcdDisplayBase CcdDisplay { get; } = new Base();
 	public override RegionMappings Mappings { get; } = new Mapping();
 	
-	public FallBackTrain(IMotorManager motorManager, Logger logger) : base(motorManager, logger)
+	public FallBackTrain(IMotorManager motorManager, ILogger<FallBackTrain> logger) : base(motorManager, logger)
 	{
 		Task.Run(Initialize);
 	}
@@ -28,7 +27,7 @@ public class FallBackTrain : DefaultModel
 	/// </summary>
 	public override void EasyControl(int power)
 	{
-		Logger.Log($"EC: Setting power to {power}%.");
+		Logger.LogInformation($"EC: Setting power to {power}%.");
 	}
 
 	public override void EmergencyBrake()
@@ -36,7 +35,7 @@ public class FallBackTrain : DefaultModel
 		// TODO: Report to user that this is not available, if it's the default train model.
 		// Or have some generalised option to emergency brake, that is the same on all trains.
 		OnEmergencyBrake?.Invoke();
-		Logger.Log("EC: Emergency brake has been initiated.");
+		Logger.LogInformation("EC: Emergency brake has been initiated.");
 	}
 	
 	public sealed override void Initialize()

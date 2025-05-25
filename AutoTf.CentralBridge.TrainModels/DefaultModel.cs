@@ -2,8 +2,7 @@ using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.CentralBridge.TrainModels.CcdDisplays;
-using AutoTf.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.TrainModels;
 
@@ -12,11 +11,11 @@ public abstract class DefaultModel : ITrainModel
 	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
 	
 	internal readonly IMotorManager MotorManager;
-	internal readonly Logger Logger;
+	internal readonly ILogger Logger;
 	
 	internal int _currentPower = 0;
 
-	public DefaultModel(IMotorManager motorManager, Logger logger)
+	public DefaultModel(IMotorManager motorManager, ILogger logger)
 	{
 		MotorManager = motorManager;
 		Logger = logger;
@@ -110,7 +109,7 @@ public abstract class DefaultModel : ITrainModel
 			else
 				angle = leverMiddleAngle + (percentage / 100) * (leverMinimumAngle - leverMiddleAngle);
 			
-			Logger.Log($"Default Train: Setting Combined Lever \"{lever.Name}\" to: {angle}");
+			Logger.LogInformation($"Default Train: Setting Combined Lever \"{lever.Name}\" to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
 		else if (lever.Type == LeverType.RangedLever)
@@ -120,7 +119,7 @@ public abstract class DefaultModel : ITrainModel
 				? leverMaximumAngle - (percentage / 100) * (leverMaximumAngle - leverMinimumAngle)
 				: leverMinimumAngle + (percentage / 100) * (leverMaximumAngle - leverMinimumAngle);
 
-			Logger.Log($"Default Train: Setting {lever.Type.ToString()} \"{lever.Name}\" to: {angle}");
+			Logger.LogInformation($"Default Train: Setting {lever.Type.ToString()} \"{lever.Name}\" to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
 	}

@@ -1,8 +1,6 @@
 using System.IO.Ports;
-using AutoTf.CentralBridge.Models;
-using AutoTf.CentralBridge.Models.Static;
-using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services.Gps;
 
@@ -12,12 +10,13 @@ namespace AutoTf.CentralBridge.Services.Gps;
 // See github/AutoTf.GpsTest repo for docs
 public class MotionService : IHostedService
 {
-	public MotionService()
+	private readonly ILogger<MotionService> _logger;
+	
+	public MotionService(ILogger<MotionService> logger)
 	{
+		_logger = logger;
 		_gpsSerialPort = new SerialPort(_gpsPortName, _gpsBaudRate, Parity.None, 8, StopBits.One);
 	}
-	
-	private readonly Logger _logger = Statics.Logger;
 
 	private readonly string _gpsPortName = "/dev/ttyACM0";
 	private readonly int _gpsBaudRate = 115200;
@@ -45,9 +44,9 @@ public class MotionService : IHostedService
 				return;
 			
 			if(!value)
-				_logger.Log("GPS: Lost GPS connection.");
+				_logger.LogTrace("GPS: Lost GPS connection.");
 			else
-				_logger.Log("GPS: Reconnected GPS.");
+				_logger.LogTrace("GPS: Reconnected GPS.");
 
 			_isGpsConnected = value;
 		}

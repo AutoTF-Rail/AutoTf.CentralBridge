@@ -11,6 +11,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+      <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250525-1133" />
     </ItemGroup>
 </Project>

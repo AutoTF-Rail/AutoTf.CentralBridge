@@ -1,9 +1,9 @@
-using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Static;
 using AutoTf.CentralBridge.TrainModels.Models;
 using AutoTf.CentralBridge.TrainModels.Models.DesiroHC;
 using AutoTf.CentralBridge.TrainModels.Models.DesiroML;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.TrainModels;
 
@@ -24,12 +24,12 @@ public static class TrainResolver
 		
 		if (trainModelMap.TryGetValue(trainType, out Type? type))
 		{
-			Statics.Logger.Log($"Starting with train model {trainType}.");
+			Statics.Logger.LogInformation($"Starting with train model {trainType}.");
 			ITrainModel? trainModel = serviceProvider.GetService(type) as ITrainModel;
 			return trainModel!;
 		}
 
-		Statics.Logger.Log("Starting with fall back train model.");
+		Statics.Logger.LogInformation("Starting with fall back train model.");
 		ITrainModel train = (serviceProvider.GetService(typeof(FallBackTrain)) as ITrainModel)!;
 		
 		return train;

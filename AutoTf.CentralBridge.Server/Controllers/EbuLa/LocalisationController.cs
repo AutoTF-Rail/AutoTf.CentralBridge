@@ -1,7 +1,6 @@
 using AutoTf.CentralBridge.Extensions;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridge.Server.Controllers.EbuLa;
@@ -14,10 +13,10 @@ namespace AutoTf.CentralBridge.Server.Controllers.EbuLa;
 [Route("ebula/localisation")]
 public class LocalisationController : ControllerBase
 {
-    private readonly Logger _logger;
+    private readonly ILogger<LocalisationController> _logger;
     private readonly IEbuLaService _ebula;
     
-    public LocalisationController(Logger logger, IEbuLaService ebula)
+    public LocalisationController(ILogger<LocalisationController> logger, IEbuLaService ebula)
     {
         _logger = logger;
         _ebula = ebula;
@@ -34,8 +33,7 @@ public class LocalisationController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when disabling localisation:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when disabling localisation:");
             return BadRequest(e.ToString());
         }
     }
@@ -53,8 +51,7 @@ public class LocalisationController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when enabling localisation:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when enabling localisation:");
             return BadRequest(e.ToString());
         }
     }
@@ -72,8 +69,7 @@ public class LocalisationController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when turning off localisation:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when turning off localisation:");
             return BadRequest(e.ToString());
         }
     }
@@ -92,8 +88,7 @@ public class LocalisationController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when turning on localisation:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when turning on localisation:");
             return BadRequest(e.ToString());
         }
     }
@@ -108,8 +103,7 @@ public class LocalisationController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when supplying the localisation state:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when supplying the localisation state:");
             return BadRequest(e.ToString());
         }
     }

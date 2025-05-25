@@ -2,6 +2,7 @@ using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.Static;
 using AutoTf.CentralBridge.Shared.Models.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.CameraService;
 
@@ -56,8 +57,7 @@ internal static class DeviceParser
 		catch (Exception ex)
 		{
 			// When it fails right here, we will just not have any devices, thus the other services just can't start, there is no need to handle this seperatly.
-			Statics.Logger.Log("Could not resolve video devices:");
-			Statics.Logger.Log(ex.ToString());
+			Statics.Logger.LogError(ex, "Could not resolve video devices.");
 			return new List<VideoDevice>();
 		}
 		

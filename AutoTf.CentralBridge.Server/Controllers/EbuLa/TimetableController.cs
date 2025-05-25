@@ -4,7 +4,6 @@ using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.FahrplanParser.Content;
 using AutoTf.FahrplanParser.Content.Content.Base;
-using AutoTf.Logging;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AutoTf.CentralBridge.Server.Controllers.EbuLa;
@@ -16,10 +15,10 @@ namespace AutoTf.CentralBridge.Server.Controllers.EbuLa;
 [Route("ebula/timetable")]
 public class TimetableController : ControllerBase
 {
-    private readonly Logger _logger;
+    private readonly ILogger<TimetableController> _logger;
     private readonly IEbuLaService _ebula;
     
-    public TimetableController(Logger logger, IEbuLaService ebula)
+    public TimetableController(ILogger<TimetableController> logger, IEbuLaService ebula)
     {
         _logger = logger;
         _ebula = ebula;
@@ -35,8 +34,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong while supplying the current Table:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong while supplying the current Table:");
             return BadRequest(e.ToString());
         }
     }
@@ -53,8 +51,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong while editing the current timetable:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong while editing the current timetable:");
             return BadRequest(e.ToString());
         }
     }
@@ -69,8 +66,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when supplying the current conditions:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when supplying the current conditions:");
             return BadRequest(e.ToString());
         }
     }
@@ -91,8 +87,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when disabling auto timetable detection:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when disabling auto timetable detection:");
             return BadRequest(e.ToString());
         }
     }
@@ -110,8 +105,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when enabling auto timetable detection:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when enabling auto timetable detection:");
             return BadRequest(e.ToString());
         }
     }
@@ -132,8 +126,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when turning off auto timetable detection:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when turning off auto timetable detection:");
             return BadRequest(e.ToString());
         }
     }
@@ -150,8 +143,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when turning on auto timetable detection:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when turning on auto timetable detection:");
             return BadRequest(e.ToString());
         }
     }
@@ -166,8 +158,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when supplying the auto timetable detection state:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when supplying the auto timetable detection state:");
             return BadRequest(e.ToString());
         }
     }
@@ -186,8 +177,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when scanning the current timetable page:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when scanning the current timetable page:");
             return BadRequest(e.ToString());
         }
     }
@@ -206,8 +196,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when locking the ebula:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when locking the ebula:");
             return BadRequest(e.ToString());
         }
     }
@@ -226,8 +215,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when unlocking the ebula:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when unlocking the ebula:");
             return BadRequest(e.ToString());
         }
     }
@@ -242,8 +230,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when returning the current lock state:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when returning the current lock state:");
             return BadRequest(e.ToString());
         }
     }
@@ -260,8 +247,7 @@ public class TimetableController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.Log("Something went wrong when rescanning the timetable:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Something went wrong when rescanning the timetable:");
             return BadRequest(e.ToString());
         }
     }

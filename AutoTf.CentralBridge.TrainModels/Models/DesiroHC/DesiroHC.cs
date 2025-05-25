@@ -4,14 +4,14 @@ using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.TrainModels.CcdDisplays;
 using AutoTf.CentralBridge.TrainModels.CcdDisplays.DesiroHc;
-using Logger = AutoTf.Logging.Logger;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.TrainModels.Models.DesiroHC;
 
 // ReSharper disable once InconsistentNaming
 public class DesiroHC : DefaultModel
 {
-    public DesiroHC(IMotorManager motorManager, Logger logger) : base(motorManager, logger)
+    public DesiroHC(IMotorManager motorManager, ILogger<DesiroHC> logger) : base(motorManager, logger)
     {
         Task.Run(Initialize);
     }
@@ -21,7 +21,7 @@ public class DesiroHC : DefaultModel
 
     public override void EasyControl(int power)
     {
-        Logger.Log($"EC: Setting power to {power}%.");
+        Logger.LogInformation($"EC: Setting power to {power}%.");
         if (power == 0) // Release all levers
         {
             SetLever(0, 0);
@@ -49,7 +49,7 @@ public class DesiroHC : DefaultModel
         SetLever(0, 0);
         SetLever(1, 100);
         OnEmergencyBrake?.Invoke();
-        Logger.Log("EC: Emergency brake has been initiated.");
+        Logger.LogInformation("EC: Emergency brake has been initiated.");
     }
 
     public sealed override void Initialize()

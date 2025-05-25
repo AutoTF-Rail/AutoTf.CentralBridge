@@ -1,19 +1,19 @@
 using System.Timers;
 using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.Logging;
+using Microsoft.Extensions.Logging;
 using Timer = System.Timers.Timer;
 
 namespace AutoTf.CentralBridge.Services;
 
 public class AicService : IAicService
 {
-    private readonly Logger _logger;
+    private readonly ILogger<AicService> _logger;
     private const string AicEndpoint = "http://192.168.0.3";
     
     private readonly Timer _onlineTimer = new Timer(15000);
 
-    public AicService(Logger logger)
+    public AicService(ILogger<AicService> logger)
     {
         _logger = logger;
     }
@@ -48,7 +48,7 @@ public class AicService : IAicService
     {
         OnlineTimerOnElapsed(null, null!);
         // Log this once on startup
-        _logger.Log($"Verbose: AIC online state has changed to: Online: {Online}.");
+        _logger.LogTrace($"AIC online state has changed to: Online: {Online}.");
         
         _onlineTimer.Elapsed += OnlineTimerOnElapsed;
         _onlineTimer.Start();
@@ -60,7 +60,7 @@ public class AicService : IAicService
 
         if (Online != newState)
         {
-            _logger.Log($"Verbose: AIC online state has changed to: Online: {newState}.");
+            _logger.LogTrace($"AIC online state has changed to: Online: {newState}.");
         }
 
         Online = newState;

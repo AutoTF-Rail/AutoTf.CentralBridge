@@ -1,18 +1,17 @@
 using System.Diagnostics;
-using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Models.Static;
 using AutoTf.CentralBridge.Shared.Models.Enums;
-using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.CameraService;
 
 public class CameraManager : IHostedService
 {
-	private readonly Logger _logger;
+	private readonly ILogger<CameraManager> _logger;
 	private readonly IProxyManager _proxy;
 	private readonly ITrainModel _train;
 
@@ -21,7 +20,7 @@ public class CameraManager : IHostedService
 	
 	private readonly List<KeyValuePair<VideoDevice, Process>> _ffmpegProcesses = new List<KeyValuePair<VideoDevice, Process>>();
 
-	public CameraManager(Logger logger, IProxyManager proxy, ITrainModel train)
+	public CameraManager(ILogger<CameraManager> logger, IProxyManager proxy, ITrainModel train)
 	{
 		_logger = logger;
 		_proxy = proxy;
@@ -39,12 +38,12 @@ public class CameraManager : IHostedService
 		
 		foreach (VideoDevice videoDevice in videoDevices)
 		{
-			_logger.Log($"Found camera {videoDevice.Name} at {videoDevice.Path}.");
+			_logger.LogTrace($"Found camera {videoDevice.Name} at {videoDevice.Path}.");
 			await StartStream(videoDevice);
 		}
 
 		Statics.AreCamerasStarted = true;
-		_logger.Log("Started up all cameras");
+		_logger.LogInformation("Started up all cameras");
 	}
 	
 	private async Task StartStream(VideoDevice videoDevice)
@@ -65,7 +64,7 @@ public class CameraManager : IHostedService
 			frameHeight = 720;
 		}
 
-		_logger.Log($"Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate} ");
+		_logger.LogTrace($"Starting stream for camera at {videoDevice.Path}: Port {port} Record: {record} Resolution: {frameWidth}x{frameHeight}:{framerate}");
 		await _proxy.CreateProxy(port, videoDevice.Type == DeviceType.Display, _logger, _train);
 		await Task.Delay(25);
 		_ffmpegProcesses.Add(new KeyValuePair<VideoDevice, Process>(videoDevice, StartFfmpegProcess(videoDevice.Path, framerate, frameWidth, frameHeight, port, record)));
@@ -97,7 +96,7 @@ public class CameraManager : IHostedService
 		process.ErrorDataReceived += (_, e) =>
 		{
 			if (e.Data != null)
-				_logger.Log($"[{port}] FFMPEG Error: {e.Data}");
+				_logger.LogError($"[{port}] FFMPEG Error: {e.Data}");
 		};
 
 		process.Start();

@@ -1,19 +1,19 @@
-using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Models.Static;
-using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services;
 
 public class BluetoothService : IHostedService
 {
 	private readonly ITrainSessionService _trainSessionService;
-	private readonly Logger _logger = Statics.Logger;
+	private readonly ILogger<BluetoothService> _logger;
 	private int _instanceId = 2;
 
-	public BluetoothService(ITrainSessionService trainSessionService)
+	public BluetoothService(ILogger<BluetoothService> logger, ITrainSessionService trainSessionService)
 	{
+		_logger = logger;
 		_trainSessionService = trainSessionService;
 	}
 
@@ -32,7 +32,7 @@ public class BluetoothService : IHostedService
 			string lengthByte = length.ToString("X2");
 			string adData = $"{lengthByte}09{hexMessage}";
 
-			_logger.Log($"Trying to start BLE with data: {adData}");
+			_logger.LogTrace($"Trying to start BLE with data: {adData}");
 			
 			string command = $"btmgmt add-adv -d {adData} {_instanceId}";
 
@@ -40,8 +40,7 @@ public class BluetoothService : IHostedService
 		}
 		catch (Exception e)
 		{
-			_logger.Log("ERROR: Bluetooth beacon threw an error");
-			_logger.Log(e.ToString());
+			_logger.LogError(e, "Bluetooth beacon threw an error.");
 		}
 	}
 	
@@ -63,7 +62,7 @@ public class BluetoothService : IHostedService
 		string command = $"btmgmt rm-adv {_instanceId}";
 		CommandExecuter.ExecuteSilent(command, true);
 		
-		_logger.Log("Beacon removed.");
+		_logger.LogTrace("Beacon removed.");
 		return Task.CompletedTask;
 	}
 }

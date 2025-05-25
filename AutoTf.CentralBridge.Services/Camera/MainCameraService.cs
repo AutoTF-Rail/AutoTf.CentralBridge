@@ -1,20 +1,20 @@
 using System.Net;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.Logging;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AutoTf.CentralBridge.Services.Camera;
 
 public class MainCameraService : IHostedService
 {
-    private readonly Logger _logger;
+    private readonly ILogger<MainCameraService> _logger;
     private readonly ITrainSessionService _trainSessionService;
     private readonly IProxyManager _proxy;
 
     private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
-    public MainCameraService(Logger logger, ITrainSessionService trainSessionService, IProxyManager proxy)
+    public MainCameraService(ILogger<MainCameraService> logger, ITrainSessionService trainSessionService, IProxyManager proxy)
     {
         _logger = logger;
         _trainSessionService = trainSessionService;
@@ -35,7 +35,7 @@ public class MainCameraService : IHostedService
         if (_trainSessionService.LocalServiceState == BridgeServiceState.Slave)
             port = 5001;
         
-        _logger.Log($"Using port {port} for main camera proxy.");
+        _logger.LogTrace($"Using port {port} for main camera proxy.");
 
         bool isCamAvailable = _proxy.IsCameraAvailable();
         int retryCount = 0;
@@ -49,11 +49,11 @@ public class MainCameraService : IHostedService
 
         if (retryCount == 10)
         {
-            _logger.Log("Failed to start up the main camera after 10 tries.");
+            _logger.LogError("Failed to start up the main camera after 10 tries.");
             return;
         }
 
-        _logger.Log($"Main camera is now available after {retryCount} retries.");
+        _logger.LogInformation($"Main camera is now available after {retryCount} retries.");
         _proxy.StartListeningForCamera(new IPEndPoint(IPAddress.Parse("127.0.0.1"), port));
     }
 
@@ -67,17 +67,16 @@ public class MainCameraService : IHostedService
     {
         try
         {
-            _logger.Log("Disposing camera service.");
+            _logger.LogTrace("Disposing camera service.");
 
             _cancellationTokenSource.Cancel();
             _proxy.StopListeningForCamera(IPAddress.Parse("127.0.0.1"));
 
-            _logger.Log("Disposed camera service.");
+            _logger.LogTrace("Disposed camera service.");
         }
         catch (Exception e)
         {
-            _logger.Log("Failed to dispose main camera service:");
-            _logger.Log(e.ToString());
+            _logger.LogError(e, "Failed to dispose main camera service:");
             throw;
         }
     }

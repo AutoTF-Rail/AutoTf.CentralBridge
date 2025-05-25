@@ -1,6 +1,6 @@
-using AutoTf.CentralBridge.Models.CameraService;
 using AutoTf.CentralBridge.Models.Interfaces;
 using AutoTf.CentralBridge.Services.Gps;
+using AutoTf.CentralBridge.Shared.Models;
 using AutoTf.CentralBridge.Shared.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,31 +22,31 @@ public class StatusController : ControllerBase
     }
     
     [HttpGet("displays")]
-    public ActionResult<List<KeyValuePair<DisplayType, bool>>> DisplayStatus()
+    public Result<List<KeyValuePair<DisplayType, bool>>> DisplayStatus()
     {
-        return _proxy.DisplaysStatus();
+        return Result<List<KeyValuePair<DisplayType, bool>>>.Ok(_proxy.DisplaysStatus());
     }
     
     [HttpGet("mainCamera")]
-    public ActionResult<bool?> MainCameraStatus()
+    public Result<bool> MainCameraStatus()
     {
         return _proxy.MainCameraStatus();
     }
     
     [HttpGet("localise")]
-    public ActionResult<bool?> Localise()
+    public Result<bool?> Localise()
     {
         return _localiseService.StartSuccess;
     }
     
     [HttpGet("gpsAvailable")]
-    public ActionResult<bool> GpsAvailable()
+    public Result<bool> GpsAvailable()
     {
         return _motionService.IsGpsAvailable;
     }
     
     [HttpGet("gpsConnected")]
-    public ActionResult<bool> GpsConnected()
+    public Result<bool> GpsConnected()
     {
         return _motionService.IsGpsConnected;
     }
