@@ -11,4 +11,8 @@
       <ProjectReference Include="..\AutoTf.CentralBridge.TrainModels.CcdDisplays\AutoTf.CentralBridge.TrainModels.CcdDisplays.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+    </ItemGroup>
+
 </Project>

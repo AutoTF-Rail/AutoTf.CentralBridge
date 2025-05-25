@@ -10,4 +10,8 @@
       <ProjectReference Include="..\AutoTf.CentralBridge.Models\AutoTf.CentralBridge.Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+    </ItemGroup>
+
 </Project>

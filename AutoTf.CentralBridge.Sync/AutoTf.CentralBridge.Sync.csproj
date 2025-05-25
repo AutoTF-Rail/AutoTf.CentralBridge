@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+      <ProjectReference Include="..\AutoTf.CentralBridge.Models\AutoTf.CentralBridge.Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AutoTf.CentralBridge.Models\AutoTf.CentralBridge.Models.csproj" />
+      <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
     </ItemGroup>
 </Project>
