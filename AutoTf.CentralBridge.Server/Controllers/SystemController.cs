@@ -48,7 +48,7 @@ public class SystemController : ControllerBase
 		string prevDir = Directory.GetCurrentDirectory();
 	
 		Directory.SetCurrentDirectory("/home/CentralBridge/AutoTf.CentralBridge/AutoTf.CentralBridge.Server");
-		_logger.Log(CommandExecuter.ExecuteCommand("bash -c \"git reset --hard && git pull && dotnet build -c RELEASE -m\""));
+		_logger.Log(CommandExecuter.ExecuteCommand("bash -c \"git reset --hard && git pull && git submodule update --init --recursive && dotnet build -c RELEASE -m\""));
 		//TODO:
 	
 		Directory.SetCurrentDirectory(prevDir);
