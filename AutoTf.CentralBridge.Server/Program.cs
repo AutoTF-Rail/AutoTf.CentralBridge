@@ -53,7 +53,10 @@ public static class Program
 
 	private static void ConfigureServices(WebApplicationBuilder builder)
 	{
-		builder.Services.AddControllers();
+		builder.Services.AddControllers(options =>
+		{
+			options.Filters.Add<CatchAttribute>();
+		});
 			
 		builder.Services.AddSingleton(Logger);
 		builder.Services.AddSingleton<ITrainSessionService, TrainSessionService>();

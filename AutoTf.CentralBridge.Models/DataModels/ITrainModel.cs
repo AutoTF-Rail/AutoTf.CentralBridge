@@ -13,11 +13,8 @@ public interface ITrainModel
 	public void SetLever(int index, double percentage);
 	public LeverType GetLeverType(int index);
 	public double? GetLeverPercentage(int index);
-	public void ReleaseMotors();
-	public void EngageMotors();
-	public void ReleaseMotor(int index);
-	public void EngageMotor(int index);
-	public bool AreMotorsReleased();
+	public bool AreMotorsEngaged();
+	public Action<bool>? MotorPowerHasChanged { get; }
 	public void EasyControl(int power);
 	public void EmergencyBrake();
 	void Initialize();

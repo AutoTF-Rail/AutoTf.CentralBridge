@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoTf.Logging" Version="1.0.0-develop-20250407-1018" />
+      <PackageReference Include="System.Device.Gpio" Version="4.0.1" />
     </ItemGroup>
 
 </Project>
