@@ -38,13 +38,6 @@ public class ControlController : ControllerBase
 		return _motionService.LastSpeedTime;
 	}
 
-	[MacAuthorize]
-	[HttpGet("areMotorsReleased")]
-	public ActionResult<bool> AreMotorsReleased()
-	{
-		return _trainModel.AreMotorsReleased();
-	}
-
 	[HttpGet("isEasyControlAvailable")]
 	public ActionResult<bool> IsEasyControlAvailable()
 	{
@@ -103,40 +96,11 @@ public class ControlController : ControllerBase
 		return Ok();
 	}
 
-	[Catch]
 	[MacAuthorize]
-	[HttpPost("releaseMotor")]
-	public IActionResult ReleaseMotor([FromBody, Required] int motorIndex)
+	[HttpPost("areMotorsEngaged")]
+	public ActionResult<bool> AreMotorsEngaged()
 	{
-		_trainModel.ReleaseMotor(motorIndex);
-		return Ok();
-	}
-
-	[Catch]
-	[MacAuthorize]
-	[HttpPost("releaseMotors")]
-	public IActionResult ReleaseMotors()
-	{
-		_trainModel.ReleaseMotors();
-		return Ok();
-	}
-
-	[Catch]
-	[MacAuthorize]
-	[HttpPost("engageMotor")]
-	public IActionResult EngageMotor([FromBody, Required] int motorIndex)
-	{
-		_trainModel.EngageMotor(motorIndex);
-		return Ok();
-	}
-
-	[Catch]
-	[MacAuthorize]
-	[HttpPost("engageMotors")]
-	public IActionResult EngageMotors()
-	{
-		_trainModel.EngageMotors();
-		return Ok();
+		return _trainModel.AreMotorsEngaged();
 	}
 
 	[Catch]

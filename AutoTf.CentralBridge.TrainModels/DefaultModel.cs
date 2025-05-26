@@ -1,25 +1,50 @@
+using System.Device.Gpio;
 using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.DataModels;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
-using AutoTf.CentralBridge.TrainModels.CcdDisplays;
 using AutoTf.Logging;
 
 namespace AutoTf.CentralBridge.TrainModels;
 
-public abstract class DefaultModel : ITrainModel
+public abstract class DefaultModel : ITrainModel, IDisposable
 {
 	protected Dictionary<int, LeverModel> Levers = new Dictionary<int, LeverModel>();
+
+	private readonly GpioController _gpioController;
+	private const int MotorStatusPin = 4;
 	
 	internal readonly IMotorManager MotorManager;
 	internal readonly Logger Logger;
 	
 	internal int _currentPower = 0;
 
+	private bool? _areMotorsEngagedState;
+
 	public DefaultModel(IMotorManager motorManager, Logger logger)
 	{
 		MotorManager = motorManager;
 		Logger = logger;
+
+		_gpioController = new GpioController();
+		_gpioController.OpenPin(MotorStatusPin, PinMode.Input);
+		
+		_gpioController.RegisterCallbackForPinValueChangedEvent(MotorStatusPin, PinEventTypes.Falling | PinEventTypes.Rising, OnMotorPinChanged);
+	}
+
+	private void OnMotorPinChanged(object sender, PinValueChangedEventArgs args)
+	{
+		if (args.ChangeType == PinEventTypes.Falling)
+		{
+			_areMotorsEngagedState = false;
+		}
+		else if (args.ChangeType == PinEventTypes.Rising)
+		{
+			_areMotorsEngagedState = true;
+			// TODO: Handle this case, and maybe set the motors, so that they wont go to a random position when they reinvoke?
+			// TODO: Disable auto pilot when this happens?
+		}
+		MotorPowerHasChanged?.Invoke((bool)_areMotorsEngagedState!);
 	}
 
 	public bool IsEasyControlAvailable
@@ -41,12 +66,23 @@ public abstract class DefaultModel : ITrainModel
 
 	public Action? OnEmergencyBrake { get; set; }
 
+	public bool AreMotorsEngaged()
+	{
+		// TODO: Read pin state here and return as bool
+		if (_areMotorsEngagedState == null)
+			_areMotorsEngagedState = _gpioController.Read(MotorStatusPin) == PinValue.High;
+		
+		
+		return (bool)_areMotorsEngagedState;
+	}
+
+	public Action<bool>? MotorPowerHasChanged { get; }
+
 	public abstract void EasyControl(int power);
 
 	public abstract void EmergencyBrake();
 	
 	public int LeverCount() => Levers.Count;
-	
 
 	public LeverType GetLeverType(int index) => Levers[index].Type;
 
@@ -65,31 +101,6 @@ public abstract class DefaultModel : ITrainModel
 		}
 
 		return null;
-	}
-
-	public bool AreMotorsReleased()
-	{
-		return MotorManager.AreMotorsReleased;
-	}
-
-	public void EngageMotors()
-	{
-		MotorManager.AreMotorsReleased = false;
-	}
-
-	public void ReleaseMotor(int index)
-	{
-		MotorManager.TurnOffMotor(index);
-	}
-
-	public void EngageMotor(int index)
-	{
-		MotorManager.TurnOnMotor(index);
-	}
-
-	public void ReleaseMotors()
-	{
-		MotorManager.AreMotorsReleased = true;
 	}
 
 	public void SetLever(int index, double percentage)
@@ -123,5 +134,12 @@ public abstract class DefaultModel : ITrainModel
 			Logger.Log($"Default Train: Setting {lever.Type.ToString()} \"{lever.Name}\" to: {angle}");
 			MotorManager.SetMotorAngle(index, angle);
 		}
+	}
+
+	public void Dispose()
+	{
+		_gpioController.UnregisterCallbackForPinValueChangedEvent(MotorStatusPin, OnMotorPinChanged);
+		_gpioController.ClosePin(MotorStatusPin);
+		_gpioController.Dispose();
 	}
 }
