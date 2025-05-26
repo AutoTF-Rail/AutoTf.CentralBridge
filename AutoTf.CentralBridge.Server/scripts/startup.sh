@@ -2,10 +2,6 @@
 
 exec > /dev/tty1 2>&1
 
-eval "$(ssh-agent -s)"
-    
-ssh-add /home/CentralBridge/github
-
 check_internet() {
   sleep 5
     echo "Checking lan connection"
