@@ -4,5 +4,6 @@ public enum CodeValidationResult
 {
     NotFound,
     Invalid,
+    TooOld,
     Valid
 }

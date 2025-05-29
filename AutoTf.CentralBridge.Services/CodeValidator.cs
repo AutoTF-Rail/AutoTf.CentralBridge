@@ -1,4 +1,3 @@
-using AutoTf.CentralBridge.Models;
 using AutoTf.CentralBridge.Models.Enums;
 using AutoTf.CentralBridge.Models.Interfaces;
 using OtpNet;
@@ -16,6 +15,9 @@ public class CodeValidator
 	
 	public CodeValidationResult ValidateCode(string code, string keySerialNumber, DateTime timeOfCode)
 	{
+		if ((DateTime.UtcNow - timeOfCode).TotalHours >= 1)
+			return CodeValidationResult.TooOld;
+		
 		// KeySerialNum:secret
 		string[] allKeys = _fileManager.ReadAllLines("keys", "[]");
 		string? secret = allKeys.FirstOrDefault(x => x.StartsWith($"{keySerialNumber}:"));
